@@ -20,7 +20,7 @@ public class Assystem_app {
             orientDB.create(dbName, ODatabaseType.PLOCAL);
             
             // Ajout d'un utilisateur admin
-            orientDB.open(dbName, "root", "root").command(
+            orientDB.open(dbName, "root", "admin").command(
                 "CREATE USER admin IDENTIFIED BY 'admin' ROLE admin"
             ).close();
         }
