@@ -11,18 +11,23 @@ import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.db.OrientDBConfig;
 import com.orientechnologies.orient.core.db.OrientDBConfigBuilder;
 import com.orientechnologies.orient.core.record.OVertex;
+import com.orientechnologies.orient.core.exception.OSecurityAccessException;
+import com.orientechnologies.orient.core.exception.OStorageException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import com.orientechnologies.orient.core.record.OEdge;
 
 
 
 public class Interface_app extends javax.swing.JFrame {
-
-    private ODatabaseSession db;
+    private SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm");  // Format de l'heure
+    private String time = sdf.format(new Date());
     private OrientDB orientDB = new OrientDB("remote:localhost", OrientDBConfig.defaultConfig());
     private OrientDBConfigBuilder poolCfg = OrientDBConfig.builder()
         .addConfig(OGlobalConfiguration.DB_POOL_MIN, 5)
         .addConfig(OGlobalConfiguration.DB_POOL_MAX, 10);
     private ODatabasePool pool;
+    
     
     public Interface_app() {
         initComponents();
@@ -63,6 +68,8 @@ public class Interface_app extends javax.swing.JFrame {
         jPanel5 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -124,22 +131,24 @@ public class Interface_app extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
-                    .addComponent(jTextField4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(80, 80, 80))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(31, 31, 31)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(425, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -194,7 +203,7 @@ public class Interface_app extends javax.swing.JFrame {
 
         jLabel9.setText("Nom BDD");
 
-        jButton3.setText("Connection");
+        jButton3.setText("Connexion");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -219,7 +228,7 @@ public class Interface_app extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 595, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -263,28 +272,38 @@ public class Interface_app extends javax.swing.JFrame {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jButton2.setText("Deconnection");
+        jButton2.setText("Deconnexion");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(19, 19, 19))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
+                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(20, 20, 20))
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -323,13 +342,79 @@ public class Interface_app extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    public void printMessage(String message) {
+        // Récupérer l'heure actuelle
+        SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm:ss.SSS");  // Format de l'heure
+        String time = sdf.format(new Date());  // Obtenir l'heure actuelle
 
+        // Construire le message avec l'heure
+        String formattedMessage = time + " : " + message + "\n";
+
+        // Ajouter le message à la JTextArea
+        jTextArea1.append(formattedMessage);
+        
+        // Faire défiler jusqu'à la fin pour afficher le dernier message
+        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
+    }
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        // Initialisation des variables
+        String className = getTextFromAccessibleName("Add_Classe");
+        String famille = getTextFromAccessibleName("Add_Famille");
+        String sousFamille = getTextFromAccessibleName("Add_Sous_Famille");
+        String type = getTextFromAccessibleName("Add_Type");
+        String constructeur = getTextFromAccessibleName("Add_Constructeur");
+        System.out.println(className);
+
+        // Vérification du pool
+        if (pool == null) {
+            printMessage("Le pool de connexions est nul. Veuillez verifier son initialisation.");
+            return;
+        }
+
+        // Vérification du nom de la classe
+        if (className == null || className.isEmpty()) {
+            printMessage("Le nom de la classe est vide ou nul. Creation du vertex impossible.");
+            return;
+        }
+
+        ODatabaseSession db = null;
+        try {
+            db = pool.acquire(); // Acquisition de la session de base de données
+            printMessage("Tentative de creation du vertex pour la classe : " + className);
+
+            // Création de la classe si elle n'existe pas
+            if (!db.getMetadata().getSchema().existsClass(className)) {
+                // Création de la classe en héritant de la classe "V"
+                db.getMetadata().getSchema().createClass(className, db.getMetadata().getSchema().getClass("V"));
+                printMessage("La classe " + className + " a ete creee dans le schema.");
+            }
+
+            // Création d'un vertex de cette classe
+            OVertex v = db.newVertex(className);
+            v.setProperty("Famille", famille);
+            v.setProperty("Sous Famille", sousFamille);
+            v.setProperty("Type", type);
+            v.setProperty("Constructeur", constructeur);
+            v.save();
+
+            printMessage("Le vertex " + className + " " + famille + " " + sousFamille + " " + type + " " + constructeur + " a ete cree avec succès !");
+
+        } catch (Exception e) {
+            printMessage("Erreur lors de la creation du vertex : " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+        // Fermeture du pool seulement après l'utilisation de la base de données
+        if (db != null) {
+            db.close();
+            printMessage("Echange avec la base de donnees termine.");
+        }
+            // Il est important de ne pas fermer le pool ici, car cela affectera toutes les connexions.
+            printMessage("Operation terminee.");
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
@@ -345,19 +430,63 @@ public class Interface_app extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField7ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        String BDD = getTextFromAccessibleName("Connection_BDD");
-        String User = getTextFromAccessibleName("Connection_User");
-        String Password = getTextFromAccessibleName("Connection_Password");
-        pool = new ODatabasePool(orientDB, BDD, User, Password, poolCfg.build());
-        db = pool.acquire();
-        System.out.println("Connexion reussie à la base de donnees = " + BDD);
+        try {
+        // Récupération des informations de connexion
+            String BDD = getTextFromAccessibleName("Connection_BDD");
+            String User = getTextFromAccessibleName("Connection_User");
+            String Password = getTextFromAccessibleName("Connection_Password");
+
+            // Vérification des valeurs
+            if (BDD == null || BDD.isEmpty()) {
+                printMessage("Le nom de la base de donnees (BDD) est vide ou nul. Veuillez verifier.");
+                return;
+            }
+            if (User == null || User.isEmpty()) {
+                printMessage("Le nom d'utilisateur (User) est vide ou nul. Veuillez verifier.");
+                return;
+            }
+            if (Password == null || Password.isEmpty()) {
+                printMessage("Le mot de passe (Password) est vide ou nul. Veuillez verifier.");
+                return;
+            }
+
+        // Initialisation du pool
+            pool = new ODatabasePool(orientDB, BDD, User, Password, poolCfg.build());
+            printMessage("Connexion reussie à la base de donnees : " + BDD);
+        } catch (OStorageException e) {
+            printMessage("Erreur lors de la connexion à la base de donnees : " + e.getMessage());
+            e.printStackTrace();
+        } catch (OSecurityAccessException e) {
+            printMessage("Echec de l'authentification : " + e.getMessage());
+        } catch (Exception e) {
+            printMessage("Erreur inattendue : " + e.getMessage());
+            e.printStackTrace();
+        }
+     
         
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        pool.close();
-        orientDB.close();
-        System.out.println("Deconnexion reussie de base de donnees");
+        boolean T = false;
+        try {
+            if (pool != null && !pool.isClosed()) {
+                pool.close();
+                T = true;
+                printMessage("Le pool de connexions a été fermé.");
+            } else {
+                printMessage("Le pool de connexions est déjà fermé ou non initialisé.");
+            }
+
+            if (orientDB != null && orientDB.isOpen() && T == true) {
+                orientDB.close();
+                printMessage("Déconnexion réussie de la base de données.");
+            } else {
+                printMessage("La connexion à la base de données est déjà fermée ou non initialisée.");
+            }
+        } catch (Exception e) {
+            printMessage("Erreur lors de la fermeture des connexions : " + e.getMessage());
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private String getTextFromAccessibleName(String accessibleName) {
@@ -366,21 +495,33 @@ public class Interface_app extends javax.swing.JFrame {
 
     private String getTextFromAccessibleNameRecursive(java.awt.Container container, String accessibleName) {
         for (java.awt.Component comp : container.getComponents()) {
+            // Vérifier si le composant est un JTextField
             if (comp instanceof javax.swing.JTextField) {
-            javax.swing.JTextField textField = (javax.swing.JTextField) comp;
+                javax.swing.JTextField textField = (javax.swing.JTextField) comp;
                 if (accessibleName.equals(textField.getAccessibleContext().getAccessibleName())) {
                     return textField.getText();
                 }
-            } else if (comp instanceof java.awt.Container) {
-                // Rechercher récursivement dans les sous-conteneurs
+            }    
+        // Vérifier si le composant est un JComboBox
+            else if (comp instanceof javax.swing.JComboBox) {
+                javax.swing.JComboBox<?> comboBox = (javax.swing.JComboBox<?>) comp;
+                if (accessibleName.equals(comboBox.getAccessibleContext().getAccessibleName())) {
+                    // Récupérer la valeur sélectionnée dans la combobox
+                    Object selectedItem = comboBox.getSelectedItem();
+                    return selectedItem != null ? selectedItem.toString() : ""; // Retourne une chaîne vide si aucun élément n'est sélectionné
+                }
+            }
+            // Rechercher récursivement dans les sous-conteneurs
+            else if (comp instanceof java.awt.Container) {
                 String result = getTextFromAccessibleNameRecursive((java.awt.Container) comp, accessibleName);
                 if (!result.isEmpty()) {
                     return result;
                 }
             }
         }
-        return "";  // Retourne une chaîne vide si le champ n'est pas trouvé
+        return "";  // Retourne une chaîne vide si le champ ou la combobox n'est pas trouvé
     }
+
 
     
     public static void main(String args[]) {
@@ -411,6 +552,8 @@ public class Interface_app extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
