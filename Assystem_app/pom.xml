@@ -51,6 +51,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>17</maven.compiler.release>
-        <exec.mainClass>com.mycompany.assystem_app.Assystem_app</exec.mainClass>
+        <exec.mainClass>com.mycompany.assystem_app.Interface_app</exec.mainClass>
     </properties>
 </project>
