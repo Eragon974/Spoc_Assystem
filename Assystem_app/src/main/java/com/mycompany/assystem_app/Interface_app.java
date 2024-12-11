@@ -537,7 +537,7 @@ public class Interface_app extends javax.swing.JFrame {
                 printMessage("Le mot de passe (Password) est vide ou nul. Veuillez verifier.");
                 return;
             }
-
+        
         // Initialisation du pool
             pool = new ODatabasePool(orientDB, BDD, User, Password, poolCfg.build());
             printMessage("Connexion reussie à la base de donnees : " + BDD);
