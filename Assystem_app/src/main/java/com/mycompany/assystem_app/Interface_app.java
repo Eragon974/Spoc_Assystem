@@ -4,18 +4,23 @@
  */
 package com.mycompany.assystem_app;
 
+import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
+import com.orientechnologies.orient.core.db.OLiveQueryResultListener;
 import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.db.OrientDBConfig;
 import com.orientechnologies.orient.core.db.OrientDBConfigBuilder;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.record.OVertex;
+import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.record.OEdge;
 import com.orientechnologies.orient.core.exception.OSecurityAccessException;
 import com.orientechnologies.orient.core.exception.OStorageException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 
 
 
@@ -95,6 +100,7 @@ public class Interface_app extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
+        jLabel12 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -279,6 +285,11 @@ public class Interface_app extends javax.swing.JFrame {
 
         jLabel10.setText("Equipement");
 
+        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Armoire", "Tableau" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
         jScrollPane2.setViewportView(jList1);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -308,6 +319,11 @@ public class Interface_app extends javax.swing.JFrame {
 
         jLabel11.setText("Composant");
 
+        jList4.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Buzzer" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
         jScrollPane5.setViewportView(jList4);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -370,8 +386,63 @@ public class Interface_app extends javax.swing.JFrame {
 
         jPanel7.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-        jTextField8.setText("Recherche...");
         jTextField8.setToolTipText("");
+
+        jTextField8.addActionListener(evt -> {
+            String input = jTextField8.getText();
+            // Recherche dans la liste
+            for (int i = 0; i < jList1.getModel().getSize(); i++) {
+                if (jList1.getModel().getElementAt(i).toLowerCase().equals(input.toLowerCase())) {
+                    jList1.setSelectedIndex(i);
+                    break;
+                }
+            }
+            for (int i = 0; i < jList4.getModel().getSize(); i++) {
+                if (jList4.getModel().getElementAt(i).toLowerCase().equals(input.toLowerCase())) {
+                    jList4.setSelectedIndex(i);
+                    break;
+                }
+            }
+        LevenshteinDistance levenshtein = new LevenshteinDistance();
+        String closestMatch = null;
+        int minDistance = Integer.MAX_VALUE;
+
+        // Recherche dans la première liste
+        for (int i = 0; i < jList1.getModel().getSize(); i++) {
+            String element = jList1.getModel().getElementAt(i);
+            int distance = levenshtein.apply(input.toLowerCase(), element.toLowerCase());
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestMatch = element;
+            }
+        }
+
+        // Recherche dans la deuxième liste
+        for (int i = 0; i < jList4.getModel().getSize(); i++) {
+            String element = jList4.getModel().getElementAt(i);
+            int distance = levenshtein.apply(input.toLowerCase(), element.toLowerCase());
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestMatch = element;
+            }
+        }
+
+        // Sélectionner l'élément le plus proche
+        if (closestMatch != null) {
+            for (int i = 0; i < jList1.getModel().getSize(); i++) {
+                if (jList1.getModel().getElementAt(i).equals(closestMatch)) {
+                    jList1.setSelectedIndex(i);
+                    return;
+                }
+            }
+            for (int i = 0; i < jList4.getModel().getSize(); i++) {
+                if (jList4.getModel().getElementAt(i).equals(closestMatch)) {
+                    jList4.setSelectedIndex(i);
+                    return;
+                }
+            }
+        }
+        });
 
         jButton4.setText("Supprimer");
 
@@ -379,23 +450,30 @@ public class Interface_app extends javax.swing.JFrame {
 
         jButton6.setText("Modifier");
 
+        jLabel12.setText("Recherche");
+
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+            .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField8)
-                    .addComponent(jButton4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE))
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jTextField8, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel12)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addGap(29, 29, 29)
+                .addGap(7, 7, 7)
+                .addComponent(jLabel12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(55, 55, 55)
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -576,6 +654,10 @@ public class Interface_app extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField8ActionPerformed
+
     private String getTextFromAccessibleName(String accessibleName) {
         return getTextFromAccessibleNameRecursive(getContentPane(), accessibleName);
     }
@@ -608,6 +690,34 @@ public class Interface_app extends javax.swing.JFrame {
         }
         return "";  // Retourne une chaîne vide si le champ ou la combobox n'est pas trouvé
     }
+    // Gestion des Live Querries
+    class MyLiveQueryListener implements OLiveQueryResultListener {
+
+    @Override
+    public void onCreate(ODatabaseDocument database, OResult data) {
+       // your record create logic here
+    }
+
+    @Override
+    public void onUpdate(ODatabaseDocument database, OResult before, OResult after) {
+       // your record update logic here
+    }
+
+    @Override
+    public void onDelete(ODatabaseDocument database, OResult data) {
+       // your record delete logic here
+    }
+
+    @Override
+    public void onError(ODatabaseDocument database, OException exception) {
+       // your error logic here
+    }
+
+    @Override
+    public void onEnd(ODatabaseDocument database) {
+       // this is invoked when you unsubscribe
+    }
+  }
     
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -628,6 +738,7 @@ public class Interface_app extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
