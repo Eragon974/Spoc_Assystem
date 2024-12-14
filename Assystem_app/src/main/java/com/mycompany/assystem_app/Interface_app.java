@@ -19,8 +19,9 @@ import com.orientechnologies.orient.core.record.OEdge;
 import com.orientechnologies.orient.core.exception.OSecurityAccessException;
 import com.orientechnologies.orient.core.exception.OStorageException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 import org.apache.commons.text.similarity.LevenshteinDistance;
+
 
 
 
@@ -286,7 +287,7 @@ public class Interface_app extends javax.swing.JFrame {
         jLabel10.setText("Equipement");
 
         jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Armoire", "Tableau" };
+            String[] strings = { "Armoire", "Tableau", "Armoire" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
@@ -387,61 +388,10 @@ public class Interface_app extends javax.swing.JFrame {
         jPanel7.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
         jTextField8.setToolTipText("");
-
-        jTextField8.addActionListener(evt -> {
-            String input = jTextField8.getText();
-            // Recherche dans la liste
-            for (int i = 0; i < jList1.getModel().getSize(); i++) {
-                if (jList1.getModel().getElementAt(i).toLowerCase().equals(input.toLowerCase())) {
-                    jList1.setSelectedIndex(i);
-                    break;
-                }
+        jTextField8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField8ActionPerformed(evt);
             }
-            for (int i = 0; i < jList4.getModel().getSize(); i++) {
-                if (jList4.getModel().getElementAt(i).toLowerCase().equals(input.toLowerCase())) {
-                    jList4.setSelectedIndex(i);
-                    break;
-                }
-            }
-        LevenshteinDistance levenshtein = new LevenshteinDistance();
-        String closestMatch = null;
-        int minDistance = Integer.MAX_VALUE;
-
-        // Recherche dans la première liste
-        for (int i = 0; i < jList1.getModel().getSize(); i++) {
-            String element = jList1.getModel().getElementAt(i);
-            int distance = levenshtein.apply(input.toLowerCase(), element.toLowerCase());
-            if (distance < minDistance) {
-                minDistance = distance;
-                closestMatch = element;
-            }
-        }
-
-        // Recherche dans la deuxième liste
-        for (int i = 0; i < jList4.getModel().getSize(); i++) {
-            String element = jList4.getModel().getElementAt(i);
-            int distance = levenshtein.apply(input.toLowerCase(), element.toLowerCase());
-            if (distance < minDistance) {
-                minDistance = distance;
-                closestMatch = element;
-            }
-        }
-
-        // Sélectionner l'élément le plus proche
-        if (closestMatch != null) {
-            for (int i = 0; i < jList1.getModel().getSize(); i++) {
-                if (jList1.getModel().getElementAt(i).equals(closestMatch)) {
-                    jList1.setSelectedIndex(i);
-                    return;
-                }
-            }
-            for (int i = 0; i < jList4.getModel().getSize(); i++) {
-                if (jList4.getModel().getElementAt(i).equals(closestMatch)) {
-                    jList4.setSelectedIndex(i);
-                    return;
-                }
-            }
-        }
         });
 
         jButton4.setText("Supprimer");
@@ -619,6 +569,8 @@ public class Interface_app extends javax.swing.JFrame {
         // Initialisation du pool
             pool = new ODatabasePool(orientDB, BDD, User, Password, poolCfg.build());
             printMessage("Connexion reussie à la base de donnees : " + BDD);
+            OLiveQueryResultListener listener_composant = new MyLiveQueryListener();
+            OLiveQueryResultListener listener_equipement = new MyLiveQueryListener();
         } catch (OStorageException e) {
             printMessage("Erreur lors de la connexion à la base de donnees : " + e.getMessage());
             e.printStackTrace();
@@ -653,9 +605,62 @@ public class Interface_app extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton2ActionPerformed
-
+    public static String[] original_list1() {
+        return new String[] { "Armoire", "Tableau", "Armoire" };
+    }
+    public static String[] original_list2() {
+        return new String[] { "Buzzer" };
+    }
+    
     private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
-        // TODO add your handling code here:
+
+            String input = jTextField8.getText();
+            LevenshteinDistance levenshtein = new LevenshteinDistance();
+            String[] closestMatch1 = {};
+            String[] closestMatch2 = {};
+            int minDistance1 = 3;
+            int minDistance2 = 3;
+
+            // Recherche dans la première liste
+            for (int i = 0; i < jList1.getModel().getSize(); i++) {
+            String element = jList1.getModel().getElementAt(i);
+            int distance = levenshtein.apply(input.toLowerCase(), element.toLowerCase());
+            if (distance <= minDistance1) {
+                minDistance1 = distance;
+                closestMatch1 = Arrays.copyOf(closestMatch1, closestMatch1.length + 1);
+                closestMatch1[closestMatch1.length - 1] = element;
+            }
+            }
+
+            // Recherche dans la deuxième liste
+            for (int i = 0; i < jList4.getModel().getSize(); i++) {
+            String element = jList4.getModel().getElementAt(i);
+            int distance = levenshtein.apply(input.toLowerCase(), element.toLowerCase());
+            if (distance < minDistance2) {
+                minDistance2 = distance;
+                closestMatch2 = Arrays.copyOf(closestMatch2, closestMatch1.length + 1);
+                closestMatch2[closestMatch1.length - 1] = element;
+            }
+            }
+            printMessage(Arrays.toString(closestMatch1));
+            
+
+            // Mettre à jour les listes avec les éléments les plus proches
+            if (closestMatch1.length != 0) {
+            jList1.setListData(closestMatch1);
+            }
+            else if(closestMatch1.length == 0) {
+            printMessage("Aucun élément trouvé dans la liste 1" + Arrays.toString(original_list1()));
+            jList1.setListData(original_list1());
+            }
+
+            if (closestMatch2.length != 0) {
+            jList4.setListData(closestMatch2);
+            } 
+            else {
+            printMessage("Aucun élément trouvé dans la liste 2" + Arrays.toString(original_list2()));
+            jList4.setListData(original_list2());
+            }
     }//GEN-LAST:event_jTextField8ActionPerformed
 
     private String getTextFromAccessibleName(String accessibleName) {
