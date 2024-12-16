@@ -3,24 +3,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.assystem_app;
-
-import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
+import com.orientechnologies.orient.core.db.OLiveQueryMonitor;
 import com.orientechnologies.orient.core.db.OLiveQueryResultListener;
 import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.db.OrientDBConfig;
 import com.orientechnologies.orient.core.db.OrientDBConfigBuilder;
-import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.record.OVertex;
-import com.orientechnologies.orient.core.sql.executor.OResult;
-import com.orientechnologies.orient.core.record.OEdge;
 import com.orientechnologies.orient.core.exception.OSecurityAccessException;
 import com.orientechnologies.orient.core.exception.OStorageException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.apache.commons.text.similarity.LevenshteinDistance;
+import javax.swing.DefaultListModel;
+
 
 
 
@@ -33,6 +30,18 @@ public class Interface_app extends javax.swing.JFrame {
         .addConfig(OGlobalConfiguration.DB_POOL_MIN, 5)
         .addConfig(OGlobalConfiguration.DB_POOL_MAX, 10);
     private ODatabasePool pool;
+    OLiveQueryMonitor monitorC;
+    OLiveQueryMonitor monitorE;
+    private DefaultListModel<String> listModelC = new DefaultListModel<>();
+    private DefaultListModel<String> listModelE = new DefaultListModel<>();
+    private MyLiveQueryListener listenerC = new MyLiveQueryListener(listModelC, "Composant", () -> {
+            // Cette méthode est appelée dès que la connexion réussie
+            printMessage("Connexion réussie, récupération des données de la classe Composant...");
+        });
+    private MyLiveQueryListener listenerE = new MyLiveQueryListener(listModelE, "Equipement", () -> {
+            // Cette méthode est appelée dès que la connexion réussie
+            printMessage("Connexion réussie, récupération des données de la classe Equipement...");
+        });
 
     public Interface_app() {
         initComponents();
@@ -285,11 +294,7 @@ public class Interface_app extends javax.swing.JFrame {
 
         jLabel10.setText("Equipement");
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Armoire", "Tableau" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
+        jList1.setModel(listModelE);
         jScrollPane2.setViewportView(jList1);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -319,11 +324,7 @@ public class Interface_app extends javax.swing.JFrame {
 
         jLabel11.setText("Composant");
 
-        jList4.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Buzzer" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
+        jList4.setModel(listModelC);
         jScrollPane5.setViewportView(jList4);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -387,61 +388,10 @@ public class Interface_app extends javax.swing.JFrame {
         jPanel7.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
         jTextField8.setToolTipText("");
-
-        jTextField8.addActionListener(evt -> {
-            String input = jTextField8.getText();
-            // Recherche dans la liste
-            for (int i = 0; i < jList1.getModel().getSize(); i++) {
-                if (jList1.getModel().getElementAt(i).toLowerCase().equals(input.toLowerCase())) {
-                    jList1.setSelectedIndex(i);
-                    break;
-                }
+        jTextField8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField8ActionPerformed(evt);
             }
-            for (int i = 0; i < jList4.getModel().getSize(); i++) {
-                if (jList4.getModel().getElementAt(i).toLowerCase().equals(input.toLowerCase())) {
-                    jList4.setSelectedIndex(i);
-                    break;
-                }
-            }
-        LevenshteinDistance levenshtein = new LevenshteinDistance();
-        String closestMatch = null;
-        int minDistance = Integer.MAX_VALUE;
-
-        // Recherche dans la première liste
-        for (int i = 0; i < jList1.getModel().getSize(); i++) {
-            String element = jList1.getModel().getElementAt(i);
-            int distance = levenshtein.apply(input.toLowerCase(), element.toLowerCase());
-            if (distance < minDistance) {
-                minDistance = distance;
-                closestMatch = element;
-            }
-        }
-
-        // Recherche dans la deuxième liste
-        for (int i = 0; i < jList4.getModel().getSize(); i++) {
-            String element = jList4.getModel().getElementAt(i);
-            int distance = levenshtein.apply(input.toLowerCase(), element.toLowerCase());
-            if (distance < minDistance) {
-                minDistance = distance;
-                closestMatch = element;
-            }
-        }
-
-        // Sélectionner l'élément le plus proche
-        if (closestMatch != null) {
-            for (int i = 0; i < jList1.getModel().getSize(); i++) {
-                if (jList1.getModel().getElementAt(i).equals(closestMatch)) {
-                    jList1.setSelectedIndex(i);
-                    return;
-                }
-            }
-            for (int i = 0; i < jList4.getModel().getSize(); i++) {
-                if (jList4.getModel().getElementAt(i).equals(closestMatch)) {
-                    jList4.setSelectedIndex(i);
-                    return;
-                }
-            }
-        }
         });
 
         jButton4.setText("Supprimer");
@@ -551,14 +501,6 @@ public class Interface_app extends javax.swing.JFrame {
         try {
             db = pool.acquire(); // Acquisition de la session de base de données
             printMessage("Tentative de creation du vertex pour la classe : " + className);
-
-            // Création de la classe si elle n'existe pas
-            if (!db.getMetadata().getSchema().existsClass(className)) {
-                // Création de la classe en héritant de la classe "V"
-                db.getMetadata().getSchema().createClass(className, db.getMetadata().getSchema().getClass("V"));
-                printMessage("La classe " + className + " a ete creee dans le schema.");
-            }
-
             // Création d'un vertex de cette classe
             OVertex v = db.newVertex(className);
             v.setProperty("Famille", famille);
@@ -596,6 +538,7 @@ public class Interface_app extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField7ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        ODatabaseSession db;
         try {
         // Récupération des informations de connexion
             String BDD = getTextFromAccessibleName("Connection_BDD");
@@ -615,10 +558,23 @@ public class Interface_app extends javax.swing.JFrame {
                 printMessage("Le mot de passe (Password) est vide ou nul. Veuillez verifier.");
                 return;
             }
-        
-        // Initialisation du pool
+            // Initialisation du pool
             pool = new ODatabasePool(orientDB, BDD, User, Password, poolCfg.build());
             printMessage("Connexion reussie à la base de donnees : " + BDD);
+            // Initialisation Live Query
+            db = pool.acquire();
+            if (!db.getMetadata().getSchema().existsClass("Composant")) {
+                // Création de la classe en héritant de la classe "V"
+                db.getMetadata().getSchema().createClass("Composant", db.getMetadata().getSchema().getClass("V"));
+                printMessage("La classe Composant a ete creee dans le schema.");
+            }
+            if (!db.getMetadata().getSchema().existsClass("Equipement")) {
+                // Création de la classe en héritant de la classe "V"
+                db.getMetadata().getSchema().createClass("Equipement", db.getMetadata().getSchema().getClass("V"));
+                printMessage("La classe Equipement a ete creee dans le schema.");
+            }
+            monitorC = db.live("LIVE SELECT FROM Composant", listenerC);
+            monitorE = db.live("LIVE SELECT FROM Equipement", listenerE);
         } catch (OStorageException e) {
             printMessage("Erreur lors de la connexion à la base de donnees : " + e.getMessage());
             e.printStackTrace();
@@ -628,7 +584,6 @@ public class Interface_app extends javax.swing.JFrame {
             printMessage("Erreur inattendue : " + e.getMessage());
             e.printStackTrace();
         }
-
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -690,34 +645,6 @@ public class Interface_app extends javax.swing.JFrame {
         }
         return "";  // Retourne une chaîne vide si le champ ou la combobox n'est pas trouvé
     }
-    // Gestion des Live Querries
-    class MyLiveQueryListener implements OLiveQueryResultListener {
-
-    @Override
-    public void onCreate(ODatabaseDocument database, OResult data) {
-       // your record create logic here
-    }
-
-    @Override
-    public void onUpdate(ODatabaseDocument database, OResult before, OResult after) {
-       // your record update logic here
-    }
-
-    @Override
-    public void onDelete(ODatabaseDocument database, OResult data) {
-       // your record delete logic here
-    }
-
-    @Override
-    public void onError(ODatabaseDocument database, OException exception) {
-       // your error logic here
-    }
-
-    @Override
-    public void onEnd(ODatabaseDocument database) {
-       // this is invoked when you unsubscribe
-    }
-  }
     
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
