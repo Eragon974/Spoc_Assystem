@@ -604,12 +604,12 @@ public class Interface_app extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton2ActionPerformed
-    public static String[] original_list1() {
+    /*public static String[] original_list1() {
         return new String[] { "Armoire", "Tableau", "Armoire" };
     }
     public static String[] original_list2() {
         return new String[] { "Buzzer" };
-    }
+    }*/
     
     private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
 
@@ -619,6 +619,16 @@ public class Interface_app extends javax.swing.JFrame {
         String[] closestMatch2 = {};
         int minDistance1 = 3;
         int minDistance2 = 3;
+
+        String[] listModelCArray = new String[listModelC.getSize()];
+        for (int i = 0; i < listModelC.getSize(); i++) {
+            listModelCArray[i] = listModelC.getElementAt(i);
+        }
+
+        String[] listModelEArray = new String[listModelE.getSize()];
+        for (int i = 0; i < listModelE.getSize(); i++) {
+            listModelEArray[i] = listModelE.getElementAt(i);
+        }
 
         // Recherche dans la première liste
         for (int i = 0; i < jList1.getModel().getSize(); i++) {
@@ -649,14 +659,14 @@ public class Interface_app extends javax.swing.JFrame {
             jList1.setListData(closestMatch1);
         } else {
             printMessage("Aucun élément trouvé dans la liste 1" + Arrays.toString(original_list1()));
-            jList1.setListData(original_list1());
+            jList1.setListData(listModelEArray);
         }
 
         if (closestMatch2.length != 0) {
             jList4.setListData(closestMatch2);
         } else {
             printMessage("Aucun élément trouvé dans la liste 2" + Arrays.toString(original_list2()));
-            jList4.setListData(original_list2());
+            jList4.setListData(listModelCArray);
         }
     }//GEN-LAST:event_jTextField8ActionPerformed
 
