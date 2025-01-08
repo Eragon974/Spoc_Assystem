@@ -613,15 +613,15 @@ public class Interface_app extends javax.swing.JFrame {
     
     private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
 
-            String input = jTextField8.getText();
-            LevenshteinDistance levenshtein = new LevenshteinDistance();
-            String[] closestMatch1 = {};
-            String[] closestMatch2 = {};
-            int minDistance1 = 5;
-            int minDistance2 = 5;
+        String input = jTextField8.getText();
+        LevenshteinDistance levenshtein = new LevenshteinDistance();
+        String[] closestMatch1 = {};
+        String[] closestMatch2 = {};
+        int minDistance1 = 3;
+        int minDistance2 = 3;
 
-            // Recherche dans la première liste
-            for (int i = 0; i < jList1.getModel().getSize(); i++) {
+        // Recherche dans la première liste
+        for (int i = 0; i < jList1.getModel().getSize(); i++) {
             String element = jList1.getModel().getElementAt(i);
             int distance = levenshtein.apply(input.toLowerCase(), element.toLowerCase());
             if (distance <= minDistance1) {
@@ -629,37 +629,35 @@ public class Interface_app extends javax.swing.JFrame {
                 closestMatch1 = Arrays.copyOf(closestMatch1, closestMatch1.length + 1);
                 closestMatch1[closestMatch1.length - 1] = element;
             }
-            }
+        }
 
-            // Recherche dans la deuxième liste
-            for (int i = 0; i < jList4.getModel().getSize(); i++) {
+        // Recherche dans la deuxième liste
+        for (int i = 0; i < jList4.getModel().getSize(); i++) {
             String element = jList4.getModel().getElementAt(i);
             int distance = levenshtein.apply(input.toLowerCase(), element.toLowerCase());
-            if (distance < minDistance2) {
+            if (distance <= minDistance2) {
                 minDistance2 = distance;
-                closestMatch2 = Arrays.copyOf(closestMatch2, closestMatch1.length + 1);
+                closestMatch2 = Arrays.copyOf(closestMatch2, closestMatch2.length + 1);
                 closestMatch2[closestMatch2.length - 1] = element;
             }
-            }
-            printMessage(Arrays.toString(closestMatch1));
-            
+        }
+        printMessage(Arrays.toString(closestMatch1));
+        printMessage(Arrays.toString(closestMatch2));
 
-            // Mettre à jour les listes avec les éléments les plus proches
-            if (closestMatch1.length != 0) {
+        // Mettre à jour les listes avec les éléments les plus proches
+        if (closestMatch1.length != 0) {
             jList1.setListData(closestMatch1);
-            }
-            else if(closestMatch1.length == 0) {
+        } else {
             printMessage("Aucun élément trouvé dans la liste 1" + Arrays.toString(original_list1()));
             jList1.setListData(original_list1());
-            }
-            
-            if (closestMatch2.length != 0) {
+        }
+
+        if (closestMatch2.length != 0) {
             jList4.setListData(closestMatch2);
-            } 
-            else {
+        } else {
             printMessage("Aucun élément trouvé dans la liste 2" + Arrays.toString(original_list2()));
             jList4.setListData(original_list2());
-            }
+        }
     }//GEN-LAST:event_jTextField8ActionPerformed
 
     private String getTextFromAccessibleName(String accessibleName) {
