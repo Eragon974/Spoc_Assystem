@@ -624,11 +624,13 @@ public class Interface_app extends javax.swing.JFrame {
         for (int i = 0; i < listModelC.getSize(); i++) {
             listModelCArray[i] = listModelC.getElementAt(i);
         }
+        jList4.setListData(listModelCArray);
 
         String[] listModelEArray = new String[listModelE.getSize()];
         for (int i = 0; i < listModelE.getSize(); i++) {
             listModelEArray[i] = listModelE.getElementAt(i);
         }
+        jList1.setListData(listModelEArray);
 
         // Recherche dans la première liste
         for (int i = 0; i < jList1.getModel().getSize(); i++) {
@@ -658,14 +660,14 @@ public class Interface_app extends javax.swing.JFrame {
         if (closestMatch1.length != 0) {
             jList1.setListData(closestMatch1);
         } else {
-            printMessage("Aucun élément trouvé dans la liste 1" + Arrays.toString(original_list1()));
+            printMessage("Aucun élément trouvé dans la liste 1" + Arrays.toString(listModelEArray));
             jList1.setListData(listModelEArray);
         }
 
         if (closestMatch2.length != 0) {
             jList4.setListData(closestMatch2);
         } else {
-            printMessage("Aucun élément trouvé dans la liste 2" + Arrays.toString(original_list2()));
+            printMessage("Aucun élément trouvé dans la liste 2" + Arrays.toString(listModelCArray));
             jList4.setListData(listModelCArray);
         }
     }//GEN-LAST:event_jTextField8ActionPerformed
