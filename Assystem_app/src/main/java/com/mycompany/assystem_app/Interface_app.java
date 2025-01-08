@@ -3,11 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.assystem_app;
+
 import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.db.OLiveQueryMonitor;
-import com.orientechnologies.orient.core.db.OLiveQueryResultListener;
 import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.db.OrientDBConfig;
 import com.orientechnologies.orient.core.db.OrientDBConfigBuilder;
@@ -15,8 +15,9 @@ import com.orientechnologies.orient.core.record.OVertex;
 import com.orientechnologies.orient.core.exception.OSecurityAccessException;
 import com.orientechnologies.orient.core.exception.OStorageException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 import javax.swing.DefaultListModel;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 
 
 
@@ -30,18 +31,12 @@ public class Interface_app extends javax.swing.JFrame {
         .addConfig(OGlobalConfiguration.DB_POOL_MIN, 5)
         .addConfig(OGlobalConfiguration.DB_POOL_MAX, 10);
     private ODatabasePool pool;
-    OLiveQueryMonitor monitorC;
-    OLiveQueryMonitor monitorE;
+    private MyLiveQueryListener listenerC;
     private DefaultListModel<String> listModelC = new DefaultListModel<>();
+    private OLiveQueryMonitor monitorC;
+    private MyLiveQueryListener listenerE;
     private DefaultListModel<String> listModelE = new DefaultListModel<>();
-    private MyLiveQueryListener listenerC = new MyLiveQueryListener(listModelC, "Composant", () -> {
-            // Cette méthode est appelée dès que la connexion réussie
-            printMessage("Connexion réussie, récupération des données de la classe Composant...");
-        });
-    private MyLiveQueryListener listenerE = new MyLiveQueryListener(listModelE, "Equipement", () -> {
-            // Cette méthode est appelée dès que la connexion réussie
-            printMessage("Connexion réussie, récupération des données de la classe Equipement...");
-        });
+    private OLiveQueryMonitor monitorE;
 
     public Interface_app() {
         initComponents();
@@ -305,9 +300,11 @@ public class Interface_app extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jScrollPane2))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel10)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2))
+                        .addGap(0, 428, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -514,15 +511,7 @@ public class Interface_app extends javax.swing.JFrame {
         } catch (Exception e) {
             printMessage("Erreur lors de la creation du vertex : " + e.getMessage());
             e.printStackTrace();
-        } finally {
-        // Fermeture du pool seulement après l'utilisation de la base de données
-        if (db != null) {
-            db.close();
-            printMessage("Echange avec la base de donnees termine.");
-        }
-            // Il est important de ne pas fermer le pool ici, car cela affectera toutes les connexions.
-            printMessage("Operation terminee.");
-        }
+        } 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
@@ -538,7 +527,7 @@ public class Interface_app extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField7ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        ODatabaseSession db;
+        ODatabaseSession db ;
         try {
         // Récupération des informations de connexion
             String BDD = getTextFromAccessibleName("Connection_BDD");
@@ -558,10 +547,10 @@ public class Interface_app extends javax.swing.JFrame {
                 printMessage("Le mot de passe (Password) est vide ou nul. Veuillez verifier.");
                 return;
             }
-            // Initialisation du pool
+        
+        // Initialisation du pool
             pool = new ODatabasePool(orientDB, BDD, User, Password, poolCfg.build());
             printMessage("Connexion reussie à la base de donnees : " + BDD);
-            // Initialisation Live Query
             db = pool.acquire();
             if (!db.getMetadata().getSchema().existsClass("Composant")) {
                 // Création de la classe en héritant de la classe "V"
@@ -573,8 +562,12 @@ public class Interface_app extends javax.swing.JFrame {
                 db.getMetadata().getSchema().createClass("Equipement", db.getMetadata().getSchema().getClass("V"));
                 printMessage("La classe Equipement a ete creee dans le schema.");
             }
-            monitorC = db.live("LIVE SELECT FROM Composant", listenerC);
-            monitorE = db.live("LIVE SELECT FROM Equipement", listenerE);
+            listenerC = new MyLiveQueryListener(listModelC,"Composant");
+            listenerC.loadInitialData(db);
+            monitorC = db.live("SELECT FROM Composant", listenerC);
+            listenerE = new MyLiveQueryListener(listModelE,"Equipement");
+            listenerE.loadInitialData(db);
+            monitorE = db.live("SELECT FROM Equipement", listenerE);
         } catch (OStorageException e) {
             printMessage("Erreur lors de la connexion à la base de donnees : " + e.getMessage());
             e.printStackTrace();
@@ -584,11 +577,14 @@ public class Interface_app extends javax.swing.JFrame {
             printMessage("Erreur inattendue : " + e.getMessage());
             e.printStackTrace();
         }
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         boolean T = false;
         try {
+            monitorC.unSubscribe();
+            monitorE.unSubscribe();
             if (pool != null && !pool.isClosed()) {
                 pool.close();
                 T = true;
@@ -608,9 +604,62 @@ public class Interface_app extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton2ActionPerformed
-
+    public static String[] original_list1() {
+        return new String[] { "Armoire", "Tableau", "Armoire" };
+    }
+    public static String[] original_list2() {
+        return new String[] { "Buzzer" };
+    }
+    
     private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
-        // TODO add your handling code here:
+
+            String input = jTextField8.getText();
+            LevenshteinDistance levenshtein = new LevenshteinDistance();
+            String[] closestMatch1 = {};
+            String[] closestMatch2 = {};
+            int minDistance1 = 5;
+            int minDistance2 = 5;
+
+            // Recherche dans la première liste
+            for (int i = 0; i < jList1.getModel().getSize(); i++) {
+            String element = jList1.getModel().getElementAt(i);
+            int distance = levenshtein.apply(input.toLowerCase(), element.toLowerCase());
+            if (distance <= minDistance1) {
+                minDistance1 = distance;
+                closestMatch1 = Arrays.copyOf(closestMatch1, closestMatch1.length + 1);
+                closestMatch1[closestMatch1.length - 1] = element;
+            }
+            }
+
+            // Recherche dans la deuxième liste
+            for (int i = 0; i < jList4.getModel().getSize(); i++) {
+            String element = jList4.getModel().getElementAt(i);
+            int distance = levenshtein.apply(input.toLowerCase(), element.toLowerCase());
+            if (distance < minDistance2) {
+                minDistance2 = distance;
+                closestMatch2 = Arrays.copyOf(closestMatch2, closestMatch1.length + 1);
+                closestMatch2[closestMatch2.length - 1] = element;
+            }
+            }
+            printMessage(Arrays.toString(closestMatch1));
+            
+
+            // Mettre à jour les listes avec les éléments les plus proches
+            if (closestMatch1.length != 0) {
+            jList1.setListData(closestMatch1);
+            }
+            else if(closestMatch1.length == 0) {
+            printMessage("Aucun élément trouvé dans la liste 1" + Arrays.toString(original_list1()));
+            jList1.setListData(original_list1());
+            }
+            
+            if (closestMatch2.length != 0) {
+            jList4.setListData(closestMatch2);
+            } 
+            else {
+            printMessage("Aucun élément trouvé dans la liste 2" + Arrays.toString(original_list2()));
+            jList4.setListData(original_list2());
+            }
     }//GEN-LAST:event_jTextField8ActionPerformed
 
     private String getTextFromAccessibleName(String accessibleName) {

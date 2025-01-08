@@ -3,6 +3,7 @@ import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.db.OLiveQueryResultListener;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
+import com.orientechnologies.orient.core.record.impl.OVertexDocument;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import javax.swing.*;
@@ -13,47 +14,12 @@ public class MyLiveQueryListener implements OLiveQueryResultListener {
 
     private final List<List<Object>> dataMatrix = new ArrayList<>();
     private final DefaultListModel<String> listModel;
-    private final Runnable onConnexionCallback;
     private final String ClassName;
 
-    public MyLiveQueryListener(DefaultListModel<String> listModel, String ClassName, Runnable onConnexionCallback) {
+    public MyLiveQueryListener(DefaultListModel<String> listModel, String ClassName) {
         this.listModel = listModel;
-        this.onConnexionCallback = onConnexionCallback;
         this.ClassName = ClassName;
     }
-    
-    public void onConnexion(ODatabaseSession db) {
-        SwingUtilities.invokeLater(() -> {
-            try {
-                // Une fois que la connexion est établie, on récupère toutes les données de la classe associée
-                String query = "SELECT FROM " + ClassName;  // Par exemple "Composant" ou "Equipement"
-                List<OResult> result = db.query(new OSQLSynchQuery<>(query));
-
-                // Ajouter les résultats à la matrice de données
-                synchronized (dataMatrix) {
-                    for (OResult r : result) {
-                        List<Object> row = new ArrayList<>();
-                        for (String field : r.getPropertyNames()) {
-                            row.add(r.getProperty(field));  // Ajoute chaque propriété du vertex à la ligne
-                        }
-                        dataMatrix.add(row);  // Ajoute la ligne à la matrice
-                    }
-                }
-
-                // Mettre à jour la vue avec les nouvelles données
-                updateListView();
-
-                // Appeler le callback (si défini) après la connexion
-                if (onConnexionCallback != null) {
-                    onConnexionCallback.run();  // Appelle la méthode onConnexionCallback
-                }
-            } catch (Exception e) {
-                e.printStackTrace();  // Gestion des erreurs
-            }
-        });
-    }
-
-    
     @Override
     public void onCreate(ODatabaseDocument odd, OResult or) {
         addVertexToMatrix(or);
@@ -138,4 +104,30 @@ public class MyLiveQueryListener implements OLiveQueryResultListener {
             }
         }
     }
+    
+    public void loadInitialData(ODatabaseSession db) {
+        try {
+            if (!db.isActiveOnCurrentThread()) {
+                db.activateOnCurrentThread(); // Assure que la session est active dans le thread
+            }
+            String query = "SELECT FROM " + ClassName; // Requête pour récupérer toutes les données de la classe
+            System.out.println("Exécution de la requête : " + query);
+            // Exécute la requête et récupère les résultats
+            List<OVertexDocument> results = db.query(new OSQLSynchQuery<>(query));
+            System.out.println("Nombre de résultats trouvés : " + results.size());      
+            synchronized (dataMatrix) {
+                for (OVertexDocument vertex : results) {
+                    List<Object> row = new ArrayList<>();
+                    for (String field : vertex.getPropertyNames()) {
+                        row.add(vertex.getProperty(field)); // Ajoute chaque propriété à la ligne
+                    }
+                    dataMatrix.add(row); // Ajoute la ligne au dataMatrix
+                }
+            }
+            updateListView(); // Mets à jour directement la liste
+        } catch (Exception e) {
+            System.err.println("Erreur lors du chargement des données initiales pour " + ClassName + ": " + e.getMessage());
+        }
+    }
+
 }
