@@ -3,65 +3,24 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.assystem_app;
-
-import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
-import com.orientechnologies.orient.core.db.OLiveQueryMonitor;
-import com.orientechnologies.orient.core.db.OrientDB;
-import com.orientechnologies.orient.core.db.OrientDBConfig;
-import com.orientechnologies.orient.core.db.OrientDBConfigBuilder;
 import com.orientechnologies.orient.core.record.OVertex;
-import com.orientechnologies.orient.core.exception.OSecurityAccessException;
-import com.orientechnologies.orient.core.exception.OStorageException;
-import com.orientechnologies.orient.core.metadata.security.OSecurityUser;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import javax.swing.DefaultListModel;
+
 /**
  *
  * @author frate
  */
 public class Ajout_BDD_Frame extends javax.swing.JFrame {
-    
-    private SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm");  // Format de l'heure
-    private String time = sdf.format(new Date());
-    private OrientDB orientDB = new OrientDB("remote:localhost", OrientDBConfig.defaultConfig());
-    private OrientDBConfigBuilder poolCfg = OrientDBConfig.builder()
-        .addConfig(OGlobalConfiguration.DB_POOL_MIN, 5)
-        .addConfig(OGlobalConfiguration.DB_POOL_MAX, 10);
     private ODatabasePool pool;
-    private OSecurityUser user;
     private ODatabaseSession db;
-    private MyLiveQueryListener listenerC;
-    private DefaultListModel<String> listModelC = new DefaultListModel<>();
-    private OLiveQueryMonitor monitorC;
-    private MyLiveQueryListener listenerE;
-    private DefaultListModel<String> listModelE = new DefaultListModel<>();
-    private OLiveQueryMonitor monitorE;
-    private javax.swing.JFrame Interface_app;
+    private Interface_app Interface_app;
     
-    public Ajout_BDD_Frame(ODatabasePool pool) {
+    
+    public Ajout_BDD_Frame(ODatabasePool pool, Interface_app Interface_app) {
         this.pool = pool;
+        this.Interface_app=Interface_app;
         initComponents();
-    }
-    public void setJframe(javax.swing.JFrame Interface_app){
-        this.Interface_app = Interface_app;
-    }
-
-    public void printMessage(String message) {
-        // Récupérer l'heure actuelle
-        SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm:ss.SSS");  // Format de l'heure
-        String time = sdf.format(new Date());  // Obtenir l'heure actuelle
-
-        // Construire le message avec l'heure
-        String formattedMessage = time + " : " + message + "\n";
-
-        // Ajouter le message à la JTextArea
-        jTextArea1.append(formattedMessage);
-        
-        // Faire défiler jusqu'à la fin pour afficher le dernier message
-        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
     }
 
     /**
@@ -95,10 +54,8 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         jTextField9 = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
@@ -276,29 +233,18 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
         jTextField8.getAccessibleContext().setAccessibleName("Add_Indice_Confiance");
         jTextField9.getAccessibleContext().setAccessibleName("Add_Origine_Consommation");
 
-        jTextArea1.setEditable(false);
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(77, 77, 77)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(62, 62, 62)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(46, 46, 46))
+                .addContainerGap(182, Short.MAX_VALUE))
         );
 
         pack();
@@ -324,19 +270,19 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
 
         // Vérification du pool
         if (pool == null) {
-            printMessage("Le pool de connexions est nul. Veuillez verifier son initialisation.");
+            Interface_app.printMessage("Le pool de connexions est nul. Veuillez verifier son initialisation.");
             return;
         }
 
         // Vérification du nom de la classe
         if (className == null || className.isEmpty()) {
-            printMessage("Le nom de la classe est vide ou nul. Creation du vertex impossible.");
+            Interface_app.printMessage("Le nom de la classe est vide ou nul. Creation du vertex impossible.");
             return;
         }
 
         try {
             db = pool.acquire(); // Acquisition de la session de base de données
-            printMessage("Tentative de creation du vertex pour la classe : " + className);
+            Interface_app.printMessage("Tentative de creation du vertex pour la classe : " + className);
             // Création d'un vertex de cette classe
             OVertex v = db.newVertex(className);
             v.setProperty("Famille", famille);
@@ -350,10 +296,9 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
             v.setProperty("Origine de consommation", origineConsommation);
             v.save();
 
-            printMessage("Le vertex " + className + " " + famille + " " + sousFamille + " " + type + " " + constructeur + " " + tension + " " + puissanceUnitaire + " " + puissanceTransitoire + " " + indice + " " + origineConsommation + "a ete cree avec succès !");
-
+            Interface_app.printMessage("Le vertex " + className + " " + famille + " " + sousFamille + " " + type + " " + constructeur + " " + tension + " " + puissanceUnitaire + " " + puissanceTransitoire + " " + indice + " " + origineConsommation + "a ete cree avec succès !");
         } catch (Exception e) {
-            printMessage("Erreur lors de la creation du vertex : " + e.getMessage());
+            Interface_app.printMessage("Erreur lors de la creation du vertex : " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -428,8 +373,6 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;

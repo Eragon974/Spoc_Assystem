@@ -12,15 +12,11 @@ import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.db.OrientDBConfig;
 import com.orientechnologies.orient.core.db.OrientDBConfigBuilder;
 import com.orientechnologies.orient.core.record.OVertex;
-import com.orientechnologies.orient.core.exception.OSecurityAccessException;
-import com.orientechnologies.orient.core.exception.OStorageException;
 import com.orientechnologies.orient.core.id.ORecordId;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.ListModel;
-import org.apache.commons.text.similarity.LevenshteinDistance;
+import javax.swing.SwingWorker;
 
 
 public class Interface_app extends javax.swing.JFrame {
@@ -37,7 +33,8 @@ public class Interface_app extends javax.swing.JFrame {
     private MyLiveQueryListener listenerE;
     private DefaultListModel<String> listModelE = new DefaultListModel<>();
     private OLiveQueryMonitor monitorE;
-    private javax.swing.JFrame Ajout_BDD_Frame; 
+    private Ajout_BDD_Frame Ajout_BDD_Frame; 
+    private Connexion_Frame Connexion_Frame; 
 
     public Interface_app() {
         initComponents();
@@ -290,7 +287,9 @@ public class Interface_app extends javax.swing.JFrame {
 
         jLabel10.setText("Equipement");
 
-        jList1.setModel(listModelE);
+        jList1.setModel(listModelE
+
+        );
         jScrollPane2.setViewportView(jList1);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -486,44 +485,8 @@ public class Interface_app extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField2ActionPerformed
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // Initialisation des variables
-        /*String className = getTextFromAccessibleName("Add_Classe");
-        String famille = getTextFromAccessibleName("Add_Famille");
-        String sousFamille = getTextFromAccessibleName("Add_Sous_Famille");
-        String type = getTextFromAccessibleName("Add_Type");
-        String constructeur = getTextFromAccessibleName("Add_Constructeur");
-
-        // Vérification du pool
-        if (pool == null) {
-            printMessage("Le pool de connexions est nul. Veuillez verifier son initialisation.");
-            return;
-        }
-
-        // Vérification du nom de la classe
-        if (className == null || className.isEmpty()) {
-            printMessage("Le nom de la classe est vide ou nul. Creation du vertex impossible.");
-            return;
-        }
-
-        ODatabaseSession db;
-        try {
-            db = pool.acquire(); // Acquisition de la session de base de données
-            printMessage("Tentative de creation du vertex pour la classe : " + className);
-            // Création d'un vertex de cette classe
-            OVertex v = db.newVertex(className);
-            v.setProperty("Famille", famille);
-            v.setProperty("Sous Famille", sousFamille);
-            v.setProperty("Type", type);
-            v.setProperty("Constructeur", constructeur);
-            v.save();
-
-            printMessage("Le vertex " + className + " " + famille + " " + sousFamille + " " + type + " " + constructeur + " a ete cree avec succès !");
-
-        } catch (Exception e) {
-            printMessage("Erreur lors de la creation du vertex : " + e.getMessage());
-            e.printStackTrace();
-        } */
-        Ajout_BDD_Frame = new Ajout_BDD_Frame(pool);
+        
+        Ajout_BDD_Frame = new Ajout_BDD_Frame(pool,this);
         Ajout_BDD_Frame.setVisible(true);
         
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -541,56 +504,60 @@ public class Interface_app extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField7ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        ODatabaseSession db ;
-        try {
-        // Récupération des informations de connexion
-            String BDD = getTextFromAccessibleName("Connection_BDD");
-            String User = getTextFromAccessibleName("Connection_User");
-            String Password = getTextFromAccessibleName("Connection_Password");
+        Connexion_Frame connexionFrame = new Connexion_Frame(this);
 
-            // Vérification des valeurs
-            if (BDD == null || BDD.isEmpty()) {
-                printMessage("Le nom de la base de donnees (BDD) est vide ou nul. Veuillez verifier.");
-                return;
+    // Afficher la fenêtre de connexion
+    connexionFrame.setVisible(true);
+
+    // Utiliser un SwingWorker pour attendre l'interaction de l'utilisateur
+    new SwingWorker<Void, Void>() {
+        @Override
+        protected Void doInBackground() throws Exception {
+            // Attendre que l'utilisateur ait terminé (polling)
+            while (connexionFrame.isVisible()) {
+                Thread.sleep(100); // Polling interval (100ms)
             }
-            if (User == null || User.isEmpty()) {
-                printMessage("Le nom d'utilisateur (User) est vide ou nul. Veuillez verifier.");
-                return;
-            }
-            if (Password == null || Password.isEmpty()) {
-                printMessage("Le mot de passe (Password) est vide ou nul. Veuillez verifier.");
-                return;
-            }
-        
-        // Initialisation du pool
-            pool = new ODatabasePool(orientDB, BDD, User, Password, poolCfg.build());
-            printMessage("Connexion reussie à la base de donnees : " + BDD);
-            db = pool.acquire();
-            if (!db.getMetadata().getSchema().existsClass("Composant")) {
-                // Création de la classe en héritant de la classe "V"
-                db.getMetadata().getSchema().createClass("Composant", db.getMetadata().getSchema().getClass("V"));
-                printMessage("La classe Composant a ete creee dans le schema.");
-            }
-            if (!db.getMetadata().getSchema().existsClass("Equipement")) {
-                // Création de la classe en héritant de la classe "V"
-                db.getMetadata().getSchema().createClass("Equipement", db.getMetadata().getSchema().getClass("V"));
-                printMessage("La classe Equipement a ete creee dans le schema.");
-            }
-            listenerC = new MyLiveQueryListener(listModelC,"Composant", db);
-            listenerC.loadInitialData(db);
-            monitorC = db.live("SELECT FROM Composant", listenerC);
-            listenerE = new MyLiveQueryListener(listModelE,"Equipement", db);
-            listenerE.loadInitialData(db);
-            monitorE = db.live("SELECT FROM Equipement", listenerE);
-        } catch (OStorageException e) {
-            printMessage("Erreur lors de la connexion à la base de donnees : " + e.getMessage());
-            e.printStackTrace();
-        } catch (OSecurityAccessException e) {
-            printMessage("Echec de l'authentification : " + e.getMessage());
-        } catch (Exception e) {
-            printMessage("Erreur inattendue : " + e.getMessage());
-            e.printStackTrace();
+            return null;
         }
+
+        @Override
+        protected void done() {
+            // Récupération des informations après la fermeture de la fenêtre
+            String BDD = connexionFrame.getBDD();
+            String User = connexionFrame.getUser();
+            String Password = connexionFrame.getPassword();
+
+            if (BDD != null && User != null && Password != null) {
+                try {
+                    // Initialisation du pool
+                    pool = new ODatabasePool(orientDB, BDD, User, Password, poolCfg.build());
+                    printMessage("Connexion réussie à la base de données : " + BDD);
+
+                    ODatabaseSession db = pool.acquire();
+                    if (!db.getMetadata().getSchema().existsClass("Composant")) {
+                        db.getMetadata().getSchema().createClass("Composant", db.getMetadata().getSchema().getClass("V"));
+                        printMessage("La classe Composant a été créée dans le schéma.");
+                    }
+                    if (!db.getMetadata().getSchema().existsClass("Equipement")) {
+                        db.getMetadata().getSchema().createClass("Equipement", db.getMetadata().getSchema().getClass("V"));
+                        printMessage("La classe Equipement a été créée dans le schéma.");
+                    }
+
+                    listenerC = new MyLiveQueryListener(listModelC, "Composant", db);
+                    listenerC.loadInitialData(db);
+                    monitorC = db.live("SELECT FROM Composant", listenerC);
+
+                    listenerE = new MyLiveQueryListener(listModelE, "Equipement", db);
+                    listenerE.loadInitialData(db);
+                    monitorE = db.live("SELECT FROM Equipement", listenerE);
+                } catch (Exception e) {
+                    printMessage("Erreur lors de la connexion : " + e.getMessage());
+                }
+            } else {
+                printMessage("Connexion annulée par l'utilisateur.");
+            }
+        }
+    }.execute();
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -605,13 +572,6 @@ public class Interface_app extends javax.swing.JFrame {
                 printMessage("Le pool de connexions a été fermé.");
             } else {
                 printMessage("Le pool de connexions est déjà fermé ou non initialisé.");
-            }
-
-            if (orientDB != null && orientDB.isOpen() && T == true) {
-                orientDB.close();
-                printMessage("Déconnexion réussie de la base de données.");
-            } else {
-                printMessage("La connexion à la base de données est déjà fermée ou non initialisée.");
             }
         } catch (Exception e) {
             printMessage("Erreur lors de la fermeture des connexions : " + e.getMessage());
@@ -755,11 +715,11 @@ public class Interface_app extends javax.swing.JFrame {
         
     }//GEN-LAST:event_jButton5ActionPerformed
 
-    private String getTextFromAccessibleName(String accessibleName) {
+    public String getTextFromAccessibleName(String accessibleName) {
         return getTextFromAccessibleNameRecursive(getContentPane(), accessibleName);
     }
 
-    private String getTextFromAccessibleNameRecursive(java.awt.Container container, String accessibleName) {
+    public String getTextFromAccessibleNameRecursive(java.awt.Container container, String accessibleName) {
         for (java.awt.Component comp : container.getComponents()) {
             // Vérifier si le composant est un JTextField
             if (comp instanceof javax.swing.JTextField) {
@@ -790,7 +750,6 @@ public class Interface_app extends javax.swing.JFrame {
     
     public static void main(String args[]) {
         Interface_app interface_app = new Interface_app();
-        interface_app.setJframe(new javax.swing.JFrame());
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Interface_app().setVisible(true);
@@ -798,10 +757,12 @@ public class Interface_app extends javax.swing.JFrame {
         }); 
     }
 
-    public void setJframe(javax.swing.JFrame Ajout_BDD_Frame){
+    public void setJframeAjout_BDD(Ajout_BDD_Frame Ajout_BDD_Frame){
         this.Ajout_BDD_Frame = Ajout_BDD_Frame;
     }
-
+    public void setJframeConnexion_BDD(Connexion_Frame Connexion_Frame){
+        this.Connexion_Frame = Connexion_Frame;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
