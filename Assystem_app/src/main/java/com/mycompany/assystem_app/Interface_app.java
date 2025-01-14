@@ -37,20 +37,11 @@ public class Interface_app extends javax.swing.JFrame {
     private MyLiveQueryListener listenerE;
     private DefaultListModel<String> listModelE = new DefaultListModel<>();
     private OLiveQueryMonitor monitorE;
-<<<<<<< HEAD
-    
-=======
     private javax.swing.JFrame Ajout_BDD_Frame; 
 
->>>>>>> e3f3a72fe52e34acaf53073d995ca27a11badb32
     public Interface_app() {
         initComponents();
     }
-    
-<<<<<<< HEAD
-=======
-    
->>>>>>> e3f3a72fe52e34acaf53073d995ca27a11badb32
     public void printMessage(String message) {
         // Récupérer l'heure actuelle
         SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm:ss.SSS");  // Format de l'heure
@@ -629,7 +620,7 @@ public class Interface_app extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
-        String input = jTextField8.getText().toLowerCase().trim();
+        /*String input = jTextField8.getText().toLowerCase().trim();
         LevenshteinDistance levenshtein = new LevenshteinDistance();
 
         // Préparer des listes temporaires pour les résultats filtrés
@@ -644,9 +635,9 @@ public class Interface_app extends javax.swing.JFrame {
         }
         jList4.setListData(listModelCArray);
 
-<<<<<<< HEAD
+
         // Filtrage pour la première JList
-=======
+
         String[] listModelEArray = new String[listModelE.getSize()];
         for (int i = 0; i < listModelE.getSize(); i++) {
             listModelEArray[i] = listModelE.getElementAt(i);
@@ -654,7 +645,7 @@ public class Interface_app extends javax.swing.JFrame {
         jList1.setListData(listModelEArray);
 
         // Recherche dans la première liste
->>>>>>> e3f3a72fe52e34acaf53073d995ca27a11badb32
+
         for (int i = 0; i < jList1.getModel().getSize(); i++) {
             String element = jList1.getModel().getElementAt(i);
             if (isMatch(input, element, levenshtein)) {
@@ -670,11 +661,10 @@ public class Interface_app extends javax.swing.JFrame {
             }
         }
 
-<<<<<<< HEAD
         // Mise à jour des JList avec les éléments filtrés
         jList1.setListData(closestMatch1.toArray(new String[0]));
         jList4.setListData(closestMatch2.toArray(new String[0]));
-=======
+
         // Mettre à jour les listes avec les éléments les plus proches
         if (closestMatch1.length != 0) {
             jList1.setListData(closestMatch1);
@@ -688,10 +678,9 @@ public class Interface_app extends javax.swing.JFrame {
         } else {
             printMessage("Aucun élément trouvé dans la liste 2" + Arrays.toString(listModelCArray));
             jList4.setListData(listModelCArray);
-        }
->>>>>>> e3f3a72fe52e34acaf53073d995ca27a11badb32
+        }*/
     }//GEN-LAST:event_jTextField8ActionPerformed
-    private boolean isMatch(String input, String element, LevenshteinDistance levenshtein) {
+    /*private boolean isMatch(String input, String element, LevenshteinDistance levenshtein) {
         // Diviser l'élément en mots
         String[] words = element.split("\\s+");
         for (String word : words) {
@@ -712,7 +701,7 @@ public class Interface_app extends javax.swing.JFrame {
             result.add(model.getElementAt(i));
         }
         return result.toArray(new String[0]);
-    }
+    }*/
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
                               
         ODatabaseSession db = pool.acquire();
