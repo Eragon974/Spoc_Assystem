@@ -23,9 +23,6 @@ import javax.swing.ListModel;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
 
-
-
-
 public class Interface_app extends javax.swing.JFrame {
     private SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm");  // Format de l'heure
     private String time = sdf.format(new Date());
@@ -40,11 +37,20 @@ public class Interface_app extends javax.swing.JFrame {
     private MyLiveQueryListener listenerE;
     private DefaultListModel<String> listModelE = new DefaultListModel<>();
     private OLiveQueryMonitor monitorE;
+<<<<<<< HEAD
     
+=======
+    private javax.swing.JFrame Ajout_BDD_Frame; 
+
+>>>>>>> e3f3a72fe52e34acaf53073d995ca27a11badb32
     public Interface_app() {
         initComponents();
     }
     
+<<<<<<< HEAD
+=======
+    
+>>>>>>> e3f3a72fe52e34acaf53073d995ca27a11badb32
     public void printMessage(String message) {
         // Récupérer l'heure actuelle
         SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm:ss.SSS");  // Format de l'heure
@@ -490,7 +496,7 @@ public class Interface_app extends javax.swing.JFrame {
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Initialisation des variables
-        String className = getTextFromAccessibleName("Add_Classe");
+        /*String className = getTextFromAccessibleName("Add_Classe");
         String famille = getTextFromAccessibleName("Add_Famille");
         String sousFamille = getTextFromAccessibleName("Add_Sous_Famille");
         String type = getTextFromAccessibleName("Add_Type");
@@ -525,7 +531,10 @@ public class Interface_app extends javax.swing.JFrame {
         } catch (Exception e) {
             printMessage("Erreur lors de la creation du vertex : " + e.getMessage());
             e.printStackTrace();
-        } 
+        } */
+        Ajout_BDD_Frame = new Ajout_BDD_Frame(pool);
+        Ajout_BDD_Frame.setVisible(true);
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
@@ -633,8 +642,19 @@ public class Interface_app extends javax.swing.JFrame {
             jList4.setListData(getArrayFromList(jList4));
             return;
         }
+        jList4.setListData(listModelCArray);
 
+<<<<<<< HEAD
         // Filtrage pour la première JList
+=======
+        String[] listModelEArray = new String[listModelE.getSize()];
+        for (int i = 0; i < listModelE.getSize(); i++) {
+            listModelEArray[i] = listModelE.getElementAt(i);
+        }
+        jList1.setListData(listModelEArray);
+
+        // Recherche dans la première liste
+>>>>>>> e3f3a72fe52e34acaf53073d995ca27a11badb32
         for (int i = 0; i < jList1.getModel().getSize(); i++) {
             String element = jList1.getModel().getElementAt(i);
             if (isMatch(input, element, levenshtein)) {
@@ -650,9 +670,26 @@ public class Interface_app extends javax.swing.JFrame {
             }
         }
 
+<<<<<<< HEAD
         // Mise à jour des JList avec les éléments filtrés
         jList1.setListData(closestMatch1.toArray(new String[0]));
         jList4.setListData(closestMatch2.toArray(new String[0]));
+=======
+        // Mettre à jour les listes avec les éléments les plus proches
+        if (closestMatch1.length != 0) {
+            jList1.setListData(closestMatch1);
+        } else {
+            printMessage("Aucun élément trouvé dans la liste 1" + Arrays.toString(listModelEArray));
+            jList1.setListData(listModelEArray);
+        }
+
+        if (closestMatch2.length != 0) {
+            jList4.setListData(closestMatch2);
+        } else {
+            printMessage("Aucun élément trouvé dans la liste 2" + Arrays.toString(listModelCArray));
+            jList4.setListData(listModelCArray);
+        }
+>>>>>>> e3f3a72fe52e34acaf53073d995ca27a11badb32
     }//GEN-LAST:event_jTextField8ActionPerformed
     private boolean isMatch(String input, String element, LevenshteinDistance levenshtein) {
         // Diviser l'élément en mots
@@ -763,11 +800,17 @@ public class Interface_app extends javax.swing.JFrame {
     }
     
     public static void main(String args[]) {
+        Interface_app interface_app = new Interface_app();
+        interface_app.setJframe(new javax.swing.JFrame());
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Interface_app().setVisible(true);
             }
         }); 
+    }
+
+    public void setJframe(javax.swing.JFrame Ajout_BDD_Frame){
+        this.Ajout_BDD_Frame = Ajout_BDD_Frame;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
