@@ -1,4 +1,5 @@
 package com.mycompany.assystem_app;
+
 import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.db.OLiveQueryResultListener;
@@ -6,36 +7,35 @@ import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.record.impl.OVertexDocument;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
+
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MyLiveQueryListener implements OLiveQueryResultListener {
 
-    private final List<List<Object>> dataMatrix = new ArrayList<>();
     private final DefaultListModel<String> listModel;
     private final String ClassName;
+    private final ODatabaseSession db;
 
-    public MyLiveQueryListener(DefaultListModel<String> listModel, String ClassName) {
+    public MyLiveQueryListener(DefaultListModel<String> listModel, String ClassName, ODatabaseSession db) {
         this.listModel = listModel;
         this.ClassName = ClassName;
+        this.db = db;
     }
+
     @Override
     public void onCreate(ODatabaseDocument odd, OResult or) {
-        addVertexToMatrix(or);
-        updateListView();
+        loadData(db);  // Recharger les données après la création
     }
 
     @Override
     public void onUpdate(ODatabaseDocument odd, OResult or, OResult or1) {
-        updateVertexInMatrix(or);
-        updateListView();
+        loadData(db);  // Recharger les données après la mise à jour
     }
 
     @Override
     public void onDelete(ODatabaseDocument odd, OResult or) {
-        removeVertexFromMatrix(or);
-        updateListView();
+        loadData(db);  // Recharger les données après la suppression
     }
 
     @Override
@@ -47,87 +47,46 @@ public class MyLiveQueryListener implements OLiveQueryResultListener {
     public void onEnd(ODatabaseDocument odd) {
         System.out.println("LiveQuery terminée.");
     }
-    
-    private void addVertexToMatrix(OResult or) {
-        List<Object> row = new ArrayList<>();
-        for (String field : or.getPropertyNames()) {
-            row.add(or.getProperty(field));
-        }
-        synchronized (dataMatrix) {
-            dataMatrix.add(row);
-        }
-    }
 
-    private void updateVertexInMatrix(OResult or) {
-        synchronized (dataMatrix) {
-            int index = findRowIndex(or);
-            if (index != -1) {
-                List<Object> row = new ArrayList<>();
-                for (String field : or.getPropertyNames()) {
-                    row.add(or.getProperty(field));
-                }
-                dataMatrix.set(index, row);
-            }
-        }
-    }
-
-    private void removeVertexFromMatrix(OResult or) {
-        synchronized (dataMatrix) {
-            int index = findRowIndex(or);
-            if (index != -1) {
-                dataMatrix.remove(index);
-            }
-        }
-    }
-
-    private int findRowIndex(OResult or) {
-        synchronized (dataMatrix) {
-            for (int i = 0; i < dataMatrix.size(); i++) {
-                List<Object> row = dataMatrix.get(i);
-                if (!row.isEmpty() && row.get(0).equals(or.getIdentity())) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
-
-    private void updateListView() {
-        synchronized (dataMatrix) {
-            listModel.clear();
-            for (List<Object> row : dataMatrix) {
-                StringBuilder rowText = new StringBuilder();
-                for (Object value : row) {
-                    rowText.append(value).append(" ");
-                }
-                listModel.addElement(rowText.toString());
-            }
-        }
-    }
-    
-    public void loadInitialData(ODatabaseSession db) {
+    private void loadData(ODatabaseSession db) {
         try {
             if (!db.isActiveOnCurrentThread()) {
-                db.activateOnCurrentThread(); // Assure que la session est active dans le thread
+                db.activateOnCurrentThread();
             }
-            String query = "SELECT FROM " + ClassName; // Requête pour récupérer toutes les données de la classe
-            System.out.println("Exécution de la requête : " + query);
-            // Exécute la requête et récupère les résultats
+        
+            String query = "SELECT FROM " + ClassName;
             List<OVertexDocument> results = db.query(new OSQLSynchQuery<>(query));
-            System.out.println("Nombre de résultats trouvés : " + results.size());      
-            synchronized (dataMatrix) {
-                for (OVertexDocument vertex : results) {
-                    List<Object> row = new ArrayList<>();
-                    for (String field : vertex.getPropertyNames()) {
-                        row.add(vertex.getProperty(field)); // Ajoute chaque propriété à la ligne
+        
+            // Vider les données actuelles
+            listModel.clear();
+        
+            // Recharger les données depuis la base
+            for (OVertexDocument vertex : results) {
+                StringBuilder rowText = new StringBuilder();
+                String id = vertex.getIdentity().toString();
+            
+                // Ajouter les autres propriétés
+                for (String field : vertex.getPropertyNames()) {
+                    String propertyValue = vertex.getProperty(field);
+                    if (propertyValue != null) {
+                        rowText.append(propertyValue).append(" ");
+                    } else {
+                        rowText.append("null ").append(" ");  // Remplacer par "N/A" ou une chaîne vide si nécessaire
                     }
-                    dataMatrix.add(row); // Ajoute la ligne au dataMatrix
                 }
+            
+                // Ajouter l'ID à la fin
+                rowText.append("ID: ").append(id);
+            
+                listModel.addElement(rowText.toString());
             }
-            updateListView(); // Mets à jour directement la liste
         } catch (Exception e) {
-            System.err.println("Erreur lors du chargement des données initiales pour " + ClassName + ": " + e.getMessage());
+            System.err.println("Erreur lors du chargement des données pour " + ClassName + ": " + e.getMessage());
         }
     }
 
+    
+    public void loadInitialData(ODatabaseSession db) {
+        loadData(db);  // Utiliser la méthode loadData pour charger les données initiales
+    }
 }

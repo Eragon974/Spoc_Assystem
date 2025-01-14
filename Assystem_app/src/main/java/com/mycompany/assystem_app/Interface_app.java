@@ -14,6 +14,7 @@ import com.orientechnologies.orient.core.db.OrientDBConfigBuilder;
 import com.orientechnologies.orient.core.record.OVertex;
 import com.orientechnologies.orient.core.exception.OSecurityAccessException;
 import com.orientechnologies.orient.core.exception.OStorageException;
+import com.orientechnologies.orient.core.id.ORecordId;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.DefaultListModel;
@@ -37,10 +38,11 @@ public class Interface_app extends javax.swing.JFrame {
     private MyLiveQueryListener listenerE;
     private DefaultListModel<String> listModelE = new DefaultListModel<>();
     private OLiveQueryMonitor monitorE;
-
+    
     public Interface_app() {
         initComponents();
     }
+    
     public void printMessage(String message) {
         // Récupérer l'heure actuelle
         SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm:ss.SSS");  // Format de l'heure
@@ -392,8 +394,18 @@ public class Interface_app extends javax.swing.JFrame {
         });
 
         jButton4.setText("Supprimer");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton5.setText("Dupliquer");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jButton6.setText("Modifier");
 
@@ -562,10 +574,10 @@ public class Interface_app extends javax.swing.JFrame {
                 db.getMetadata().getSchema().createClass("Equipement", db.getMetadata().getSchema().getClass("V"));
                 printMessage("La classe Equipement a ete creee dans le schema.");
             }
-            listenerC = new MyLiveQueryListener(listModelC,"Composant");
+            listenerC = new MyLiveQueryListener(listModelC,"Composant", db);
             listenerC.loadInitialData(db);
             monitorC = db.live("SELECT FROM Composant", listenerC);
-            listenerE = new MyLiveQueryListener(listModelE,"Equipement");
+            listenerE = new MyLiveQueryListener(listModelE,"Equipement", db);
             listenerE.loadInitialData(db);
             monitorE = db.live("SELECT FROM Equipement", listenerE);
         } catch (OStorageException e) {
@@ -604,13 +616,7 @@ public class Interface_app extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton2ActionPerformed
-    public static String[] original_list1() {
-        return new String[] { "Armoire", "Tableau", "Armoire" };
-    }
-    public static String[] original_list2() {
-        return new String[] { "Buzzer" };
-    }
-    
+
     private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
 
         String input = jTextField8.getText();
@@ -620,6 +626,18 @@ public class Interface_app extends javax.swing.JFrame {
         int minDistance1 = 3;
         int minDistance2 = 3;
 
+        String[] listModelCArray = new String[listModelC.getSize()];
+        for (int i = 0; i < listModelC.getSize(); i++) {
+            listModelCArray[i] = listModelC.getElementAt(i);
+        }
+        jList4.setListData(listModelCArray);
+        String[] listModelEArray = new String[listModelE.getSize()];
+        for (int i = 0; i < listModelE.getSize(); i++) {
+            listModelEArray[i] = listModelE.getElementAt(i);
+        }
+        jList1.setListData(listModelCArray);
+        printMessage(Arrays.toString(listModelEArray));
+        printMessage(Arrays.toString(listModelCArray));
         // Recherche dans la première liste
         for (int i = 0; i < jList1.getModel().getSize(); i++) {
             String element = jList1.getModel().getElementAt(i);
@@ -630,7 +648,7 @@ public class Interface_app extends javax.swing.JFrame {
                 closestMatch1[closestMatch1.length - 1] = element;
             }
         }
-
+        
         // Recherche dans la deuxième liste
         for (int i = 0; i < jList4.getModel().getSize(); i++) {
             String element = jList4.getModel().getElementAt(i);
@@ -648,17 +666,70 @@ public class Interface_app extends javax.swing.JFrame {
         if (closestMatch1.length != 0) {
             jList1.setListData(closestMatch1);
         } else {
-            printMessage("Aucun élément trouvé dans la liste 1" + Arrays.toString(original_list1()));
-            jList1.setListData(original_list1());
+            printMessage("Aucun élément trouvé dans la liste 1" + Arrays.toString(listModelEArray));
+            jList1.setListData(listModelEArray);
         }
 
         if (closestMatch2.length != 0) {
             jList4.setListData(closestMatch2);
         } else {
-            printMessage("Aucun élément trouvé dans la liste 2" + Arrays.toString(original_list2()));
-            jList4.setListData(original_list2());
+            printMessage("Aucun élément trouvé dans la liste 2" + Arrays.toString(listModelCArray));
+            jList4.setListData(listModelCArray);
         }
     }//GEN-LAST:event_jTextField8ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+                              
+        ODatabaseSession db = pool.acquire();
+
+        // Récupérer les éléments sélectionnés dans jList1 et jList4
+        List<String> selectedItemsList1 = jList1.getSelectedValuesList();
+        List<String> selectedItemsList4 = jList4.getSelectedValuesList();
+
+        // Supprimer les éléments sélectionnés de la base de données
+        for (String item : selectedItemsList1) {
+            try {
+                // Extraire l'ID du vertex (dernière partie du texte dans l'élément de jList)
+                String[] parts = item.split("ID: ");  // Assure que l'ID est après "ID: "
+                if (parts.length > 1) {
+                    String vertexId = parts[1];  // ID récupéré
+                    ORecordId recordId = new ORecordId(vertexId);
+                    OVertex vertex = db.load(recordId); 
+                    if (vertex != null) {
+                        vertex.delete();  // Supprimer le vertex
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Erreur lors de la suppression : " + e.getMessage());
+            }
+        }
+
+        for (String item : selectedItemsList4) {
+            try {
+                // Extraire l'ID du vertex (dernière partie du texte dans l'élément de jList)
+                String[] parts = item.split("ID: ");
+                if (parts.length > 1) {
+                    String vertexId = parts[1];  // ID récupéré
+                    ORecordId recordId = new ORecordId(vertexId);
+                    OVertex vertex = db.load(recordId);  
+                    if (vertex != null) {
+                        vertex.delete();  // Supprimer le vertex
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Erreur lors de la suppression : " + e.getMessage());
+            }
+        }
+
+        // Afficher un message de confirmation
+        printMessage("Éléments supprimés avec succès !");
+
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        ODatabaseSession db = pool.acquire();
+        
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     private String getTextFromAccessibleName(String accessibleName) {
         return getTextFromAccessibleNameRecursive(getContentPane(), accessibleName);
