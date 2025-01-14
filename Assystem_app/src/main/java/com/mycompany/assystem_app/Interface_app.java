@@ -20,9 +20,6 @@ import javax.swing.DefaultListModel;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
 
-
-
-
 public class Interface_app extends javax.swing.JFrame {
     private SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm");  // Format de l'heure
     private String time = sdf.format(new Date());
@@ -37,10 +34,13 @@ public class Interface_app extends javax.swing.JFrame {
     private MyLiveQueryListener listenerE;
     private DefaultListModel<String> listModelE = new DefaultListModel<>();
     private OLiveQueryMonitor monitorE;
+    private javax.swing.JFrame Ajout_BDD_Frame; 
 
     public Interface_app() {
         initComponents();
     }
+    
+    
     public void printMessage(String message) {
         // Récupérer l'heure actuelle
         SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm:ss.SSS");  // Format de l'heure
@@ -476,7 +476,7 @@ public class Interface_app extends javax.swing.JFrame {
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Initialisation des variables
-        String className = getTextFromAccessibleName("Add_Classe");
+        /*String className = getTextFromAccessibleName("Add_Classe");
         String famille = getTextFromAccessibleName("Add_Famille");
         String sousFamille = getTextFromAccessibleName("Add_Sous_Famille");
         String type = getTextFromAccessibleName("Add_Type");
@@ -511,7 +511,10 @@ public class Interface_app extends javax.swing.JFrame {
         } catch (Exception e) {
             printMessage("Erreur lors de la creation du vertex : " + e.getMessage());
             e.printStackTrace();
-        } 
+        } */
+        Ajout_BDD_Frame = new Ajout_BDD_Frame(pool);
+        Ajout_BDD_Frame.setVisible(true);
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
@@ -706,11 +709,17 @@ public class Interface_app extends javax.swing.JFrame {
     }
     
     public static void main(String args[]) {
+        Interface_app interface_app = new Interface_app();
+        interface_app.setJframe(new javax.swing.JFrame());
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Interface_app().setVisible(true);
             }
         }); 
+    }
+
+    public void setJframe(javax.swing.JFrame Ajout_BDD_Frame){
+        this.Ajout_BDD_Frame = Ajout_BDD_Frame;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
