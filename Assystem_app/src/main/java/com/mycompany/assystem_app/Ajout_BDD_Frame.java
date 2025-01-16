@@ -267,7 +267,7 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
         String puissanceTransitoire = getTextFromAccessibleName("Add_Puissance_Transitoire");
         String indice = getTextFromAccessibleName("Add_Indice_Confiance");
         String origineConsommation = getTextFromAccessibleName("Add_Origine_Consommation");
-
+        
         // Vérification du pool
         if (pool == null) {
             Interface_app.printMessage("Le pool de connexions est nul. Veuillez verifier son initialisation.");
@@ -295,7 +295,7 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
             v.setProperty("Indice de confiance", indice);
             v.setProperty("Origine de consommation", origineConsommation);
             v.save();
-
+            clearAllTextFields();
             Interface_app.printMessage("Le vertex " + className + " " + famille + " " + sousFamille + " " + type + " " + constructeur + " " + tension + " " + puissanceUnitaire + " " + puissanceTransitoire + " " + indice + " " + origineConsommation + "a ete cree avec succès !");
         } catch (Exception e) {
             Interface_app.printMessage("Erreur lors de la creation du vertex : " + e.getMessage());
@@ -355,6 +355,24 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
         }
         return "";  // Retourne une chaîne vide si le champ ou la combobox n'est pas trouvé
     }
+    private void clearAllTextFields() {
+        clearAllTextFieldsRecursive(getContentPane());
+    }
+
+    private void clearAllTextFieldsRecursive(java.awt.Container container) {
+        for (java.awt.Component comp : container.getComponents()) {
+            // Vérifier si le composant est un JTextField
+            if (comp instanceof javax.swing.JTextField) {
+                javax.swing.JTextField textField = (javax.swing.JTextField) comp;
+                textField.setText(""); // Efface le contenu du JTextField
+            }
+            // Rechercher récursivement dans les sous-conteneurs
+            else if (comp instanceof java.awt.Container) {
+                clearAllTextFieldsRecursive((java.awt.Container) comp);
+            }
+        }
+    }
+
     /**
      * @param args the command line arguments
      */

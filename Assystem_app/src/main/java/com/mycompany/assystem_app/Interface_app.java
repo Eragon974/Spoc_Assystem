@@ -562,13 +562,11 @@ public class Interface_app extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        boolean T = false;
         try {
             monitorC.unSubscribe();
             monitorE.unSubscribe();
             if (pool != null && !pool.isClosed()) {
                 pool.close();
-                T = true;
                 printMessage("Le pool de connexions a été fermé.");
             } else {
                 printMessage("Le pool de connexions est déjà fermé ou non initialisé.");
@@ -712,6 +710,76 @@ public class Interface_app extends javax.swing.JFrame {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         ODatabaseSession db = pool.acquire();
+        // Liste des propriétés associées à filteredWords
+        String[] propertyKeys = {
+            "Famille", 
+            "Sous Famille", 
+            "Type", 
+            "Constructeur", 
+            "Tension(VCC)", 
+            "Puissance Unitaire(W)", 
+            "Puissance Transitoire(W)", 
+            "Indice de confiance", 
+            "Origine de consommation"
+        };
+        List<String> selectedItemsList1 = jList1.getSelectedValuesList();
+        List<String> selectedItemsList4 = jList4.getSelectedValuesList();
+        if (selectedItemsList1.isEmpty() && selectedItemsList4.isEmpty()){
+            printMessage("Pas d'éléments sélectionnés pour la duplication");
+            return;
+        }
+        for (String item : selectedItemsList1){
+            String[] info = item.split("\\s+");
+
+            // Filter out the word that starts with "ID:"
+            List<String> filteredWords = new ArrayList<>();
+            for (String infos : info) {
+                if (!infos.startsWith("ID:") && !infos.startsWith("#")) {
+                    filteredWords.add(infos.trim());
+                }
+            }
+            System.out.println(filteredWords);
+            try {
+                printMessage("Tentative de duplication du/des vertex");
+                OVertex v = db.newVertex("Equipement");
+                    // Parcours de filteredWords et définition des propriétés
+                for (int i = 0; i <= 8; i++) {
+                    v.setProperty(propertyKeys[i], filteredWords.get(i));
+                }
+                // Sauvegarde de l'objet
+                v.save();
+                printMessage("Le/Les Vertex ont bien été dupliqués");
+            } catch (Exception e) {
+                printMessage("Erreur lors de la duplication : " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        for (String item : selectedItemsList4){
+            String[] info = item.split("\\s+");
+
+            // Filter out the word that starts with "ID:"
+            List<String> filteredWords = new ArrayList<>();
+            for (String infos : info) {
+                if (!infos.startsWith("ID:") && !infos.startsWith("#")) {
+                    filteredWords.add(infos.trim());
+                }
+            }
+            System.out.println(filteredWords);
+            try {
+                printMessage("Tentative de duplication du/des vertex");
+                OVertex v = db.newVertex("Composant");
+                    // Parcours de filteredWords et définition des propriétés
+                for (int i = 0; i <= 8; i++) {
+                    v.setProperty(propertyKeys[i], filteredWords.get(i));
+                }
+                // Sauvegarde de l'objet
+                v.save();
+                printMessage("Le/Les Vertex ont bien été dupliqués");
+            } catch (Exception e) {
+                printMessage("Erreur lors de la duplication : " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
         
     }//GEN-LAST:event_jButton5ActionPerformed
 
