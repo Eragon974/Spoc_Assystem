@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingWorker;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 
 
 public class Interface_app extends javax.swing.JFrame {
@@ -441,6 +442,8 @@ public class Interface_app extends javax.swing.JFrame {
                 .addContainerGap(104, Short.MAX_VALUE))
         );
 
+        jTextField8.getAccessibleContext().setAccessibleName("Recherche");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -578,67 +581,69 @@ public class Interface_app extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
-        /*String input = jTextField8.getText().toLowerCase().trim();
+        String input = getTextFromAccessibleName("Recherche");
         LevenshteinDistance levenshtein = new LevenshteinDistance();
 
         // Préparer des listes temporaires pour les résultats filtrés
         List<String> closestMatch1 = new ArrayList<>();
         List<String> closestMatch2 = new ArrayList<>();
-
-        // Si le JTextField est vide, afficher tout
-        if (input.isEmpty()) {
-            jList1.setListData(getArrayFromList(jList1));
-            jList4.setListData(getArrayFromList(jList4));
-            return;
-        }
-        jList4.setListData(listModelCArray);
-
+        List<String> listModelCArray = new ArrayList<>();
+        List<String> listModelEArray = new ArrayList<>();
 
         // Filtrage pour la première JList
 
-        String[] listModelEArray = new String[listModelE.getSize()];
         for (int i = 0; i < listModelE.getSize(); i++) {
-            listModelEArray[i] = listModelE.getElementAt(i);
+            listModelEArray.add(listModelE.getElementAt(i));
         }
-        jList1.setListData(listModelEArray);
+
+        for (int i = 0; i < listModelC.getSize(); i++) {
+            listModelCArray.add(listModelC.getElementAt(i));
+        }
 
         // Recherche dans la première liste
 
-        for (int i = 0; i < jList1.getModel().getSize(); i++) {
-            String element = jList1.getModel().getElementAt(i);
+        for (int i = 0; i < listModelEArray.size(); i++) {
+            String element = listModelEArray.get(i);
             if (isMatch(input, element, levenshtein)) {
                 closestMatch1.add(element);
             }
         }
 
         // Filtrage pour la deuxième JList
-        for (int i = 0; i < jList4.getModel().getSize(); i++) {
-            String element = jList4.getModel().getElementAt(i);
+        for (int i = 0; i < listModelCArray.size(); i++) {
+            String element = listModelCArray.get(i);
             if (isMatch(input, element, levenshtein)) {
                 closestMatch2.add(element);
             }
         }
-
-        // Mise à jour des JList avec les éléments filtrés
-        jList1.setListData(closestMatch1.toArray(new String[0]));
-        jList4.setListData(closestMatch2.toArray(new String[0]));
+        printMessage(closestMatch1.toString());
+        printMessage(closestMatch2.toString());
 
         // Mettre à jour les listes avec les éléments les plus proches
-        if (closestMatch1.length != 0) {
-            jList1.setListData(closestMatch1);
-        } else {
-            printMessage("Aucun élément trouvé dans la liste 1" + Arrays.toString(listModelEArray));
-            jList1.setListData(listModelEArray);
+        if (!closestMatch1.isEmpty()) {
+            jList1.setListData(closestMatch1.toArray(new String[0]));
+        } else if (input.isEmpty()) {
+            printMessage("input vide");
+            jList1.setListData(listModelEArray.toArray(new String[0]));
+        }
+        else {
+            printMessage("Aucun élément trouvé dans la liste 1" + listModelEArray.toString());
+            jList1.setListData(listModelEArray.toArray(new String[0]));
         }
 
-        if (closestMatch2.length != 0) {
-            jList4.setListData(closestMatch2);
-        } else {
-            printMessage("Aucun élément trouvé dans la liste 2" + Arrays.toString(listModelCArray));
-            jList4.setListData(listModelCArray);
-        }*/
+        if (!closestMatch2.isEmpty()) {
+            jList4.setListData(closestMatch2.toArray(new String[0]));
+        } else if(input.isEmpty()){
+            printMessage("input vide");
+            jList4.setListData(listModelCArray.toArray(new String[0]));
+        }
+        else{
+            printMessage("Aucun élément trouvé dans la liste 2" + listModelCArray.toString());
+            jList4.setListData(listModelCArray.toArray(new String[0]));
+        }
     }//GEN-LAST:event_jTextField8ActionPerformed
-    /*private boolean isMatch(String input, String element, LevenshteinDistance levenshtein) {
+
+    private boolean isMatch(String input, String element, LevenshteinDistance levenshtein) {
         // Diviser l'élément en mots
         String[] words = element.split("\\s+");
         for (String word : words) {
@@ -651,15 +656,6 @@ public class Interface_app extends javax.swing.JFrame {
         return false;
     }
 
-    // Méthode utilitaire pour convertir le modèle de la JList en tableau
-    private String[] getArrayFromList(JList<String> list) {
-        List<String> result = new ArrayList<>();
-        ListModel<String> model = list.getModel();
-        for (int i = 0; i < model.getSize(); i++) {
-            result.add(model.getElementAt(i));
-        }
-        return result.toArray(new String[0]);
-    }*/
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
                               
         ODatabaseSession db = pool.acquire();
