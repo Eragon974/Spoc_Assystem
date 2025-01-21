@@ -71,6 +71,7 @@ public class Interface_app extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         jButton7 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
@@ -82,12 +83,15 @@ public class Interface_app extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
         jList2 = new javax.swing.JList<>();
+        jList2 = new javax.swing.JList<>();
         jPanel6 = new javax.swing.JPanel();
+        jButton6 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jPanel7 = new javax.swing.JPanel();
         jTextField8 = new javax.swing.JTextField();
+        jButton3 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
@@ -323,7 +327,9 @@ public class Interface_app extends javax.swing.JFrame {
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jTextField8, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addComponent(jLabel12)
@@ -339,9 +345,12 @@ public class Interface_app extends javax.swing.JFrame {
                 .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(55, 55, 55)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(139, Short.MAX_VALUE))
         );
@@ -385,31 +394,38 @@ public class Interface_app extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
         
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        
+        if (pool == null) {
+            printMessage("Action impossible, la connexion n'est pas établie");
+            return;
+        }  
         Ajout_BDD_Frame = new Ajout_BDD_Frame(pool,this);
         Ajout_BDD_Frame.setVisible(true);
         
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    Connexion_Frame connexionFrame = new Connexion_Frame(this);
-
-    // Afficher la fenêtre de connexion
-    connexionFrame.setVisible(true);
-
-    // Utiliser un SwingWorker pour attendre l'interaction de l'utilisateur
-    new SwingWorker<Void, Void>() {
-        @Override
-        protected Void doInBackground() throws Exception {
-            // Attendre que l'utilisateur ait terminé (polling)
-            while (connexionFrame.isVisible()) {
-                Thread.sleep(100); // Polling interval (100ms)
-            }
-            return null;
+        
+        if (pool != null && !pool.isClosed()) {
+            printMessage("Action impossible, connexion déjà établie");
+            return;
         }
+        Connexion_Frame connexionFrame = new Connexion_Frame(this);
+        // Afficher la fenêtre de connexion
+        connexionFrame.setVisible(true);
+        
+        // Utiliser un SwingWorker pour attendre l'interaction de l'utilisateur
+        new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                // Attendre que l'utilisateur ait terminé (polling)
+                while (connexionFrame.isVisible()) {
+                    Thread.sleep(100); // Polling interval (100ms)
+                }
+                return null;
+            }
 
-        @Override
-        protected void done() {
+            @Override
+            protected void done() {
             // Récupération des informations après la fermeture de la fenêtre
             String BDD = connexionFrame.getBDD();
             String User = connexionFrame.getUser();
@@ -450,6 +466,10 @@ public class Interface_app extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        if (pool == null) {
+            printMessage("Action impossible, la connexion n'est pas établie");
+            return;
+        }
         try {
             monitorC.unSubscribe();
             monitorE.unSubscribe();
@@ -542,12 +562,15 @@ public class Interface_app extends javax.swing.JFrame {
     }
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-                              
+        if (pool == null) {
+            printMessage("Action impossible, la connexion n'est pas établie");
+            return;
+        }        
         ODatabaseSession db = pool.acquire();
 
         // Récupérer les éléments sélectionnés dans jList1 et jList4
         List<String> selectedItemsList1 = jList1.getSelectedValuesList();
-        List<String> selectedItemsList4 = jList2.getSelectedValuesList();
+        List<String> selectedItemsList2 = jList2.getSelectedValuesList();
 
         // Supprimer les éléments sélectionnés de la base de données
         for (String item : selectedItemsList1) {
@@ -567,7 +590,7 @@ public class Interface_app extends javax.swing.JFrame {
             }
         }
 
-        for (String item : selectedItemsList4) {
+        for (String item : selectedItemsList2) {
             try {
                 // Extraire l'ID du vertex (dernière partie du texte dans l'élément de jList)
                 String[] parts = item.split("ID: ");
@@ -590,6 +613,10 @@ public class Interface_app extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        if (pool == null) {
+            printMessage("Action impossible, la connexion n'est pas établie");
+            return;
+        }
         ODatabaseSession db = pool.acquire();
         // Liste des propriétés associées à filteredWords
         String[] propertyKeys = {
@@ -604,8 +631,8 @@ public class Interface_app extends javax.swing.JFrame {
             "Origine de consommation"
         };
         List<String> selectedItemsList1 = jList1.getSelectedValuesList();
-        List<String> selectedItemsList4 = jList2.getSelectedValuesList();
-        if (selectedItemsList1.isEmpty() && selectedItemsList4.isEmpty()){
+        List<String> selectedItemsList2 = jList2.getSelectedValuesList();
+        if (selectedItemsList1.isEmpty() && selectedItemsList2.isEmpty()){
             printMessage("Pas d'éléments sélectionnés pour la duplication");
             return;
         }
@@ -634,7 +661,7 @@ public class Interface_app extends javax.swing.JFrame {
                 e.printStackTrace();
             }
         }
-        for (String item : selectedItemsList4){
+        for (String item : selectedItemsList2){
             String[] info = item.split("\\s+");
 
             // Filter out the word that starts with "ID:"
@@ -662,18 +689,17 @@ public class Interface_app extends javax.swing.JFrame {
         
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        Graphe = new Graphe(pool,this);
-        Graphe.setVisible(true);
-    }//GEN-LAST:event_jButton7ActionPerformed
-
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        if (pool == null) {
+            printMessage("Action impossible, la connexion n'est pas établie");
+            return;
+        }  
         ODatabaseSession db = pool.acquire();
         // Liste des propriétés associées à filteredWords
         
         List<String> selectedItemsList1 = new ArrayList<>(jList1.getSelectedValuesList()); // Créer une nouvelle liste modifiable
-        List<String> selectedItemsList4 = new ArrayList<>(jList2.getSelectedValuesList());
-        if (selectedItemsList1.isEmpty() && selectedItemsList4.isEmpty()){
+        List<String> selectedItemsList2 = new ArrayList<>(jList2.getSelectedValuesList());
+        if (selectedItemsList1.isEmpty() && selectedItemsList2.isEmpty()){
             printMessage("Pas d'éléments sélectionnés pour la modification");
             return;
         }
@@ -681,10 +707,11 @@ public class Interface_app extends javax.swing.JFrame {
         List<String> infoC = new ArrayList<>();
         infoE.add("Equipement"); // Ajouter "Equipement" comme premier élément
         infoC.add("Composant"); // Ajouter "Equipement" comme premier élément
-        // Parcourir les éléments et les ajouter à la liste `info`
+        // Parcourir les éléments et les ajouter à la liste info
         for (String item : selectedItemsList1) {
-            // Découper chaque item et ajouter chaque partie à `info`
+            // Découper chaque item et ajouter chaque partie à info
             String[] parts = item.split("\\s+");
+            System.out.println(parts);
             infoE.addAll(Arrays.asList(parts));
             
             Modification_Frame modificationFrame = new Modification_Frame(infoE,db);
@@ -703,7 +730,7 @@ public class Interface_app extends javax.swing.JFrame {
                 }     
             }.execute();
         }
-        for (String item : selectedItemsList4){
+        for (String item : selectedItemsList2){
             String[] parts = item.split("\\s+");
             infoC.addAll(Arrays.asList(parts));            
             Modification_Frame modificationFrame = new Modification_Frame(infoC,db);
@@ -722,8 +749,12 @@ public class Interface_app extends javax.swing.JFrame {
                 }       
             }.execute();
         }
-        
-    }//GEN-LAST:event_jButton5ActionPerformed
+}
+    
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        Graphe = new Graphe(pool,this);
+        Graphe.setVisible(true);
+    }//GEN-LAST:event_jButton7ActionPerformed
 
     public String getTextFromAccessibleName(String accessibleName) {
         return getTextFromAccessibleNameRecursive(getContentPane(), accessibleName);

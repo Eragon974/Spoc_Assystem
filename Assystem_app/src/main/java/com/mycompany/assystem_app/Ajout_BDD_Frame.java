@@ -6,6 +6,8 @@ package com.mycompany.assystem_app;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.record.OVertex;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
@@ -67,6 +69,12 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
         jLabel2.setText("Classe");
 
         jLabel3.setText("Famille");
+
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
 
         jTextField2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -278,7 +286,21 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+    public void printMessage(String message) {
+        // Récupérer l'heure actuelle
+        SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm:ss.SSS");  // Format de l'heure
+        String time = sdf.format(new Date());  // Obtenir l'heure actuelle
 
+        // Construire le message avec l'heure
+        String formattedMessage = time + " : " + message + "\n";
+
+        // Ajouter le message à la JTextArea
+        jTextArea1.append(formattedMessage);
+        
+        // Faire défiler jusqu'à la fin pour afficher le dernier message
+        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
+    }
     private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField5ActionPerformed
@@ -308,21 +330,15 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
     if (indice.isEmpty()) indice = "NULL";
     if (origineConsommation.isEmpty()) origineConsommation = "NULL";
 
-    // Vérification du pool
-    if (pool == null) {
-        Interface_app.printMessage("Le pool de connexions est nul. Veuillez verifier son initialisation.");
-        return;
-    }
-
     // Vérification du nom de la classe
     if (className.equals("NULL") || className.isEmpty()) {
-        Interface_app.printMessage("Le nom de la classe est vide ou nul. Creation du vertex impossible.");
+        printMessage("Le nom de la classe est vide ou nul. Creation du vertex impossible.");
         return;
     }
 
     try {
         db = pool.acquire(); // Acquisition de la session de base de données
-        Interface_app.printMessage("Tentative de creation du vertex pour la classe : " + className);
+        printMessage("Tentative de creation du vertex pour la classe : " + className);
         // Création d'un vertex de cette classe
         OVertex v = db.newVertex(className);
         v.setProperty("Famille", famille);
@@ -336,9 +352,9 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
         v.setProperty("Origine de consommation", origineConsommation);
         v.save();
         clearAllTextFields();
-        Interface_app.printMessage("Le vertex " + className + " " + famille + " " + sousFamille + " " + type + " " + constructeur + " " + tension + " " + puissanceUnitaire + " " + puissanceTransitoire + " " + indice + " " + origineConsommation + " a ete cree avec succès !");
+        printMessage("Le vertex " + className + " " + famille + " " + sousFamille + " " + type + " " + constructeur + " " + tension + " " + puissanceUnitaire + " " + puissanceTransitoire + " " + indice + " " + origineConsommation + " a ete cree avec succès !");
     } catch (Exception e) {
-        Interface_app.printMessage("Erreur lors de la creation du vertex : " + e.getMessage());
+        printMessage("Erreur lors de la creation du vertex : " + e.getMessage());
         e.printStackTrace();
     }
 
@@ -365,6 +381,10 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
     private void jTextField9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField9ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField9ActionPerformed
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
     private String getTextFromAccessibleName(String accessibleName) {
         return getTextFromAccessibleNameRecursive(getContentPane(), accessibleName);
     }
