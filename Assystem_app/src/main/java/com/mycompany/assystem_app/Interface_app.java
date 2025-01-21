@@ -37,7 +37,7 @@ public class Interface_app extends javax.swing.JFrame {
     private Ajout_BDD_Frame Ajout_BDD_Frame; 
     private Connexion_Frame Connexion_Frame;
     private Modification_Frame Modification_Frame;
-
+    private Graphe Graphe;
     public Interface_app() {
         initComponents();
     }
@@ -72,6 +72,8 @@ public class Interface_app extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
+        jButton7 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -132,6 +134,15 @@ public class Interface_app extends javax.swing.JFrame {
 
         jLabel6.setText("Ajouter un composant ou un équipement à la base de données");
 
+        jButton7.setText("Voir Graphe");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Visualiser et modifier le Graphe");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -144,7 +155,7 @@ public class Interface_app extends javax.swing.JFrame {
                 .addGap(120, 120, 120))
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(110, 110, 110)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(200, 200, 200))
@@ -154,11 +165,12 @@ public class Interface_app extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(36, 36, 36))
         );
 
@@ -657,7 +669,7 @@ public class Interface_app extends javax.swing.JFrame {
             }
         }
         
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         if (pool == null) {
@@ -677,10 +689,11 @@ public class Interface_app extends javax.swing.JFrame {
         List<String> infoC = new ArrayList<>();
         infoE.add("Equipement"); // Ajouter "Equipement" comme premier élément
         infoC.add("Composant"); // Ajouter "Equipement" comme premier élément
-        // Parcourir les éléments et les ajouter à la liste `info`
+        // Parcourir les éléments et les ajouter à la liste info
         for (String item : selectedItemsList1) {
-            // Découper chaque item et ajouter chaque partie à `info`
+            // Découper chaque item et ajouter chaque partie à info
             String[] parts = item.split("\\s+");
+            System.out.println(parts);
             infoE.addAll(Arrays.asList(parts));
             
             Modification_Frame modificationFrame = new Modification_Frame(infoE,db);
@@ -718,8 +731,12 @@ public class Interface_app extends javax.swing.JFrame {
                 }       
             }.execute();
         }
-        
-    }//GEN-LAST:event_jButton5ActionPerformed
+}
+    
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        Graphe = new Graphe(pool,this);
+        Graphe.setVisible(true);
+    }//GEN-LAST:event_jButton7ActionPerformed
 
     public String getTextFromAccessibleName(String accessibleName) {
         return getTextFromAccessibleNameRecursive(getContentPane(), accessibleName);
@@ -762,6 +779,16 @@ public class Interface_app extends javax.swing.JFrame {
             }
         }); 
     }
+
+    public void setJframeAjout_BDD(Ajout_BDD_Frame Ajout_BDD_Frame){
+        this.Ajout_BDD_Frame = Ajout_BDD_Frame;
+    }
+    public void setJframeConnexion_BDD(Connexion_Frame Connexion_Frame){
+        this.Connexion_Frame = Connexion_Frame;
+    }
+    public void setJframeGraphe_BDD(Graphe Graphe){
+        this.Graphe = Graphe;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -769,10 +796,12 @@ public class Interface_app extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JList<String> jList1;
