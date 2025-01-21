@@ -36,8 +36,8 @@ public class Interface_app extends javax.swing.JFrame {
     private OLiveQueryMonitor monitorE;
     private Ajout_BDD_Frame Ajout_BDD_Frame; 
     private Connexion_Frame Connexion_Frame;
+    private Modification_Frame Modification_Frame;
     private Graphe Graphe;
-
     public Interface_app() {
         initComponents();
     }
@@ -306,6 +306,11 @@ public class Interface_app extends javax.swing.JFrame {
         });
 
         jButton6.setText("Modifier");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
 
         jLabel12.setText("Recherche");
 
@@ -387,7 +392,7 @@ public class Interface_app extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        Connexion_Frame connexionFrame = new Connexion_Frame(this);
+    Connexion_Frame connexionFrame = new Connexion_Frame(this);
 
     // Afficher la fenêtre de connexion
     connexionFrame.setVisible(true);
@@ -589,8 +594,8 @@ public class Interface_app extends javax.swing.JFrame {
         // Liste des propriétés associées à filteredWords
         String[] propertyKeys = {
             "Famille", 
-            "Sous Famille", 
-            "Type", 
+            "Type",
+            "Sous Famille",
             "Constructeur", 
             "Tension(VCC)", 
             "Puissance Unitaire(W)", 
@@ -614,7 +619,6 @@ public class Interface_app extends javax.swing.JFrame {
                     filteredWords.add(infos.trim());
                 }
             }
-            System.out.println(filteredWords);
             try {
                 printMessage("Tentative de duplication du/des vertex");
                 OVertex v = db.newVertex("Equipement");
@@ -640,7 +644,6 @@ public class Interface_app extends javax.swing.JFrame {
                     filteredWords.add(infos.trim());
                 }
             }
-            System.out.println(filteredWords);
             try {
                 printMessage("Tentative de duplication du/des vertex");
                 OVertex v = db.newVertex("Composant");
@@ -663,6 +666,64 @@ public class Interface_app extends javax.swing.JFrame {
         Graphe = new Graphe(pool,this);
         Graphe.setVisible(true);
     }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        ODatabaseSession db = pool.acquire();
+        // Liste des propriétés associées à filteredWords
+        
+        List<String> selectedItemsList1 = new ArrayList<>(jList1.getSelectedValuesList()); // Créer une nouvelle liste modifiable
+        List<String> selectedItemsList4 = new ArrayList<>(jList4.getSelectedValuesList());
+        if (selectedItemsList1.isEmpty() && selectedItemsList4.isEmpty()){
+            printMessage("Pas d'éléments sélectionnés pour la modification");
+            return;
+        }
+        List<String> infoE = new ArrayList<>();
+        List<String> infoC = new ArrayList<>();
+        infoE.add("Equipement"); // Ajouter "Equipement" comme premier élément
+        infoC.add("Composant"); // Ajouter "Equipement" comme premier élément
+        // Parcourir les éléments et les ajouter à la liste `info`
+        for (String item : selectedItemsList1) {
+            // Découper chaque item et ajouter chaque partie à `info`
+            String[] parts = item.split("\\s+");
+            infoE.addAll(Arrays.asList(parts));
+            
+            Modification_Frame modificationFrame = new Modification_Frame(infoE,db);
+            // Afficher la fenêtre de connexion
+            modificationFrame.setVisible(true);
+
+            // Utiliser un SwingWorker pour attendre l'interaction de l'utilisateur
+            new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                   // Attendre que l'utilisateur ait terminé (polling)
+                    while (modificationFrame.isVisible()) {
+                        Thread.sleep(100); // Polling interval (100ms)
+                    }
+                    return null;
+                }     
+            }.execute();
+        }
+        for (String item : selectedItemsList4){
+            String[] parts = item.split("\\s+");
+            infoC.addAll(Arrays.asList(parts));            
+            Modification_Frame modificationFrame = new Modification_Frame(infoC,db);
+            // Afficher la fenêtre de connexion
+            modificationFrame.setVisible(true);
+
+            // Utiliser un SwingWorker pour attendre l'interaction de l'utilisateur
+            new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                   // Attendre que l'utilisateur ait terminé (polling)
+                    while (modificationFrame.isVisible()) {
+                        Thread.sleep(100); // Polling interval (100ms)
+                    }
+                    return null;
+                }       
+            }.execute();
+        }
+        
+    }//GEN-LAST:event_jButton6ActionPerformed
 
     public String getTextFromAccessibleName(String accessibleName) {
         return getTextFromAccessibleNameRecursive(getContentPane(), accessibleName);
