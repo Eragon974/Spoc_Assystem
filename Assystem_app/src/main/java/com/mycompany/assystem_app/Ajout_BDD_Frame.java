@@ -54,12 +54,15 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         jTextField9 = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Composant", "Equipement" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Equipement", "Composant" }));
 
         jLabel2.setText("Classe");
 
@@ -134,7 +137,7 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(135, 135, 135)
@@ -176,7 +179,7 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
                                 .addComponent(jLabel11))
                             .addComponent(jLabel9)
                             .addComponent(jLabel10))
-                        .addContainerGap(98, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -233,18 +236,44 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
         jTextField8.getAccessibleContext().setAccessibleName("Add_Indice_Confiance");
         jTextField9.getAccessibleContext().setAccessibleName("Add_Origine_Consommation");
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1406, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(12, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(62, 62, 62)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(182, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -256,51 +285,64 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-        // Initialisation des variables
-        String className = getTextFromAccessibleName("Add_Classe");
-        String famille = getTextFromAccessibleName("Add_Famille");
-        String sousFamille = getTextFromAccessibleName("Add_Sous_Famille");
-        String type = getTextFromAccessibleName("Add_Type");
-        String constructeur = getTextFromAccessibleName("Add_Constructeur");
-        String tension = getTextFromAccessibleName("Add_Tension");
-        String puissanceUnitaire = getTextFromAccessibleName("Add_Puissance_Unitaire");
-        String puissanceTransitoire = getTextFromAccessibleName("Add_Puissance_Transitoire");
-        String indice = getTextFromAccessibleName("Add_Indice_Confiance");
-        String origineConsommation = getTextFromAccessibleName("Add_Origine_Consommation");
-        
-        // Vérification du pool
-        if (pool == null) {
-            Interface_app.printMessage("Le pool de connexions est nul. Veuillez verifier son initialisation.");
-            return;
-        }
+    // Initialisation des variables avec la logique de remplacement si null
+    String className = getTextFromAccessibleName("Add_Classe");
+    String famille = getTextFromAccessibleName("Add_Famille");
+    String sousFamille = getTextFromAccessibleName("Add_Sous_Famille");
+    String type = getTextFromAccessibleName("Add_Type");
+    String constructeur = getTextFromAccessibleName("Add_Constructeur");
+    String tension = getTextFromAccessibleName("Add_Tension");
+    String puissanceUnitaire = getTextFromAccessibleName("Add_Puissance_Unitaire");
+    String puissanceTransitoire = getTextFromAccessibleName("Add_Puissance_Transitoire");
+    String indice = getTextFromAccessibleName("Add_Indice_Confiance");
+    String origineConsommation = getTextFromAccessibleName("Add_Origine_Consommation");
+    System.out.println(type);
+    // Remplacer les valeurs null par "NULL"
+    if (famille.isEmpty()) famille = "NULL";
+    if (sousFamille.isEmpty()) sousFamille = "NULL";
+    if (type.isEmpty()) type = "NULL";
+    if (constructeur.isEmpty()) constructeur = "NULL";
+    if (tension.isEmpty()) tension = "NULL";
+    if (puissanceUnitaire.isEmpty()) puissanceUnitaire = "NULL";
+    if (puissanceTransitoire.isEmpty()) puissanceTransitoire = "NULL";
+    if (indice.isEmpty()) indice = "NULL";
+    if (origineConsommation.isEmpty()) origineConsommation = "NULL";
 
-        // Vérification du nom de la classe
-        if (className == null || className.isEmpty()) {
-            Interface_app.printMessage("Le nom de la classe est vide ou nul. Creation du vertex impossible.");
-            return;
-        }
+    // Vérification du pool
+    if (pool == null) {
+        Interface_app.printMessage("Le pool de connexions est nul. Veuillez verifier son initialisation.");
+        return;
+    }
 
-        try {
-            db = pool.acquire(); // Acquisition de la session de base de données
-            Interface_app.printMessage("Tentative de creation du vertex pour la classe : " + className);
-            // Création d'un vertex de cette classe
-            OVertex v = db.newVertex(className);
-            v.setProperty("Famille", famille);
-            v.setProperty("Sous Famille", sousFamille);
-            v.setProperty("Type", type);
-            v.setProperty("Constructeur", constructeur);
-            v.setProperty("Tension(VCC)", tension);
-            v.setProperty("Puissance Unitaire(W)", puissanceUnitaire);
-            v.setProperty("Puissance Transitoire(W)", puissanceTransitoire);
-            v.setProperty("Indice de confiance", indice);
-            v.setProperty("Origine de consommation", origineConsommation);
-            v.save();
-            clearAllTextFields();
-            Interface_app.printMessage("Le vertex " + className + " " + famille + " " + sousFamille + " " + type + " " + constructeur + " " + tension + " " + puissanceUnitaire + " " + puissanceTransitoire + " " + indice + " " + origineConsommation + "a ete cree avec succès !");
-        } catch (Exception e) {
-            Interface_app.printMessage("Erreur lors de la creation du vertex : " + e.getMessage());
-            e.printStackTrace();
-        }
+    // Vérification du nom de la classe
+    if (className.equals("NULL") || className.isEmpty()) {
+        Interface_app.printMessage("Le nom de la classe est vide ou nul. Creation du vertex impossible.");
+        return;
+    }
+
+    try {
+        db = pool.acquire(); // Acquisition de la session de base de données
+        Interface_app.printMessage("Tentative de creation du vertex pour la classe : " + className);
+        // Création d'un vertex de cette classe
+        OVertex v = db.newVertex(className);
+        v.setProperty("Famille", famille);
+        v.setProperty("Type", type);
+        v.setProperty("Sous Famille", sousFamille);
+        v.setProperty("Constructeur", constructeur);
+        v.setProperty("Tension(VCC)", tension);
+        v.setProperty("Puissance Unitaire(W)", puissanceUnitaire);
+        v.setProperty("Puissance Transitoire(W)", puissanceTransitoire);
+        v.setProperty("Indice de confiance", indice);
+        v.setProperty("Origine de consommation", origineConsommation);
+        v.save();
+        clearAllTextFields();
+        Interface_app.printMessage("Le vertex " + className + " " + famille + " " + sousFamille + " " + type + " " + constructeur + " " + tension + " " + puissanceUnitaire + " " + puissanceTransitoire + " " + indice + " " + origineConsommation + " a ete cree avec succès !");
+    } catch (Exception e) {
+        Interface_app.printMessage("Erreur lors de la creation du vertex : " + e.getMessage());
+        e.printStackTrace();
+    }
+
+
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -390,7 +432,10 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
