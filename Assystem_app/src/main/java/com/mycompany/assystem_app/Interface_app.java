@@ -18,6 +18,11 @@ import java.util.*;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingWorker;
 import org.apache.commons.text.similarity.LevenshteinDistance;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.web.WebView;
+import java.awt.BorderLayout;
 
 
 public class Interface_app extends javax.swing.JFrame {
@@ -107,9 +112,7 @@ public class Interface_app extends javax.swing.JFrame {
 
         jLabel10.setText("Equipement");
 
-        jList1.setModel(listModelE
-
-        );
+        jList1.setModel(listModelE);
         jScrollPane2.setViewportView(jList1);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -167,6 +170,17 @@ public class Interface_app extends javax.swing.JFrame {
             }
         });
 
+        /*Code JPanel8 fenêtre OrientDB */
+        JFXPanel jfxPanel = new JFXPanel();
+        Platform.runLater(() -> {
+            WebView webView = new WebView();
+            webView.getEngine().load("http://localhost:2480/studio/index.html#/database/test/graph");
+            jfxPanel.setScene(new Scene(webView, jPanel8.getWidth(), jPanel8.getHeight()));
+            jPanel8.setLayout(new BorderLayout());
+            jPanel8.add(jfxPanel, BorderLayout.CENTER);
+            jPanel8.validate();
+        });
+        /*Fin du code JPanel8 fenêtre OrientDB */
         jLabel12.setText("Recherche");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
@@ -410,7 +424,7 @@ public class Interface_app extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(89, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
