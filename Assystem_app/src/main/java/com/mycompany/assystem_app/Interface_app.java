@@ -99,12 +99,7 @@ public class Interface_app extends javax.swing.JFrame {
         jButton6 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        jPanel7 = new javax.swing.JPanel();
-        jTextField8 = new javax.swing.JTextField();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jLabel12 = new javax.swing.JLabel();
+        jPanel8 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -112,7 +107,9 @@ public class Interface_app extends javax.swing.JFrame {
 
         jLabel10.setText("Equipement");
 
-        jList1.setModel(listModelE);
+        jList1.setModel(listModelE
+
+        );
         jScrollPane2.setViewportView(jList1);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -170,17 +167,7 @@ public class Interface_app extends javax.swing.JFrame {
             }
         });
 
-        /*Code JPanel8 fenêtre OrientDB */
-        JFXPanel jfxPanel = new JFXPanel();
-        Platform.runLater(() -> {
-            WebView webView = new WebView();
-            webView.getEngine().load("http://localhost:2480/studio/index.html#/database/test/graph");
-            jfxPanel.setScene(new Scene(webView, jPanel8.getWidth(), jPanel8.getHeight()));
-            jPanel8.setLayout(new BorderLayout());
-            jPanel8.add(jfxPanel, BorderLayout.CENTER);
-            jPanel8.validate();
-        });
-        /*Fin du code JPanel8 fenêtre OrientDB */
+        
         jLabel12.setText("Recherche");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
@@ -241,7 +228,6 @@ public class Interface_app extends javax.swing.JFrame {
         jLabel8.setText("Se connecter à la base de données");
 
         jButton1.setText("Connexion");
-        jButton1.setText("Connexion");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -271,14 +257,17 @@ public class Interface_app extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(124, 124, 124)
-                .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel6)
-                .addGap(120, 120, 120))
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(110, 110, 110)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(110, 110, 110)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(124, 124, 124)
+                        .addComponent(jLabel8)))
+                .addGap(291, 291, 291)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
@@ -416,7 +405,7 @@ public class Interface_app extends javax.swing.JFrame {
             .addGap(0, 579, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab("OrientDB", jPanel8);
+        jTabbedPane1.addTab("Orient DB", jPanel8);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -447,7 +436,7 @@ public class Interface_app extends javax.swing.JFrame {
         Ajout_BDD_Frame.setVisible(true);
         
     }//GEN-LAST:event_jButton2ActionPerformed
-
+    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
         if (pool != null && !pool.isClosed()) {
@@ -507,6 +496,17 @@ public class Interface_app extends javax.swing.JFrame {
             }
         }
     }.execute();
+    /*Code JPanel8 fenêtre OrientDB */
+    JFXPanel jfxPanel = new JFXPanel();
+    Platform.runLater(() -> {
+        WebView webView = new WebView();
+        webView.getEngine().load("http://localhost:2480/studio/index.html#/database/test/graph");
+        jfxPanel.setScene(new Scene(webView, jPanel8.getWidth(), jPanel8.getHeight()));
+        jPanel8.setLayout(new BorderLayout());
+        jPanel8.add(jfxPanel, BorderLayout.CENTER);
+        jPanel8.validate();
+    });
+    /*Fin du code JPanel8 fenêtre OrientDB */
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -800,7 +800,7 @@ public class Interface_app extends javax.swing.JFrame {
             }.execute();
         }
         
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }                                        
 
     public String getTextFromAccessibleName(String accessibleName) {
         return getTextFromAccessibleNameRecursive(getContentPane(), accessibleName);
