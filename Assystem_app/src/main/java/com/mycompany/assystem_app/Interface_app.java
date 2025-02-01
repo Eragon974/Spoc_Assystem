@@ -241,6 +241,7 @@ public class Interface_app extends javax.swing.JFrame {
         jLabel8.setText("Se connecter à la base de données");
 
         jButton1.setText("Connexion");
+        jButton1.setText("Connexion");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -756,10 +757,11 @@ public class Interface_app extends javax.swing.JFrame {
         List<String> infoC = new ArrayList<>();
         infoE.add("Equipement"); // Ajouter "Equipement" comme premier élément
         infoC.add("Composant"); // Ajouter "Equipement" comme premier élément
-        // Parcourir les éléments et les ajouter à la liste `info`
+        // Parcourir les éléments et les ajouter à la liste info
         for (String item : selectedItemsList1) {
-            // Découper chaque item et ajouter chaque partie à `info`
+            // Découper chaque item et ajouter chaque partie à info
             String[] parts = item.split("\\s+");
+            System.out.println(parts);
             infoE.addAll(Arrays.asList(parts));
             
             Modification_Frame modificationFrame = new Modification_Frame(infoE,db);
