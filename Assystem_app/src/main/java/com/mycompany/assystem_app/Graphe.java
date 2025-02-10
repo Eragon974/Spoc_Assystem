@@ -4,29 +4,36 @@
  */
 package com.mycompany.assystem_app;
 
+
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
-import com.orientechnologies.orient.core.record.OElement;
-import com.orientechnologies.orient.core.record.OVertex;
-import com.orientechnologies.orient.core.sql.executor.OResultSet;
+//import com.orientechnologies.orient.core.record.OElement;
+//import com.orientechnologies.orient.core.record.OVertex;
+
+
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
+import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
+import org.graphstream.ui.graphicGraph.GraphicNode;
+import org.graphstream.ui.graphicGraph.GraphicEdge;
+import org.graphstream.ui.graphicGraph.GraphicGraph;
+import org.graphstream.ui.graphicGraph.GraphicElement;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+
 
 /**
  *
  * @author frate
  */
-public class Graphe extends javax.swing.JFrame {
+public class Graphe extends javax.swing.JFrame implements KeyListener {
     private ODatabasePool pool;
     private ODatabaseSession db;
     private Interface_app Interface_app;
@@ -34,6 +41,7 @@ public class Graphe extends javax.swing.JFrame {
     private Viewer viewer;
     private String selectedNodeId = null; // Pour stocker le nœud sélectionné
     private String selectedEdgeId = null; // Pour stocker l'arête sélectionnée
+    private Edge selectedEdge = null; // Pour stocker l'arête sélectionnée pour la suppression
 
     public Graphe(ODatabasePool pool, Interface_app Interface_app) {
         this.pool = pool;
@@ -57,15 +65,18 @@ public class Graphe extends javax.swing.JFrame {
         // Créer un viewer pour afficher le graphe dans jPanel1
         viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.enableAutoLayout();
+        
         JPanel viewPanel = (JPanel) viewer.addDefaultView(false); // false pour ne pas utiliser OpenGL
-
+        viewPanel.addKeyListener(this); // Ajouter un KeyListener pour gérer les événements clavier
+        viewPanel.setFocusable(true); // Ensure the panel can receive key events
+        viewer.getDefaultView().enableMouseOptions(); // Activer les interactions de la souris
+        
         // Ajouter le viewer à jPanel1
         jPanel3.setLayout(new java.awt.BorderLayout());
         jPanel3.add(viewPanel, java.awt.BorderLayout.CENTER);
     }
 
     private void setupInteractions() {
-        // Ajouter un écouteur pour gérer les clics de souris
         ViewerPipe viewerPipe = viewer.newViewerPipe();
         viewerPipe.addViewerListener(new ViewerListener() {
             @Override
@@ -78,34 +89,70 @@ public class Graphe extends javax.swing.JFrame {
                 if (graph.getNode(elementId) != null) {
                     // Clic sur un nœud
                     handleNodeClick(elementId);
-                } else if (graph.getEdge(elementId) != null) {
-                    // Clic sur une arête
-                    handleEdgeClick(elementId);
+                }
+
+                java.awt.Point mousePoint = ((JPanel)viewer.getDefaultView()).getMousePosition();
+                if (mousePoint != null) {
+                    handleEdgeClick((float)mousePoint.getX(), (float)mousePoint.getY());
                 }
             }
 
             @Override
-            public void buttonReleased(String nodeId) {
+            public void buttonReleased(String elementId) {
                 // Ignorer
             }
 
             @Override
-            public void mouseOver(String nodeId) {
+            public void mouseOver(String edgeId) {
                 // Ignorer
             }
 
             @Override
-            public void mouseLeft(String nodeId) {
+            public void mouseLeft(String edgeId) {
                 // Ignorer
             }
         });
-
-        // Démarrer un thread pour écouter les événements
         new Thread(() -> {
             while (true) {
-                viewerPipe.pump();
+                try {
+                    viewerPipe.pump();
+                    Thread.sleep(10); // Small delay to avoid excessive CPU usage
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
+    }
+
+    //Gestion des événements clavier pour supprimer une arête sélectionnée
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_DELETE && selectedEdge != null) {
+            graph.removeEdge(selectedEdge); // Remove the selected edge
+            selectedEdge = null; // Clear the selected edge
+            System.out.println("Edge deleted.");
+        }
+
+        if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            if (selectedNodeId != null) {
+                graph.getNode(selectedNodeId).removeAttribute("ui.class"); // Remove highlight from selected node
+                selectedNodeId = null; // Clear the selected node
+            }
+            if (selectedEdge != null) {
+                selectedEdge.removeAttribute("ui.class"); // Remove highlight from selected edge
+                selectedEdge = null; // Clear the selected edge
+            }
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        // Not used but required by KeyListener interface
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        // Not used but required by KeyListener interface
     }
 
     private void handleNodeClick(String nodeId) {
@@ -121,49 +168,78 @@ public class Graphe extends javax.swing.JFrame {
         }
     }
 
-    private void handleEdgeClick(String edgeId) {
-        if (selectedEdgeId == null) {
-            // Si aucune arête n'est sélectionnée, sélectionner cette arête
-            selectedEdgeId = edgeId;
-            graph.getEdge(edgeId).setAttribute("ui.class", "selected"); // Mettre en surbrillance
-        } else {
-            // Si une arête est déjà sélectionnée, désélectionner
-            graph.getEdge(selectedEdgeId).removeAttribute("ui.class");
-            selectedEdgeId = null;
+    private void handleEdgeClick(float mouseX, float mouseY) {
+        Edge clickedEdge = selectEdge(mouseX, mouseY);
+        if (clickedEdge != null) {
+            if (selectedEdge != null) {
+                selectedEdge.removeAttribute("ui.class"); // Remove highlight from previously selected edge
+            }
+            selectedEdge = clickedEdge;
+            selectedEdge.setAttribute("ui.class", "selected"); // Highlight the selected edge
         }
     }
-    private void getEachEdge(){
-        
+
+    private Edge selectEdge(double mouseX, double mouseY) {
+        final double maxDistance = 10; // Maximum distance for edge selection (in pixels)
+        final GraphicEdge[] closestEdge = {null}; // Store the closest edge
+        final double[] minDistance = {Double.MAX_VALUE}; // Store the minimum distance
+    
+        GraphicGraph gg = (GraphicGraph) viewer.getGraphicGraph();
+    
+        // Iterate through all edges in the graph
+        gg.edges().forEach(ge -> {
+            // Get the two nodes connected by the edge
+            GraphicNode gn0 = (GraphicNode) ge.getNode0();
+            GraphicNode gn1 = (GraphicNode) ge.getNode1();
+    
+            // Transform node coordinates from graph units (GU) to pixel coordinates (PX)
+            Point3 gn0p = viewer.getDefaultView().getCamera().transformGuToPx(gn0.getX(), gn0.getY(), gn0.getZ());
+            Point3 gn1p = viewer.getDefaultView().getCamera().transformGuToPx(gn1.getX(), gn1.getY(), gn1.getZ());
+    
+            // Vector math: Calculate the perpendicular distance from the mouse to the line segment
+            double x1 = gn0p.x, y1 = gn0p.y;
+            double x2 = gn1p.x, y2 = gn1p.y;
+    
+            double dx = x2 - x1;
+            double dy = y2 - y1;
+    
+            if (dx == 0 && dy == 0) {
+                // Edge is a point (invalid case)
+                return;
+            }
+    
+            // Parametric projection of the mouse point onto the line segment
+            double t = ((mouseX - x1) * dx + (mouseY - y1) * dy) / (dx * dx + dy * dy);
+    
+            // Clamp t to [0, 1] to ensure the projection lies on the segment
+            t = Math.max(0, Math.min(1, t));
+    
+            // Closest point on the line segment to the mouse
+            double closestX = x1 + t * dx;
+            double closestY = y1 + t * dy;
+    
+            // Distance from the mouse to the closest point
+            double distance = Math.sqrt((mouseX - closestX) * (mouseX - closestX) + (mouseY - closestY) * (mouseY - closestY));
+    
+            // Check if the distance is within the threshold
+            if (distance < maxDistance && distance < minDistance[0]) {
+                minDistance[0] = distance;
+                closestEdge[0] = (GraphicEdge) ge;
+            }
+        });
+    
+        // Return the closest edge if found
+        if (closestEdge[0] != null) {
+            System.out.println("Selected edge: " + closestEdge[0].getId());
+            return graph.getEdge(closestEdge[0].getId());
+        }
+    
+        return null;
     }
 
     private void saveGraphToOrientDB() {
-        try (ODatabaseSession db = pool.acquire()) {
-            // Supprimer les anciens nœuds et arêtes de la base de données
-            db.command("DELETE VERTEX V");
-            db.command("DELETE EDGE E");
-
-            // Sauvegarder les nœuds
-            for (Node node : graph) {
-                OVertex vertex = db.newVertex("V");
-                vertex.setProperty("id", node.getId());
-                vertex.setProperty("label", node.getAttribute("ui.label", String.class));
-                vertex.save();
-            }
-
-            // Sauvegarder les arêtes
-            
-            /*for (Edge edge : graph.getEachEdge()) {
-                OVertex source = db.query("SELECT FROM V WHERE id = ?", edge.getSourceNode().getId()).stream().findFirst().get().toElement().asVertex();
-                OVertex target = db.query("SELECT FROM V WHERE id = ?", edge.getTargetNode().getId()).stream().findFirst().get().toElement().asVertex();
-                source.addEdge(target, "E").save();
-            }*/
-
-            JOptionPane.showMessageDialog(null, "Graphe sauvegardé dans OrientDB !");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Erreur lors de la sauvegarde : " + e.getMessage());
-        }
+       // Code pour sauvegarder le graphe dans OrientDB
     }
-
     
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

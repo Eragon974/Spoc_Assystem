@@ -496,6 +496,7 @@ public class Interface_app extends javax.swing.JFrame {
             }
         }
     }.execute();
+    
     /*Code JPanel8 fenêtre OrientDB */
     JFXPanel jfxPanel = new JFXPanel();
     Platform.runLater(() -> {
