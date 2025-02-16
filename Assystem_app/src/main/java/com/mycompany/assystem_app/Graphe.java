@@ -7,8 +7,11 @@ package com.mycompany.assystem_app;
 
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
-//import com.orientechnologies.orient.core.record.OElement;
-//import com.orientechnologies.orient.core.record.OVertex;
+import com.orientechnologies.orient.core.record.OEdge;
+import com.orientechnologies.orient.core.record.OVertex;
+import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.sql.executor.OResult;
+import com.orientechnologies.orient.core.sql.executor.OResultSet;
 
 
 import org.graphstream.graph.Edge;
@@ -27,6 +30,9 @@ import org.graphstream.ui.graphicGraph.GraphicElement;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -43,7 +49,7 @@ public class Graphe extends javax.swing.JFrame implements KeyListener {
     private String selectedEdgeId = null; // Pour stocker l'arête sélectionnée
     private Edge selectedEdge = null; // Pour stocker l'arête sélectionnée pour la suppression
 
-    public Graphe(ODatabasePool pool, Interface_app Interface_app) {
+    public Graphe(ODatabasePool pool,Interface_app Interface_app) {
         this.pool = pool;
         this.Interface_app = Interface_app;
         initComponents();
@@ -239,6 +245,43 @@ public class Graphe extends javax.swing.JFrame implements KeyListener {
 
     private void saveGraphToOrientDB() {
        // Code pour sauvegarder le graphe dans OrientDB
+       // Utilisez les méthodes de l'API OrientDB pour sauvegarder les noeuds et les arêtes du graphe dans la base de données
+        // Assurez-vous que la session de base de données est ouverte
+    db = pool.acquire();
+    db.activateOnCurrentThread();
+
+    try {
+        // Sauvegarder les nœuds
+        for (Node node : graph) {
+            // Créer un document pour chaque nœud
+            ODocument nodeDoc = new ODocument("Node");
+            nodeDoc.field("id", node.getId());
+            Map<String, Object> attributes = new HashMap<>();
+            node.attributeKeys().forEach(key -> attributes.put(key, node.getAttribute(key)));
+            nodeDoc.field("attributes", attributes);
+            nodeDoc.save();
+        }
+
+        // Sauvegarder les arêtes
+        graph.edges().forEach(edge -> { 
+            // Créer un document pour chaque arête
+            ODocument edgeDoc = new ODocument("Edge");
+            edgeDoc.field("id", edge.getId());
+            edgeDoc.field("source", edge.getSourceNode().getId());
+            edgeDoc.field("target", edge.getTargetNode().getId());
+            edgeDoc.save();
+        });
+
+        System.out.println("Graph saved to OrientDB successfully.");
+    } catch (Exception e) {
+        e.printStackTrace();
+        System.err.println("Failed to save graph to OrientDB: " + e.getMessage());
+    } finally {
+        // Fermer la session de base de données
+        if (db != null) {
+            db.close();
+            }
+        }
     }
     
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

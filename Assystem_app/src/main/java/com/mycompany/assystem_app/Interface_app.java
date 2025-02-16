@@ -45,6 +45,7 @@ public class Interface_app extends javax.swing.JFrame {
     private Graphe Graphe;
     public Interface_app() {
         initComponents();
+        connexion_OrientDB();
     }
     public void printMessage(String message) {
         // Récupérer l'heure actuelle
@@ -89,8 +90,6 @@ public class Interface_app extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
-        jButton7 = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
@@ -100,6 +99,9 @@ public class Interface_app extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jPanel8 = new javax.swing.JPanel();
+        jPanel9 = new javax.swing.JPanel();
+        jButton7 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -107,9 +109,8 @@ public class Interface_app extends javax.swing.JFrame {
 
         jLabel10.setText("Equipement");
 
-        jList1.setModel(listModelE
+        jList1.setModel(listModelE);
 
-        );
         jScrollPane2.setViewportView(jList1);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -167,7 +168,6 @@ public class Interface_app extends javax.swing.JFrame {
             }
         });
 
-        
         jLabel12.setText("Recherche");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
@@ -243,15 +243,6 @@ public class Interface_app extends javax.swing.JFrame {
 
         jLabel6.setText("Ajouter un composant ou un équipement à la base de données");
 
-        jButton7.setText("Voir Graphe");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
-            }
-        });
-
-        jLabel2.setText("Visualiser et modifier le Graphe");
-
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -264,10 +255,6 @@ public class Interface_app extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(124, 124, 124)
                         .addComponent(jLabel8)))
-                .addGap(291, 291, 291)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
@@ -282,13 +269,11 @@ public class Interface_app extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(36, 36, 36))
         );
 
@@ -407,6 +392,38 @@ public class Interface_app extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Orient DB", jPanel8);
 
+        jButton7.setText("Voir Graphe");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Visualiser et modifier le Graphe");
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addContainerGap(1133, Short.MAX_VALUE))
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(510, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Création de bilan de puissance", jPanel9);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -484,10 +501,12 @@ public class Interface_app extends javax.swing.JFrame {
                     listenerC = new MyLiveQueryListener(listModelC, "Composant", db);
                     listenerC.loadInitialData(db);
                     monitorC = db.live("SELECT FROM Composant", listenerC);
+                    jList2.setModel(listModelC);
 
                     listenerE = new MyLiveQueryListener(listModelE, "Equipement", db);
                     listenerE.loadInitialData(db);
                     monitorE = db.live("SELECT FROM Equipement", listenerE);
+                    jList1.setModel(listModelE);
                 } catch (Exception e) {
                     printMessage("Erreur lors de la connexion : " + e.getMessage());
                 }
@@ -496,32 +515,42 @@ public class Interface_app extends javax.swing.JFrame {
             }
         }
     }.execute();
-    
-    /*Code JPanel8 fenêtre OrientDB */
-    JFXPanel jfxPanel = new JFXPanel();
-    Platform.runLater(() -> {
-        WebView webView = new WebView();
-        webView.getEngine().load("http://localhost:2480/studio/index.html#/database/test/graph");
-        jfxPanel.setScene(new Scene(webView, jPanel8.getWidth(), jPanel8.getHeight()));
-        jPanel8.setLayout(new BorderLayout());
-        jPanel8.add(jfxPanel, BorderLayout.CENTER);
-        jPanel8.validate();
-    });
-    /*Fin du code JPanel8 fenêtre OrientDB */
-
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void connexion_OrientDB() {
+        /*Code JPanel8 fenêtre OrientDB */
+        JFXPanel jfxPanel = new JFXPanel();
+        Platform.runLater(() -> {
+            WebView webView = new WebView();
+            webView.getEngine().load("http://localhost:2480/studio/index.html#/database/test/graph");
+            jfxPanel.setScene(new Scene(webView, jPanel8.getWidth(), jPanel8.getHeight()));
+            jPanel8.setLayout(new BorderLayout());
+            jPanel8.add(jfxPanel, BorderLayout.CENTER);
+            jPanel8.validate();
+        });
+    }
+    
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         if (pool == null) {
             printMessage("Action impossible, la connexion n'est pas établie");
             return;
         }
         try {
-            monitorC.unSubscribe();
-            monitorE.unSubscribe();
+            if (monitorC != null) {
+                monitorC.unSubscribe();
+                monitorC = null;
+            }
+            if (monitorE != null) {
+                monitorE.unSubscribe();
+                monitorE = null;
+            }
             if (pool != null && !pool.isClosed()) {
+                Thread.sleep(1000); // Give time for unsubscribe to complete
                 pool.close();
+                pool = null;
                 printMessage("Le pool de connexions a été fermé.");
+                jList1.setListData(new String[0]);
+                jList2.setListData(new String[0]);
             } else {
                 printMessage("Le pool de connexions est déjà fermé ou non initialisé.");
             }
@@ -879,6 +908,7 @@ public class Interface_app extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane5;
