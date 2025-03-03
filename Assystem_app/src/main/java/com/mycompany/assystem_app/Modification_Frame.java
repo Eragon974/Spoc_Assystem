@@ -41,7 +41,7 @@ public class Modification_Frame extends javax.swing.JFrame {
     public Modification_Frame(List<String> info, ODatabaseSession db) {
         this.db = db;
         this.info = info;
-        this.RID = info.get(11);
+        this.RID = info.get(10);
         filteredWords = new ArrayList<>();
         initComponents();
         for (String infos : info) {

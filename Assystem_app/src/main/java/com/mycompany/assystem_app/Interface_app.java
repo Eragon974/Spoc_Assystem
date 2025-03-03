@@ -11,18 +11,29 @@ import com.orientechnologies.orient.core.db.OLiveQueryMonitor;
 import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.db.OrientDBConfig;
 import com.orientechnologies.orient.core.db.OrientDBConfigBuilder;
+import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.OVertex;
+import com.orientechnologies.orient.core.sql.executor.OResult;
+import com.orientechnologies.orient.core.sql.executor.OResultSet;
 import com.orientechnologies.orient.core.id.ORecordId;
+
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 import javax.swing.DefaultListModel;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.table.DefaultTableModel;
+
 import org.apache.commons.text.similarity.LevenshteinDistance;
+
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.web.WebView;
 import java.awt.BorderLayout;
+
 
 
 public class Interface_app extends javax.swing.JFrame {
@@ -31,19 +42,31 @@ public class Interface_app extends javax.swing.JFrame {
     private OrientDB orientDB = new OrientDB("remote:localhost", OrientDBConfig.defaultConfig());
     private OrientDBConfigBuilder poolCfg = OrientDBConfig.builder()
         .addConfig(OGlobalConfiguration.DB_POOL_MIN, 5)
-        .addConfig(OGlobalConfiguration.DB_POOL_MAX, 10);
+        .addConfig(OGlobalConfiguration.DB_POOL_MAX, 20);
     private ODatabasePool pool;
     private MyLiveQueryListener listenerC;
-    private DefaultListModel<String> listModelC = new DefaultListModel<>();
+    private DefaultTableModel modelC;
+    
+    // Method to retrieve the model from MyLiveQueryListener
+    private DefaultListModel<String> listModelC;
     private OLiveQueryMonitor monitorC;
+    private DefaultTableModel modelE;
+    private DefaultListModel<String> listModelE;
     private MyLiveQueryListener listenerE;
-    private DefaultListModel<String> listModelE = new DefaultListModel<>();
     private OLiveQueryMonitor monitorE;
     private Ajout_BDD_Frame Ajout_BDD_Frame; 
     private Connexion_Frame Connexion_Frame;
     private Modification_Frame Modification_Frame;
     private Graphe Graphe;
+    private DefaultListModel<String> listModel;
+    private String className;
+    // Définition des en-têtes en HTML
+    private final String[] header = {
+    "Famille", "Type", "SousFamille", "Constructeur", "Tension", 
+    "Puiss.Unit", "Puiss.Trans", "Indice", "Origine", "ID"
+    };
     public Interface_app() {
+        modelC = new DefaultTableModel();
         initComponents();
         connexion_OrientDB();
     }
@@ -75,8 +98,8 @@ public class Interface_app extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jPanel7 = new javax.swing.JPanel();
         jTextField8 = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
@@ -92,8 +115,8 @@ public class Interface_app extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        jList2 = new javax.swing.JList<>();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
         jPanel6 = new javax.swing.JPanel();
         jButton6 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -109,9 +132,18 @@ public class Interface_app extends javax.swing.JFrame {
 
         jLabel10.setText("Equipement");
 
-        jList1.setModel(listModelE);
-
-        jScrollPane2.setViewportView(jList1);
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Famille", "Type", "Sous Famille", "Constructeur", "Tension(VCC)", "Puissance Unitaire(W)", "Puissance Transitoire(W)", "Indice de confiance", "Origine de consommation", "ID"
+            }
+        ));
+        jScrollPane3.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -121,11 +153,9 @@ public class Interface_app extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jScrollPane2))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel10)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -134,8 +164,8 @@ public class Interface_app extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2)
-                .addContainerGap())
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel7.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
@@ -180,7 +210,7 @@ public class Interface_app extends javax.swing.JFrame {
                     .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jTextField8, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addComponent(jLabel12)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -220,7 +250,7 @@ public class Interface_app extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
+            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jPanel3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
@@ -268,7 +298,7 @@ public class Interface_app extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -281,8 +311,18 @@ public class Interface_app extends javax.swing.JFrame {
 
         jLabel11.setText("Composant");
 
-        jList2.setModel(listModelC);
-        jScrollPane5.setViewportView(jList2);
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Famille", "Type", "Sous Famille", "Constructeur", "Tension(VCC)", "Puissance Unitaire(W)", "Puissance Transitoire(W)", "Indice de confiance", "Origine de consommation", "ID"
+            }
+        ));
+        jScrollPane4.setViewportView(jTable2);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -294,7 +334,7 @@ public class Interface_app extends javax.swing.JFrame {
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel11)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 684, Short.MAX_VALUE))
+                    .addComponent(jScrollPane4))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -303,8 +343,8 @@ public class Interface_app extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane5)
-                .addContainerGap())
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jButton6.setText("Deconnexion");
@@ -326,20 +366,21 @@ public class Interface_app extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(19, 19, 19))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(20, 20, 20))
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -354,7 +395,7 @@ public class Interface_app extends javax.swing.JFrame {
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(18, 18, 18)
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -369,11 +410,14 @@ public class Interface_app extends javax.swing.JFrame {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, 0)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -383,11 +427,11 @@ public class Interface_app extends javax.swing.JFrame {
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1325, Short.MAX_VALUE)
+            .addGap(0, 1410, Short.MAX_VALUE)
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 579, Short.MAX_VALUE)
+            .addGap(0, 950, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Orient DB", jPanel8);
@@ -410,7 +454,7 @@ public class Interface_app extends javax.swing.JFrame {
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addContainerGap(1133, Short.MAX_VALUE))
+                .addContainerGap(1218, Short.MAX_VALUE))
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -419,7 +463,7 @@ public class Interface_app extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(510, Short.MAX_VALUE))
+                .addContainerGap(881, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Création de bilan de puissance", jPanel9);
@@ -431,12 +475,12 @@ public class Interface_app extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(10, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -444,79 +488,6 @@ public class Interface_app extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
         
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        if (pool == null) {
-            printMessage("Action impossible, la connexion n'est pas établie");
-            return;
-        }  
-        Ajout_BDD_Frame = new Ajout_BDD_Frame(pool,this);
-        Ajout_BDD_Frame.setVisible(true);
-        
-    }//GEN-LAST:event_jButton2ActionPerformed
-    
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
-        if (pool != null && !pool.isClosed()) {
-            printMessage("Action impossible, connexion déjà établie");
-            return;
-        }
-        Connexion_Frame connexionFrame = new Connexion_Frame(this);
-        // Afficher la fenêtre de connexion
-        connexionFrame.setVisible(true);
-        
-        // Utiliser un SwingWorker pour attendre l'interaction de l'utilisateur
-        new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                // Attendre que l'utilisateur ait terminé (polling)
-                while (connexionFrame.isVisible()) {
-                    Thread.sleep(100); // Polling interval (100ms)
-                }
-                return null;
-            }
-
-            @Override
-            protected void done() {
-            // Récupération des informations après la fermeture de la fenêtre
-            String BDD = connexionFrame.getBDD();
-            String User = connexionFrame.getUser();
-            String Password = connexionFrame.getPassword();
-
-            if (BDD != null && User != null && Password != null) {
-                try {
-                    // Initialisation du pool
-                    pool = new ODatabasePool(orientDB, BDD, User, Password, poolCfg.build());
-                    printMessage("Connexion réussie à la base de données : " + BDD);
-
-                    ODatabaseSession db = pool.acquire();
-                    if (!db.getMetadata().getSchema().existsClass("Composant")) {
-                        db.getMetadata().getSchema().createClass("Composant", db.getMetadata().getSchema().getClass("V"));
-                        printMessage("La classe Composant a été créée dans le schéma.");
-                    }
-                    if (!db.getMetadata().getSchema().existsClass("Equipement")) {
-                        db.getMetadata().getSchema().createClass("Equipement", db.getMetadata().getSchema().getClass("V"));
-                        printMessage("La classe Equipement a été créée dans le schéma.");
-                    }
-
-                    listenerC = new MyLiveQueryListener(listModelC, "Composant", db);
-                    listenerC.loadInitialData(db);
-                    monitorC = db.live("SELECT FROM Composant", listenerC);
-                    jList2.setModel(listModelC);
-
-                    listenerE = new MyLiveQueryListener(listModelE, "Equipement", db);
-                    listenerE.loadInitialData(db);
-                    monitorE = db.live("SELECT FROM Equipement", listenerE);
-                    jList1.setModel(listModelE);
-                } catch (Exception e) {
-                    printMessage("Erreur lors de la connexion : " + e.getMessage());
-                }
-            } else {
-                printMessage("Connexion annulée par l'utilisateur.");
-            }
-        }
-    }.execute();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     private void connexion_OrientDB() {
         /*Code JPanel8 fenêtre OrientDB */
         JFXPanel jfxPanel = new JFXPanel();
@@ -530,6 +501,24 @@ public class Interface_app extends javax.swing.JFrame {
         });
     }
     
+    private boolean isMatch(String input, String element, LevenshteinDistance levenshtein) {
+        // Diviser l'élément en mots
+        String[] words = element.split("\\s+");
+        for (String word : words) {
+            if (word.startsWith("ID:")) continue; // Ignorer les IDs
+            int distance = levenshtein.apply(input, word.toLowerCase());
+            if (distance <= 3) { // Ajustez le seuil
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        Graphe = new Graphe(pool,this);
+        Graphe.setVisible(true);
+    }//GEN-LAST:event_jButton7ActionPerformed
+
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         if (pool == null) {
             printMessage("Action impossible, la connexion n'est pas établie");
@@ -549,143 +538,166 @@ public class Interface_app extends javax.swing.JFrame {
                 pool.close();
                 pool = null;
                 printMessage("Le pool de connexions a été fermé.");
-                jList1.setListData(new String[0]);
-                jList2.setListData(new String[0]);
+                jTable1.setModel(new javax.swing.table.DefaultTableModel());
+                jTable2.setModel(new javax.swing.table.DefaultTableModel());
             } else {
                 printMessage("Le pool de connexions est déjà fermé ou non initialisé.");
             }
+        } catch (InterruptedException ie) {
+            printMessage("Interrupted lors de la fermeture des connexions : " + ie.getMessage());
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             printMessage("Erreur lors de la fermeture des connexions : " + e.getMessage());
-            e.printStackTrace();
         }
     }//GEN-LAST:event_jButton6ActionPerformed
 
-    private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
-        String input = getTextFromAccessibleName("Recherche");
-        LevenshteinDistance levenshtein = new LevenshteinDistance();
+    // Fonction pour charger les données initiales dans un DefaultTableModel
+    private DefaultTableModel loadInitialDataIntoTableModel(ODatabaseSession db, String className) {
+    // Initialiser les colonnes de votre table
+    String[] columnNames = {
+        "Famille", "Type", "Sous Famille", "Constructeur",
+        "Tension(VCC)", "Puissance Unitaire(W)", "Puissance Transitoire(W)",
+        "Indice de confiance", "Origine de consommation", "ID"
+    };
+    DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
-        // Préparer des listes temporaires pour les résultats filtrés
-        List<String> closestMatch1 = new ArrayList<>();
-        List<String> closestMatch2 = new ArrayList<>();
-        List<String> listModelCArray = new ArrayList<>();
-        List<String> listModelEArray = new ArrayList<>();
-
-        // Filtrage pour la première JList
-
-        for (int i = 0; i < listModelE.getSize(); i++) {
-            listModelEArray.add(listModelE.getElementAt(i));
-        }
-
-        for (int i = 0; i < listModelC.getSize(); i++) {
-            listModelCArray.add(listModelC.getElementAt(i));
-        }
-
-        // Recherche dans la première liste
-
-        for (int i = 0; i < listModelEArray.size(); i++) {
-            String element = listModelEArray.get(i);
-            if (isMatch(input, element, levenshtein)) {
-                closestMatch1.add(element);
-            }
-        }
-
-        // Filtrage pour la deuxième JList
-        for (int i = 0; i < listModelCArray.size(); i++) {
-            String element = listModelCArray.get(i);
-            if (isMatch(input, element, levenshtein)) {
-                closestMatch2.add(element);
-            }
-        }
-        printMessage(closestMatch1.toString());
-        printMessage(closestMatch2.toString());
-
-        // Mettre à jour les listes avec les éléments les plus proches
-        if (!closestMatch1.isEmpty()) {
-            jList1.setListData(closestMatch1.toArray(new String[0]));
-        } else if (input.isEmpty()) {
-            printMessage("input vide");
-            jList1.setListData(listModelEArray.toArray(new String[0]));
-        }
-        else {
-            printMessage("Aucun élément trouvé dans la liste 1" + listModelEArray.toString());
-            jList1.setListData(listModelEArray.toArray(new String[0]));
-        }
-
-        if (!closestMatch2.isEmpty()) {
-            jList2.setListData(closestMatch2.toArray(new String[0]));
-        } else if(input.isEmpty()){
-            printMessage("input vide");
-            jList2.setListData(listModelCArray.toArray(new String[0]));
-        }
-        else{
-            printMessage("Aucun élément trouvé dans la liste 2" + listModelCArray.toString());
-            jList2.setListData(listModelCArray.toArray(new String[0]));
-        }
-    }//GEN-LAST:event_jTextField8ActionPerformed
-
-    private boolean isMatch(String input, String element, LevenshteinDistance levenshtein) {
-        // Diviser l'élément en mots
-        String[] words = element.split("\\s+");
-        for (String word : words) {
-            if (word.startsWith("ID:")) continue; // Ignorer les IDs
-            int distance = levenshtein.apply(input, word.toLowerCase());
-            if (distance <= 3) { // Ajustez le seuil
-                return true;
-            }
-        }
-        return false;
+    // Initialiser listModel si ce n'est pas déjà fait
+    if (className.equals("Composant") && listModelC == null) {
+        listModelC = new DefaultListModel<>();
+    } else if (className.equals("Equipement") && listModelE == null) {
+        listModelE = new DefaultListModel<>();
     }
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    // Charger les données depuis la base de données
+    try (OResultSet rs = db.query("SELECT * FROM " + className)) {
+        while (rs.hasNext()) {
+            OResult item = rs.next();
+            Object[] rowData = {
+                item.getProperty("Famille"),
+                item.getProperty("Type"),
+                item.getProperty("Sous Famille"),
+                item.getProperty("Constructeur"),
+                item.getProperty("Tension(VCC)"),
+                item.getProperty("Puissance Unitaire(W)"),
+                item.getProperty("Puissance Transitoire(W)"),
+                item.getProperty("Indice de confiance"),
+                item.getProperty("Origine de consommation"),
+                // ID placed as the last column
+                item.getIdentity().toString().replaceAll("Optional\\[(.*)\\]", "$1")
+            };
+            model.addRow(rowData);
+        }
+    }
+    return model;
+    }
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         if (pool == null) {
             printMessage("Action impossible, la connexion n'est pas établie");
             return;
-        }        
-        ODatabaseSession db = pool.acquire();
+        }
+        Ajout_BDD_Frame = new Ajout_BDD_Frame(pool,this);
+        Ajout_BDD_Frame.setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
 
-        // Récupérer les éléments sélectionnés dans jList1 et jList4
-        List<String> selectedItemsList1 = jList1.getSelectedValuesList();
-        List<String> selectedItemsList2 = jList2.getSelectedValuesList();
+    
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+    if (pool != null && !pool.isClosed()) {
+        printMessage("Action impossible, connexion déjà établie");
+        return;
+    }//GEN-LAST:event_jButton1ActionPerformed
 
-        // Supprimer les éléments sélectionnés de la base de données
-        for (String item : selectedItemsList1) {
-            try {
-                // Extraire l'ID du vertex (dernière partie du texte dans l'élément de jList)
-                String[] parts = item.split("ID: ");  // Assure que l'ID est après "ID: "
-                if (parts.length > 1) {
-                    String vertexId = parts[1];  // ID récupéré
-                    ORecordId recordId = new ORecordId(vertexId);
-                    OVertex vertex = db.load(recordId); 
-                    if (vertex != null) {
-                        vertex.delete();  // Supprimer le vertex
-                    }
-                }
-            } catch (Exception e) {
-                System.err.println("Erreur lors de la suppression : " + e.getMessage());
+    Connexion_Frame connexionFrame = new Connexion_Frame(this);
+    connexionFrame.setVisible(true);
+
+    new SwingWorker<Void, Void>() {
+        @Override
+        protected Void doInBackground() throws Exception {
+            // Attendre que l'utilisateur termine (polling)
+            while (connexionFrame.isVisible()) {
+                Thread.sleep(100); // Intervalle de polling (100ms)
             }
+            return null;
         }
 
-        for (String item : selectedItemsList2) {
-            try {
-                // Extraire l'ID du vertex (dernière partie du texte dans l'élément de jList)
-                String[] parts = item.split("ID: ");
-                if (parts.length > 1) {
-                    String vertexId = parts[1];  // ID récupéré
-                    ORecordId recordId = new ORecordId(vertexId);
-                    OVertex vertex = db.load(recordId);  
-                    if (vertex != null) {
-                        vertex.delete();  // Supprimer le vertex
-                    }
+        @Override
+        protected void done() {
+            // Récupérer les informations de connexion après la fermeture de la fenêtre
+            String BDD = connexionFrame.getBDD();
+            String User = connexionFrame.getUser();
+            String Password = connexionFrame.getPassword();
+
+            if (BDD != null && User != null && Password != null) {
+                try {
+                    // Initialiser le pool de connexions
+                    pool = new ODatabasePool(orientDB, BDD, User, Password, poolCfg.build());
+                    printMessage("Connexion réussie à la base de données : " + BDD);
+
+                    // SwingWorker pour charger les données d'Equipement
+                    new SwingWorker<DefaultTableModel, Void>() {
+                        @Override
+                        protected DefaultTableModel doInBackground() throws Exception {
+                            try (ODatabaseSession db = pool.acquire()) {
+                                // Créer les classes si elles n'existent pas
+                                if (!db.getMetadata().getSchema().existsClass("Equipement")) {
+                                    db.getMetadata().getSchema().createClass("Equipement", db.getMetadata().getSchema().getClass("V"));
+                                    printMessage("La classe Equipement a été créée dans le schéma.");
+                                }
+                                // Charger les données pour Equipement
+                                modelE = loadInitialDataIntoTableModel(db, "Equipement");
+                                return modelE;
+                            }
+                        }
+
+                        @Override
+                        protected void done() {
+                            try {
+                                listenerE = new MyLiveQueryListener(jTable1, "Equipement",pool.acquire(),modelE,modelC);
+                                listenerE.loadInitialData();
+                                monitorE = pool.acquire().live("SELECT FROM Equipement", listenerE);
+                            } catch (Exception e) {
+                                printMessage("Erreur d'exécution lors du chargement des données pour Equipement : " + e.getMessage());
+                            }
+                        }
+                    }.execute();
+
+                    // SwingWorker pour charger les données de Composant
+                    new SwingWorker<DefaultTableModel, Void>() {
+                        @Override
+                        protected DefaultTableModel doInBackground() throws Exception {
+                            try (ODatabaseSession db = pool.acquire()) {
+                                // Créer les classes si elles n'existent pas
+                                if (!db.getMetadata().getSchema().existsClass("Composant")) {
+                                    db.getMetadata().getSchema().createClass("Composant", db.getMetadata().getSchema().getClass("V"));
+                                    printMessage("La classe Composant a été créée dans le schéma.");
+                                }
+                                // Charger les données pour Composant
+                                modelC = loadInitialDataIntoTableModel(db, "Composant");
+                                return modelC;
+                            }
+                        }
+                        
+                        @Override
+                        protected void done() {
+                            try {
+                                listenerC = new MyLiveQueryListener(jTable2, "Composant", pool.acquire(),modelE,modelC);
+                                listenerC.loadInitialData();
+                                monitorC = pool.acquire().live("SELECT FROM Composant", listenerC);
+                            } catch (Exception e) {
+                                printMessage("Erreur lors du chargement des données pour Composant : " + e.getMessage());
+                            }
+                        }
+                    }.execute();
+
+                } catch (Exception e) {
+                    printMessage("Erreur lors de la connexion : " + e.getMessage());
                 }
-            } catch (Exception e) {
-                System.err.println("Erreur lors de la suppression : " + e.getMessage());
+            } else {
+                printMessage("Connexion annulée par l'utilisateur.");
             }
         }
-
-        // Afficher un message de confirmation
-        printMessage("Éléments supprimés avec succès !");
-
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }.execute();
+}
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         if (pool == null) {
@@ -693,145 +705,245 @@ public class Interface_app extends javax.swing.JFrame {
             return;
         }
         ODatabaseSession db = pool.acquire();
-        // Liste des propriétés associées à filteredWords
+        // Liste des propriétés associées
         String[] propertyKeys = {
-            "Famille", 
+            "Famille",
             "Type",
             "Sous Famille",
-            "Constructeur", 
-            "Tension(VCC)", 
-            "Puissance Unitaire(W)", 
-            "Puissance Transitoire(W)", 
-            "Indice de confiance", 
-            "Origine de consommation"
+            "Constructeur",
+            "Tension(VCC)",
+            "Puissance Unitaire(W)",
+            "Puissance Transitoire(W)",
+            "Indice de confiance",
+            "Origine de consommation",
         };
-        List<String> selectedItemsList1 = jList1.getSelectedValuesList();
-        List<String> selectedItemsList2 = jList2.getSelectedValuesList();
-        if (selectedItemsList1.isEmpty() && selectedItemsList2.isEmpty()){
+        // Récupérer les lignes sélectionnées dans jTable1
+        int[] selectedRows1 = jTable1.getSelectedRows();
+        // Récupérer les lignes sélectionnées dans jTable2
+        int[] selectedRows2 = jTable2.getSelectedRows();
+        if (selectedRows1.length == 0 && selectedRows2.length == 0){
             printMessage("Pas d'éléments sélectionnés pour la duplication");
             return;
         }
-        for (String item : selectedItemsList1){
-            String[] info = item.split("\\s+");
-
-            // Filter out the word that starts with "ID:"
-            List<String> filteredWords = new ArrayList<>();
-            for (String infos : info) {
-                if (!infos.startsWith("ID:") && !infos.startsWith("#")) {
-                    filteredWords.add(infos.trim());
-                }
+        // Duplication pour jTable1 (Equipement)
+        for (int row : selectedRows1) {
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            List<String> rowValues = new ArrayList<>();
+            for (int col = 0; col < 9; col++) {
+                Object value = model.getValueAt(row, col);
+                rowValues.add(value != null ? value.toString().trim() : "");
             }
             try {
-                printMessage("Tentative de duplication du/des vertex");
+                printMessage("Tentative de duplication du vertex Equipement");
                 OVertex v = db.newVertex("Equipement");
-                    // Parcours de filteredWords et définition des propriétés
-                for (int i = 0; i <= 8; i++) {
-                    v.setProperty(propertyKeys[i], filteredWords.get(i));
+                for (int i = 0; i < propertyKeys.length; i++) {
+                    v.setProperty(propertyKeys[i], rowValues.get(i));
                 }
-                // Sauvegarde de l'objet
-                v.save();
-                printMessage("Le/Les Vertex ont bien été dupliqués");
+                // Utiliser db.save(v) pour éviter l'utilisation de la méthode dépréciée
+                db.save(v);
+                printMessage("Le Vertex Equipement a bien été dupliqué");
             } catch (Exception e) {
-                printMessage("Erreur lors de la duplication : " + e.getMessage());
-                e.printStackTrace();
+                printMessage("Erreur lors de la duplication (Equipement) : " + e.getMessage());
+                // Remplacer e.printStackTrace() par un log via printMessage
+                // e.printStackTrace();
             }
         }
-        for (String item : selectedItemsList2){
-            String[] info = item.split("\\s+");
-
-            // Filter out the word that starts with "ID:"
-            List<String> filteredWords = new ArrayList<>();
-            for (String infos : info) {
-                if (!infos.startsWith("ID:") && !infos.startsWith("#")) {
-                    filteredWords.add(infos.trim());
-                }
+        // Duplication pour jTable2 (Composant)
+        for (int row : selectedRows2) {
+            DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+            List<String> rowValues = new ArrayList<>();
+            for (int col = 0; col < 9; col++) {
+                Object value = model.getValueAt(row, col);
+                rowValues.add(value != null ? value.toString().trim() : "");
             }
             try {
-                printMessage("Tentative de duplication du/des vertex");
+                printMessage("Tentative de duplication du vertex Composant");
                 OVertex v = db.newVertex("Composant");
-                    // Parcours de filteredWords et définition des propriétés
-                for (int i = 0; i <= 8; i++) {
-                    v.setProperty(propertyKeys[i], filteredWords.get(i));
+                for (int i = 0; i < propertyKeys.length; i++) {
+                    v.setProperty(propertyKeys[i], rowValues.get(i));
                 }
-                // Sauvegarde de l'objet
-                v.save();
-                printMessage("Le/Les Vertex ont bien été dupliqués");
+                // Utiliser db.save(v) pour éviter l'utilisation de la méthode dépréciée
+                db.save(v);
+                printMessage("Le Vertex Composant a bien été dupliqué");
             } catch (Exception e) {
-                printMessage("Erreur lors de la duplication : " + e.getMessage());
-                e.printStackTrace();
+                printMessage("Erreur lors de la duplication (Composant) : " + e.getMessage());
+                // Remplacer e.printStackTrace() par un log via printMessage
+                // e.printStackTrace();
             }
         }
-        
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        Graphe = new Graphe(pool,this);
-        Graphe.setVisible(true);
-    }//GEN-LAST:event_jButton7ActionPerformed
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        if (pool == null) {
+            printMessage("Action impossible, la connexion n'est pas établie");
+            return;
+        }
+        ODatabaseSession db = pool.acquire();
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+        // Récupérer les éléments sélectionnés dans jTable1 et jTable2
+        int[] selectedRows1 = jTable1.getSelectedRows();
+        int[] selectedRows2 = jTable2.getSelectedRows();
+
+        // Supprimer les éléments sélectionnés de la base de données pour jTable1 (Equipement)
+        for (int row : selectedRows1) {
+            try {
+                // Récupérer l'ID du vertex depuis le modèle (colonne 9)
+                Object idValue = jTable1.getModel().getValueAt(row, 9);
+                if (idValue != null) {
+                    String vertexId = idValue.toString();
+                    ORecordId recordId = new ORecordId(vertexId);
+                    OVertex vertex = db.load(recordId);
+                    if (vertex != null) {
+                        db.delete(vertex);  // Supprimer le vertex via le pool
+                        printMessage("Éléments supprimés avec succès !");
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Erreur lors de la suppression (Equipement) : " + e.getMessage());
+            }
+        }
+
+        // Supprimer les éléments sélectionnés de la base de données pour jTable2 (Composant)
+        for (int row : selectedRows2) {
+            try {
+                // Récupérer l'ID du vertex depuis le modèle (colonne 9)
+                Object idValue = jTable2.getModel().getValueAt(row, 9);
+                if (idValue != null) {
+                    String vertexId = idValue.toString();
+                    ORecordId recordId = new ORecordId(vertexId);
+                    OVertex vertex = db.load(recordId);
+                    if (vertex != null) {
+                        db.delete(vertex);  // Supprimer le vertex via le pool
+                        printMessage("Éléments supprimés avec succès !");
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Erreur lors de la suppression (Composant) : " + e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
+        String input = getTextFromAccessibleName("Recherche").trim().toLowerCase();
+        // Si la recherche est vide, restaurer les modèles d'origine
+        if (input.isEmpty()) {
+            jTable1.setModel(modelE);
+            jTable2.setModel(modelC);
+            return;
+        }
+        LevenshteinDistance levenshtein = new LevenshteinDistance();
+
+        // Filtrer jTable1 (par exemple, Equipement)
+        DefaultTableModel originalModel1 = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel filteredModel1 = new DefaultTableModel();
+        int colCount1 = originalModel1.getColumnCount();
+        for (int col = 0; col < colCount1; col++) {
+            filteredModel1.addColumn(originalModel1.getColumnName(col));
+        }
+        int rowCount1 = originalModel1.getRowCount();
+        for (int i = 0; i < rowCount1; i++) {
+            boolean matches = false;
+            for (int j = 0; j < colCount1; j++) {
+            Object value = originalModel1.getValueAt(i, j);
+            if (value != null) {
+                String text = value.toString().toLowerCase();
+                if (isMatch(input, text, levenshtein)) {
+                matches = true;
+                break;
+                }
+            }
+            }
+            if (matches) {
+            filteredModel1.addRow((Vector) originalModel1.getDataVector().elementAt(i));
+            }
+        }
+        if (filteredModel1.getRowCount() == 0) {
+            printMessage("Aucun élément trouvé dans jTable1, restauration de la table d'origine.");
+            jTable1.setModel(modelE);
+        } else {
+            jTable1.setModel(filteredModel1);
+        }
+
+        // Filtrer jTable2 (par exemple, Composant)
+        DefaultTableModel originalModel2 = (DefaultTableModel) jTable2.getModel();
+        DefaultTableModel filteredModel2 = new DefaultTableModel();
+        int colCount2 = originalModel2.getColumnCount();
+        for (int col = 0; col < colCount2; col++) {
+            filteredModel2.addColumn(originalModel2.getColumnName(col));
+        }
+        int rowCount2 = originalModel2.getRowCount();
+        for (int i = 0; i < rowCount2; i++) {
+            boolean matches = false;
+            for (int j = 0; j < colCount2; j++) {
+            Object value = originalModel2.getValueAt(i, j);
+            if (value != null) {
+                String text = value.toString().toLowerCase();
+                if (isMatch(input, text, levenshtein)) {
+                matches = true;
+                break;
+                }
+            }
+            }
+            if (matches) {
+            filteredModel2.addRow((Vector) originalModel2.getDataVector().elementAt(i));
+            }
+        }
+        if (filteredModel2.getRowCount() == 0) {
+            printMessage("Aucun élément trouvé dans jTable2, restauration de la table d'origine.");
+            jTable2.setModel(modelC);
+        } else {
+            jTable2.setModel(filteredModel2);
+        }
+    }//GEN-LAST:event_jTextField8ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent unusedEvt) {                                         
         if (pool == null) {
             printMessage("Action impossible, la connexion n'est pas établie");
             return;
         }  
         ODatabaseSession db = pool.acquire();
-        // Liste des propriétés associées à filteredWords
         
-        List<String> selectedItemsList1 = new ArrayList<>(jList1.getSelectedValuesList()); // Créer une nouvelle liste modifiable
-        List<String> selectedItemsList2 = new ArrayList<>(jList2.getSelectedValuesList());
-        if (selectedItemsList1.isEmpty() && selectedItemsList2.isEmpty()){
+        // Vérifier s'il y a des lignes sélectionnées dans l'une ou l'autre JTable
+        int[] selectedRows1 = jTable1.getSelectedRows();
+        int[] selectedRows2 = jTable2.getSelectedRows();
+        if (selectedRows1.length == 0 && selectedRows2.length == 0) {
             printMessage("Pas d'éléments sélectionnés pour la modification");
             return;
         }
-        List<String> infoE = new ArrayList<>();
-        List<String> infoC = new ArrayList<>();
-        infoE.add("Equipement"); // Ajouter "Equipement" comme premier élément
-        infoC.add("Composant"); // Ajouter "Equipement" comme premier élément
-        // Parcourir les éléments et les ajouter à la liste info
-        for (String item : selectedItemsList1) {
-            // Découper chaque item et ajouter chaque partie à info
-            String[] parts = item.split("\\s+");
-            System.out.println(parts);
-            infoE.addAll(Arrays.asList(parts));
-            
-            Modification_Frame modificationFrame = new Modification_Frame(infoE,db);
-            // Afficher la fenêtre de connexion
+        
+        // Modification pour jTable1 (Equipement)
+        DefaultTableModel localModelE = (DefaultTableModel) jTable1.getModel();
+        int columnCountE = localModelE.getColumnCount();
+        for (int row : selectedRows1) {
+            List<String> infoE = new ArrayList<>();
+            // Ajouter "Equipement" comme premier élément
+            infoE.add("Equipement");
+            // Récupérer toutes les colonnes de la ligne sélectionnée sauf le dernier (par exemple, l'ID)
+            for (int col = 0; col < columnCountE; col++) {
+                Object value = localModelE.getValueAt(row, col);
+                infoE.add(value != null ? value.toString().trim() : "");
+            }
+            Modification_Frame modificationFrame = new Modification_Frame(infoE, db);
             modificationFrame.setVisible(true);
-
-            // Utiliser un SwingWorker pour attendre l'interaction de l'utilisateur
-            new SwingWorker<Void, Void>() {
-                @Override
-                protected Void doInBackground() throws Exception {
-                   // Attendre que l'utilisateur ait terminé (polling)
-                    while (modificationFrame.isVisible()) {
-                        Thread.sleep(100); // Polling interval (100ms)
-                    }
-                    return null;
-                }     
-            }.execute();
-        }
-        for (String item : selectedItemsList2){
-            String[] parts = item.split("\\s+");
-            infoC.addAll(Arrays.asList(parts));            
-            Modification_Frame modificationFrame = new Modification_Frame(infoC,db);
-            // Afficher la fenêtre de connexion
-            modificationFrame.setVisible(true);
-
-            // Utiliser un SwingWorker pour attendre l'interaction de l'utilisateur
-            new SwingWorker<Void, Void>() {
-                @Override
-                protected Void doInBackground() throws Exception {
-                   // Attendre que l'utilisateur ait terminé (polling)
-                    while (modificationFrame.isVisible()) {
-                        Thread.sleep(100); // Polling interval (100ms)
-                    }
-                    return null;
-                }       
-            }.execute();
         }
         
-    }                                        
-
+        // Modification pour jTable2 (Composant)
+        DefaultTableModel localModelC = (DefaultTableModel) jTable2.getModel();
+        int columnCountC = localModelC.getColumnCount();
+        for (int row : selectedRows2) {
+            List<String> infoC = new ArrayList<>();
+            // Ajouter "Composant" comme premier élément
+            infoC.add("Composant");
+            // Récupérer toutes les colonnes de la ligne sélectionnée sauf le dernier (par exemple, l'ID)
+            for (int col = 0; col < columnCountC; col++) {
+                Object value = localModelC.getValueAt(row, col);
+                infoC.add(value != null ? value.toString().trim() : "");
+            }
+            Modification_Frame modificationFrame = new Modification_Frame(infoC, db);
+            modificationFrame.setVisible(true);
+        } 
+    }//GEN-LAST:event_jButton5ActionPerformed
+    
     public String getTextFromAccessibleName(String accessibleName) {
         return getTextFromAccessibleNameRecursive(getContentPane(), accessibleName);
     }
@@ -898,8 +1010,6 @@ public class Interface_app extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JList<String> jList1;
-    private javax.swing.JList<String> jList2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -910,9 +1020,11 @@ public class Interface_app extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField8;
     // End of variables declaration//GEN-END:variables
