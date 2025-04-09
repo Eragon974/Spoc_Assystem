@@ -3,6 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.assystem_app;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.record.OVertex;
@@ -58,7 +61,7 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
 
         jPanel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Equipement", "Composant" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {"Composant", "Equipement"}));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
@@ -268,7 +271,7 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
         String PuissanceEqtFermé= "NULL";
         String PuissanceEqtOuverte= "NULL";
         String className = getTextFromAccessibleName("Add_Classe");
-        if (className.equals("Composant")){
+        if (className.equals("Equipement")){
             famille = getTextFromAccessibleName("Add_1");
             sousFamille = getTextFromAccessibleName("Add_2");
             type = getTextFromAccessibleName("Add_3");
@@ -288,7 +291,7 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
             if (puissanceTransitoire.isEmpty()) puissanceTransitoire = "NULL";
             if (indice.isEmpty()) indice = "NULL";
             if (origineConsommation.isEmpty()) origineConsommation = "NULL";
-        }else if (className.equals("Equipement")){
+        }else if (className.equals("Composant")){
             type = getTextFromAccessibleName("Add_1");
             constructeur = getTextFromAccessibleName("Add_2");
             TensionCircuiPuissance = getTextFromAccessibleName("Add_3");

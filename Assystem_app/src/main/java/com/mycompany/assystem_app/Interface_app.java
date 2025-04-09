@@ -550,9 +550,9 @@ public class Interface_app extends javax.swing.JFrame {
     private DefaultTableModel loadInitialDataIntoTableModel(ODatabaseSession db, String className) {
         String[] columnNames;
         DefaultTableModel model;
-
+    
         // Choisir les colonnes en fonction du type
-        if (className.equals("Composant")) {
+        if (className.equals("Equipement")) {
             columnNames = new String[]{
                 "Famille", "Type", "Sous Famille", "Constructeur",
                 "Tension(VCC)", "Puissance Unitaire(W)", "Puissance Transitoire(W)",
@@ -583,8 +583,8 @@ public class Interface_app extends javax.swing.JFrame {
             while (rs.hasNext()) {
                 OResult item = rs.next();
                 Object[] rowData;
-
-                if (className.equals("Composant")) {
+    
+                if (className.equals("Equipement")) {
                     rowData = new Object[]{
                         item.getProperty("Famille"),
                         item.getProperty("Type"),
@@ -597,25 +597,29 @@ public class Interface_app extends javax.swing.JFrame {
                         item.getProperty("Origine de consommation"),
                         item.getIdentity().toString().replaceAll("Optional\\[(.*)\\]", "$1")
                     };
-                } else if (className.equals("Equipement")) {
+
+                } else if (className.equals("Composant")) {
                     rowData = new Object[]{
                         item.getProperty("Type"),
                         item.getProperty("Constructeur"),
-                        item.getProperty("Tension circuit puissance (V)"),
-                        item.getProperty("Tension Circuit de commande (V)"),
-                        item.getProperty("Puissance Unitaire consommée (W)"),
+                        item.getProperty("Tension Circuit Puissance"),
+                        item.getProperty("Tension Circuit de commande"),
+                        item.getProperty("Puissance Unitaire consommée"),
                         item.getProperty("Puissance Eqt fermé"),
                         item.getProperty("Puissance Eqt ouverte"),
-                        item.getProperty("Indice de Confiance"),
-                        item.getProperty("Origine consommation"),
+                        item.getProperty("Indice de confiance"),
+                        item.getProperty("Origine de consommation"),
                         item.getIdentity().toString().replaceAll("Optional\\[(.*)\\]", "$1")
+                        
                     };
+                    
                 } else {
                     rowData = new Object[]{
                         item.getIdentity().toString().replaceAll("Optional\\[(.*)\\]", "$1")
                     };
                 }
-            model.addRow(rowData);
+                model.addRow(rowData);
+                printMessage(model.getDataVector().toString());
             }
         }
         return model;
@@ -759,73 +763,70 @@ public class Interface_app extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 //Barre de Recherche
     private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
-        String input = getTextFromAccessibleName("Recherche").trim().toLowerCase();
-        // Si la recherche est vide, restaurer les modèles d'origine
-        if (input.isEmpty()) {
+        String searchInput = getTextFromAccessibleName("Recherche").trim().toLowerCase();
+        if (searchInput.isEmpty()) {
             jTable1.setModel(modelE);
             jTable2.setModel(modelC);
             return;
         }
+
         LevenshteinDistance levenshtein = new LevenshteinDistance();
 
-        // Filtrer jTable1 (par exemple, Equipement)
-        DefaultTableModel originalModel1 = (DefaultTableModel) jTable1.getModel();
+        // Filter for jTable1 (Equipement)
         DefaultTableModel filteredModel1 = new DefaultTableModel();
-        int colCount1 = originalModel1.getColumnCount();
-        for (int col = 0; col < colCount1; col++) {
-            filteredModel1.addColumn(originalModel1.getColumnName(col));
+        for (int col = 0; col < modelE.getColumnCount(); col++) {
+            filteredModel1.addColumn(modelE.getColumnName(col));
         }
-        int rowCount1 = originalModel1.getRowCount();
-        for (int i = 0; i < rowCount1; i++) {
-            boolean matches = false;
-            for (int j = 0; j < colCount1; j++) {
-            Object value = originalModel1.getValueAt(i, j);
-            if (value != null) {
-                String text = value.toString().toLowerCase();
-                if (isMatch(input, text, levenshtein)) {
-                matches = true;
+        boolean foundMatch1 = false;
+        for (int i = 0; i < modelE.getRowCount(); i++) {
+            boolean rowMatches = false;
+            for (int j = 0; j < modelE.getColumnCount(); j++) {
+            Object valueObj = modelE.getValueAt(i, j);
+            if (valueObj != null) {
+                String valueText = valueObj.toString().toLowerCase();
+                // Accept as match if similarity is high (distance <= 3)
+                if (levenshtein.apply(searchInput, valueText) <= 3) {
+                rowMatches = true;
                 break;
                 }
             }
             }
-            if (matches) {
-            filteredModel1.addRow((Vector) originalModel1.getDataVector().elementAt(i));
+            if (rowMatches) {
+            filteredModel1.addRow((Vector) modelE.getDataVector().elementAt(i));
+            foundMatch1 = true;
             }
         }
-        if (filteredModel1.getRowCount() == 0) {
+        if (!foundMatch1) {
             printMessage("Aucun élément trouvé dans jTable1, restauration de la table d'origine.");
-            jTable1.setModel(modelE);
         } else {
             jTable1.setModel(filteredModel1);
         }
 
-        // Filtrer jTable2 (par exemple, Composant)
-        DefaultTableModel originalModel2 = (DefaultTableModel) jTable2.getModel();
+        // Filter for jTable2 (Composant)
         DefaultTableModel filteredModel2 = new DefaultTableModel();
-        int colCount2 = originalModel2.getColumnCount();
-        for (int col = 0; col < colCount2; col++) {
-            filteredModel2.addColumn(originalModel2.getColumnName(col));
+        for (int col = 0; col < modelC.getColumnCount(); col++) {
+            filteredModel2.addColumn(modelC.getColumnName(col));
         }
-        int rowCount2 = originalModel2.getRowCount();
-        for (int i = 0; i < rowCount2; i++) {
-            boolean matches = false;
-            for (int j = 0; j < colCount2; j++) {
-            Object value = originalModel2.getValueAt(i, j);
-            if (value != null) {
-                String text = value.toString().toLowerCase();
-                if (isMatch(input, text, levenshtein)) {
-                matches = true;
+        boolean foundMatch2 = false;
+        for (int i = 0; i < modelC.getRowCount(); i++) {
+            boolean rowMatches = false;
+            for (int j = 0; j < modelC.getColumnCount(); j++) {
+            Object valueObj = modelC.getValueAt(i, j);
+            if (valueObj != null) {
+                String valueText = valueObj.toString().toLowerCase();
+                if (levenshtein.apply(searchInput, valueText) <= 3) {
+                rowMatches = true;
                 break;
                 }
             }
             }
-            if (matches) {
-            filteredModel2.addRow((Vector) originalModel2.getDataVector().elementAt(i));
+            if (rowMatches) {
+            filteredModel2.addRow((Vector) modelC.getDataVector().elementAt(i));
+            foundMatch2 = true;
             }
         }
-        if (filteredModel2.getRowCount() == 0) {
+        if (!foundMatch2) {
             printMessage("Aucun élément trouvé dans jTable2, restauration de la table d'origine.");
-            jTable2.setModel(modelC);
         } else {
             jTable2.setModel(filteredModel2);
         }
@@ -917,11 +918,12 @@ public class Interface_app extends javax.swing.JFrame {
                                 return modelE;
                             }
                         }
-
+    
                         @Override
                         protected void done() {
                             try {
-                                listenerE = new MyLiveQueryListener(jTable1, "Equipement",pool.acquire(),modelE,modelC);
+                                
+                                listenerE = new MyLiveQueryListener(jTable1, "Equipement", pool.acquire(), modelE, modelC);
                                 listenerE.loadInitialData();
                                 monitorE = pool.acquire().live("SELECT FROM Equipement", listenerE);
                             } catch (Exception e) {
@@ -929,7 +931,7 @@ public class Interface_app extends javax.swing.JFrame {
                             }
                         }
                     }.execute();
-
+    
                     // SwingWorker pour charger les données de Composant
                     new SwingWorker<DefaultTableModel, Void>() {
                         @Override
@@ -945,11 +947,11 @@ public class Interface_app extends javax.swing.JFrame {
                                 return modelC;
                             }
                         }
-                        
+    
                         @Override
                         protected void done() {
                             try {
-                                listenerC = new MyLiveQueryListener(jTable2, "Composant", pool.acquire(),modelE,modelC);
+                                listenerC = new MyLiveQueryListener(jTable2, "Composant", pool.acquire(), modelE, modelC);
                                 listenerC.loadInitialData();
                                 monitorC = pool.acquire().live("SELECT FROM Composant", listenerC);
                             } catch (Exception e) {
