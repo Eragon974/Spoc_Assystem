@@ -552,7 +552,7 @@ public class Interface_app extends javax.swing.JFrame {
         DefaultTableModel model;
     
         // Choisir les colonnes en fonction du type
-        if (className.equals("Equipement")) {
+        if (className.equals("Composant")) {
             columnNames = new String[]{
                 "Famille", "Type", "Sous Famille", "Constructeur",
                 "Tension(VCC)", "Puissance Unitaire(W)", "Puissance Transitoire(W)",
@@ -584,21 +584,21 @@ public class Interface_app extends javax.swing.JFrame {
                 OResult item = rs.next();
                 Object[] rowData;
     
-                if (className.equals("Equipement")) {
+                if (className.equals("Composant")) {
                     rowData = new Object[]{
                         item.getProperty("Famille"),
                         item.getProperty("Type"),
                         item.getProperty("Sous Famille"),
                         item.getProperty("Constructeur"),
                         item.getProperty("Tension(VCC)"),
-                        item.getProperty("Puissance Unitaire(W)"),
-                        item.getProperty("Puissance Transitoire(W)"),
+                        item.getProperty("Puissance Unitaire"),
+                        item.getProperty("Puissance Transitoire"),
                         item.getProperty("Indice de confiance"),
                         item.getProperty("Origine de consommation"),
                         item.getIdentity().toString().replaceAll("Optional\\[(.*)\\]", "$1")
                     };
 
-                } else if (className.equals("Composant")) {
+                } else if (className.equals("Equipement")) {
                     rowData = new Object[]{
                         item.getProperty("Type"),
                         item.getProperty("Constructeur"),
@@ -763,70 +763,73 @@ public class Interface_app extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 //Barre de Recherche
     private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
-        String searchInput = getTextFromAccessibleName("Recherche").trim().toLowerCase();
-        if (searchInput.isEmpty()) {
+         String input = getTextFromAccessibleName("Recherche").trim().toLowerCase();
+        // Si la recherche est vide, restaurer les modèles d'origine
+        if (input.isEmpty()) {
             jTable1.setModel(modelE);
             jTable2.setModel(modelC);
             return;
         }
-
         LevenshteinDistance levenshtein = new LevenshteinDistance();
 
-        // Filter for jTable1 (Equipement)
+        // Filtrer jTable1 (par exemple, Equipement)
+        DefaultTableModel originalModel1 = (DefaultTableModel) jTable1.getModel();
         DefaultTableModel filteredModel1 = new DefaultTableModel();
-        for (int col = 0; col < modelE.getColumnCount(); col++) {
-            filteredModel1.addColumn(modelE.getColumnName(col));
+        int colCount1 = originalModel1.getColumnCount();
+        for (int col = 0; col < colCount1; col++) {
+            filteredModel1.addColumn(originalModel1.getColumnName(col));
         }
-        boolean foundMatch1 = false;
-        for (int i = 0; i < modelE.getRowCount(); i++) {
-            boolean rowMatches = false;
-            for (int j = 0; j < modelE.getColumnCount(); j++) {
-            Object valueObj = modelE.getValueAt(i, j);
-            if (valueObj != null) {
-                String valueText = valueObj.toString().toLowerCase();
-                // Accept as match if similarity is high (distance <= 3)
-                if (levenshtein.apply(searchInput, valueText) <= 3) {
-                rowMatches = true;
+        int rowCount1 = originalModel1.getRowCount();
+        for (int i = 0; i < rowCount1; i++) {
+            boolean matches = false;
+            for (int j = 0; j < colCount1; j++) {
+            Object value = originalModel1.getValueAt(i, j);
+            if (value != null) {
+                String text = value.toString().toLowerCase();
+                if (isMatch(input, text, levenshtein)) {
+                matches = true;
                 break;
                 }
             }
             }
-            if (rowMatches) {
-            filteredModel1.addRow((Vector) modelE.getDataVector().elementAt(i));
-            foundMatch1 = true;
+            if (matches) {
+            filteredModel1.addRow((Vector) originalModel1.getDataVector().elementAt(i));
             }
         }
-        if (!foundMatch1) {
+        if (filteredModel1.getRowCount() == 0) {
             printMessage("Aucun élément trouvé dans jTable1, restauration de la table d'origine.");
+            jTable1.setModel(modelE);
         } else {
             jTable1.setModel(filteredModel1);
         }
 
-        // Filter for jTable2 (Composant)
+        // Filtrer jTable2 (par exemple, Composant)
+        DefaultTableModel originalModel2 = (DefaultTableModel) jTable2.getModel();
         DefaultTableModel filteredModel2 = new DefaultTableModel();
-        for (int col = 0; col < modelC.getColumnCount(); col++) {
-            filteredModel2.addColumn(modelC.getColumnName(col));
+        int colCount2 = originalModel2.getColumnCount();
+        for (int col = 0; col < colCount2; col++) {
+            filteredModel2.addColumn(originalModel2.getColumnName(col));
         }
-        boolean foundMatch2 = false;
-        for (int i = 0; i < modelC.getRowCount(); i++) {
-            boolean rowMatches = false;
-            for (int j = 0; j < modelC.getColumnCount(); j++) {
-            Object valueObj = modelC.getValueAt(i, j);
-            if (valueObj != null) {
-                String valueText = valueObj.toString().toLowerCase();
-                if (levenshtein.apply(searchInput, valueText) <= 3) {
-                rowMatches = true;
+        int rowCount2 = originalModel2.getRowCount();
+        for (int i = 0; i < rowCount2; i++) {
+            boolean matches = false;
+            for (int j = 0; j < colCount2; j++) {
+            Object value = originalModel2.getValueAt(i, j);
+            if (value != null) {
+                String text = value.toString().toLowerCase();
+                if (isMatch(input, text, levenshtein)) {
+                matches = true;
                 break;
                 }
             }
             }
-            if (rowMatches) {
-            filteredModel2.addRow((Vector) modelC.getDataVector().elementAt(i));
-            foundMatch2 = true;
+            if (matches) {
+            filteredModel2.addRow((Vector) originalModel2.getDataVector().elementAt(i));
             }
         }
-        if (!foundMatch2) {
+        if (filteredModel2.getRowCount() == 0) {
             printMessage("Aucun élément trouvé dans jTable2, restauration de la table d'origine.");
+            jTable2.setModel(modelC);
         } else {
             jTable2.setModel(filteredModel2);
         }
@@ -923,7 +926,7 @@ public class Interface_app extends javax.swing.JFrame {
                         protected void done() {
                             try {
                                 
-                                listenerE = new MyLiveQueryListener(jTable1, "Equipement", pool.acquire(), modelE, modelC);
+                                listenerE = new MyLiveQueryListener(jTable1, "Equipement",pool.acquire(),modelE,modelC);
                                 listenerE.loadInitialData();
                                 monitorE = pool.acquire().live("SELECT FROM Equipement", listenerE);
                             } catch (Exception e) {
@@ -951,7 +954,7 @@ public class Interface_app extends javax.swing.JFrame {
                         @Override
                         protected void done() {
                             try {
-                                listenerC = new MyLiveQueryListener(jTable2, "Composant", pool.acquire(), modelE, modelC);
+                                listenerC = new MyLiveQueryListener(jTable2, "Composant", pool.acquire(),modelE, modelC);
                                 listenerC.loadInitialData();
                                 monitorC = pool.acquire().live("SELECT FROM Composant", listenerC);
                             } catch (Exception e) {
