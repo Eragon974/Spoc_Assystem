@@ -85,13 +85,8 @@
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jPanel7" max="32767" attributes="0"/>
-                          <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jPanel4" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jPanel5" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="jPanel4" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jPanel5" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jPanel6" min="-2" max="-2" attributes="0"/>
@@ -155,13 +150,13 @@
                       <Properties>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                           <Table columnCount="10" rowCount="4">
-                            <Column editable="true" title="Famille" type="java.lang.Object"/>
                             <Column editable="true" title="Type" type="java.lang.Object"/>
-                            <Column editable="true" title="Sous Famille" type="java.lang.Object"/>
                             <Column editable="true" title="Constructeur" type="java.lang.Object"/>
-                            <Column editable="true" title="Tension(VCC)" type="java.lang.Object"/>
-                            <Column editable="true" title="Puissance Unitaire(W)" type="java.lang.Object"/>
-                            <Column editable="true" title="Puissance Transitoire(W)" type="java.lang.Object"/>
+                            <Column editable="true" title="Tension circuit puissance (V)" type="java.lang.Object"/>
+                            <Column editable="true" title="Tension Circuit de commande (V)" type="java.lang.Object"/>
+                            <Column editable="true" title="Puissance Unitaire consomm&#xe9;e (W)" type="java.lang.Object"/>
+                            <Column editable="true" title="Puissance Eqt ferm&#xe9;" type="java.lang.Object"/>
+                            <Column editable="true" title="Puissance Eqt ouverte" type="java.lang.Object"/>
                             <Column editable="true" title="Indice de confiance" type="java.lang.Object"/>
                             <Column editable="true" title="Origine de consommation" type="java.lang.Object"/>
                             <Column editable="true" title="ID" type="java.lang.Object"/>

@@ -51,15 +51,15 @@ public class Modification_Frame extends javax.swing.JFrame {
         }
         
         setTextToAccessibleName("Mod_Classe", filteredWords.get(0));
-        setTextToAccessibleName("Mod_Famille", filteredWords.get(1));
-        setTextToAccessibleName("Mod_Type", filteredWords.get(2));
-        setTextToAccessibleName("Mod_Sous_Famille", filteredWords.get(3));
-        setTextToAccessibleName("Mod_Constructeur", filteredWords.get(4));
-        setTextToAccessibleName("Mod_Tension", filteredWords.get(5));
-        setTextToAccessibleName("Mod_PU", filteredWords.get(6));
-        setTextToAccessibleName("Mod_PT", filteredWords.get(7));
-        setTextToAccessibleName("Mod_IdC", filteredWords.get(8));
-        setTextToAccessibleName("Mod_Cons", filteredWords.get(9));
+        setTextToAccessibleName("Mod_1", filteredWords.get(1));
+        setTextToAccessibleName("Mod_2", filteredWords.get(2));
+        setTextToAccessibleName("Mod_3", filteredWords.get(3));
+        setTextToAccessibleName("Mod_4", filteredWords.get(4));
+        setTextToAccessibleName("Mod_5", filteredWords.get(5));
+        setTextToAccessibleName("Mod_6", filteredWords.get(6));
+        setTextToAccessibleName("Mod_7", filteredWords.get(7));
+        setTextToAccessibleName("Mod_8", filteredWords.get(8));
+        setTextToAccessibleName("Mod_9", filteredWords.get(9));
         
     }
     public void printMessage(String message) {
@@ -121,7 +121,7 @@ public class Modification_Frame extends javax.swing.JFrame {
             }
         });
 
-        jLabel6.setText("Constructeur");
+        jLabel6.setText("Tension Circuit de commande (V)");
 
         jLabel11.setText("Origine consommation ");
 
@@ -138,7 +138,7 @@ public class Modification_Frame extends javax.swing.JFrame {
             }
         });
 
-        jLabel7.setText("Tension (VCC)");
+        jLabel7.setText("Puissance Unitaire consommée (W)");
 
         jTextField6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -146,7 +146,7 @@ public class Modification_Frame extends javax.swing.JFrame {
             }
         });
 
-        jLabel8.setText("Puissance unitaire (W)");
+        jLabel8.setText("Puissance Eqt fermé");
 
         jTextField7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -154,11 +154,11 @@ public class Modification_Frame extends javax.swing.JFrame {
             }
         });
 
-        jLabel9.setText("Puissance transitoire (W)");
+        jLabel9.setText("Puissance Eqt ouverte");
 
         jLabel2.setText("Classe");
 
-        jLabel3.setText("Famille");
+        jLabel3.setText("Type");
 
         jTextField2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -166,7 +166,7 @@ public class Modification_Frame extends javax.swing.JFrame {
             }
         });
 
-        jLabel4.setText("Sous famille");
+        jLabel4.setText("Tension circuit puissance (V)");
 
         jTextField8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -174,11 +174,16 @@ public class Modification_Frame extends javax.swing.JFrame {
             }
         });
 
-        jLabel5.setText("Type");
+        jLabel5.setText("Constructeur");
 
         jLabel10.setText("Indice de confiance");
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Equipement", "Composant" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -218,9 +223,9 @@ public class Modification_Frame extends javax.swing.JFrame {
                                         .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(jLabel4)
+                                            .addComponent(jLabel6)
+                                            .addComponent(jLabel7))
                                         .addGap(0, 0, Short.MAX_VALUE)))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -243,13 +248,14 @@ public class Modification_Frame extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(14, 14, 14)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -278,16 +284,16 @@ public class Modification_Frame extends javax.swing.JFrame {
                 .addGap(22, 22, 22))
         );
 
-        jTextField4.getAccessibleContext().setAccessibleName("Mod_Sous_Famille");
-        jTextField9.getAccessibleContext().setAccessibleName("Mod_Cons");
-        jTextField5.getAccessibleContext().setAccessibleName("Mod_Tension");
-        jTextField6.getAccessibleContext().setAccessibleName("Mod_PU");
-        jTextField7.getAccessibleContext().setAccessibleName("Mod_PT");
-        jTextField1.getAccessibleContext().setAccessibleName("Mod_Famille");
+        jTextField4.getAccessibleContext().setAccessibleName("Mod_3");
+        jTextField9.getAccessibleContext().setAccessibleName("Mod_9");
+        jTextField5.getAccessibleContext().setAccessibleName("Mod_5");
+        jTextField6.getAccessibleContext().setAccessibleName("Mod_6");
+        jTextField7.getAccessibleContext().setAccessibleName("Mod_7");
+        jTextField1.getAccessibleContext().setAccessibleName("Mod_1");
         jTextField1.getAccessibleContext().setAccessibleDescription("");
-        jTextField2.getAccessibleContext().setAccessibleName("Mod_Constructeur");
-        jTextField3.getAccessibleContext().setAccessibleName("Mod_Type");
-        jTextField8.getAccessibleContext().setAccessibleName("Mod_IdC");
+        jTextField2.getAccessibleContext().setAccessibleName("Mod_4");
+        jTextField3.getAccessibleContext().setAccessibleName("Mod_2");
+        jTextField8.getAccessibleContext().setAccessibleName("Mod_8");
         jComboBox1.getAccessibleContext().setAccessibleName("Mod_Classe");
 
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
@@ -342,19 +348,35 @@ public class Modification_Frame extends javax.swing.JFrame {
         OVertex v;
         try {
             ORecordId recordId = new ORecordId(RID);
-            OVertex vertex = db.load(recordId);
+            v = db.load(recordId);
             
-            String className = getTextFromAccessibleName("Mod_Classe");
-            String famille = getTextFromAccessibleName("Mod_Famille");
-            String sousFamille = getTextFromAccessibleName("Mod_Sous_Famille");
-            String type = getTextFromAccessibleName("Mod_Type");
-            String constructeur = getTextFromAccessibleName("Mod_Constructeur");
-            String tension = getTextFromAccessibleName("Mod_Tension");
-            String puissanceUnitaire = getTextFromAccessibleName("Mod_PU");
-            String puissanceTransitoire = getTextFromAccessibleName("Mod_PT");
-            String indice = getTextFromAccessibleName("Mod_IdC");
-            String origineConsommation = getTextFromAccessibleName("Mod_Cons");
-            
+        String famille = "NULL";
+        String sousFamille = "NULL";
+        String type= "NULL";
+        String constructeur= "NULL";
+        String tension= "NULL";
+        String puissanceUnitaire= "NULL";
+        String puissanceTransitoire= "NULL";
+        String indice= "NULL";
+        String origineConsommation= "NULL";
+        String TensionCircuiPuissance= "NULL";
+        String TensionCircuitCommande= "NULL";
+        String PuissanceUnitaireCons= "NULL";
+        String PuissanceEqtFermé= "NULL";
+        String PuissanceEqtOuverte= "NULL";
+        // Initialisation des variables avec la logique de remplacement si null
+        String className = getTextFromAccessibleName("Mod_Classe");
+        if (className.equals("Composant")){
+            famille = getTextFromAccessibleName("Mod_1");
+            sousFamille = getTextFromAccessibleName("Mod_2");
+            type = getTextFromAccessibleName("Mod_3");
+            constructeur = getTextFromAccessibleName("Mod_4");
+            tension = getTextFromAccessibleName("Mod_5");
+            puissanceUnitaire = getTextFromAccessibleName("Mod_6");
+            puissanceTransitoire = getTextFromAccessibleName("Mod_7");
+            indice = getTextFromAccessibleName("Mod_8");
+            origineConsommation = getTextFromAccessibleName("Mod_9");
+            // Remplacer les valeurs null par "NULL"
             if (famille.isEmpty()) famille = "NULL";
             if (sousFamille.isEmpty()) sousFamille = "NULL";
             if (type.isEmpty()) type = "NULL";
@@ -364,31 +386,76 @@ public class Modification_Frame extends javax.swing.JFrame {
             if (puissanceTransitoire.isEmpty()) puissanceTransitoire = "NULL";
             if (indice.isEmpty()) indice = "NULL";
             if (origineConsommation.isEmpty()) origineConsommation = "NULL";
+        }else if (className.equals("Equipement")){
+            type = getTextFromAccessibleName("Mod_1");
+            constructeur = getTextFromAccessibleName("Mod_2");
+            TensionCircuiPuissance = getTextFromAccessibleName("Mod_3");
+            TensionCircuitCommande = getTextFromAccessibleName("Mod_4");
+            PuissanceUnitaireCons = getTextFromAccessibleName("Mod_5");
+            PuissanceEqtFermé = getTextFromAccessibleName("Mod_6");
+            PuissanceEqtOuverte = getTextFromAccessibleName("Mod_7");
+            indice = getTextFromAccessibleName("Mod_8");
+            origineConsommation = getTextFromAccessibleName("Mod_9");
+            // Remplacer les valeurs null par "NULL"
+            if (type.isEmpty()) type = "NULL";
+            if (constructeur.isEmpty()) constructeur = "NULL";
+            if (TensionCircuiPuissance.isEmpty()) TensionCircuiPuissance = "NULL";
+            if (TensionCircuitCommande.isEmpty()) TensionCircuitCommande = "NULL";
+            if (PuissanceUnitaireCons.isEmpty()) PuissanceUnitaireCons = "NULL";
+            if (PuissanceEqtFermé.isEmpty()) PuissanceEqtFermé = "NULL";
+            if (PuissanceEqtOuverte.isEmpty()) PuissanceEqtOuverte = "NULL";
+            if (indice.isEmpty()) indice = "NULL";
+            if (origineConsommation.isEmpty()) origineConsommation = "NULL";
+        }
             if (!className.equals(info.get(0))){
-                vertex.delete();
+                v.delete();
                 OVertex newVertex = db.newVertex(className);
-                newVertex.setProperty("Famille", famille);
-                newVertex.setProperty("Type", type);
-                newVertex.setProperty("Sous Famille", sousFamille);
-                newVertex.setProperty("Constructeur", constructeur);
-                newVertex.setProperty("Tension(VCC)", tension);
-                newVertex.setProperty("Puissance Unitaire(W)", puissanceUnitaire);
-                newVertex.setProperty("Puissance Transitoire(W)", puissanceTransitoire);
-                newVertex.setProperty("Indice de confiance", indice);
-                newVertex.setProperty("Origine de consommation", origineConsommation);
-                newVertex.save();
-            }else{
-                vertex.setProperty("Famille", famille);
-                vertex.setProperty("Type", type);
-                vertex.setProperty("Sous Famille", sousFamille);
-                vertex.setProperty("Constructeur", constructeur);
-                vertex.setProperty("Tension(VCC)", tension);
-                vertex.setProperty("Puissance Unitaire(W)", puissanceUnitaire);
-                vertex.setProperty("Puissance Transitoire(W)", puissanceTransitoire);
-                vertex.setProperty("Indice de confiance", indice);
-                vertex.setProperty("Origine de consommation", origineConsommation);
-                vertex.save();
-            }
+                if (className.equals("Composant")){
+                    newVertex.setProperty("Famille", famille);
+                    newVertex.setProperty("Type", type);
+                    newVertex.setProperty("Sous Famille", sousFamille);
+                    newVertex.setProperty("Constructeur", constructeur);
+                    newVertex.setProperty("Tension(VCC)", tension);
+                    newVertex.setProperty("Puissance Unitaire", puissanceUnitaire);
+                    newVertex.setProperty("Puissance Transitoire", puissanceTransitoire);
+                    newVertex.setProperty("Indice de confiance", indice);
+                    newVertex.setProperty("Origine de consommation", origineConsommation);
+                    newVertex.save();
+                }else if(className.equals("Equipement")){
+                    newVertex.setProperty("Type", type);
+                    newVertex.setProperty("Constructeur", constructeur);
+                    newVertex.setProperty("Tension Circuit Puissance", TensionCircuiPuissance);
+                    newVertex.setProperty("Tension Circuit de commande", TensionCircuitCommande);
+                    newVertex.setProperty("Puissance Unitaire consommée", PuissanceUnitaireCons);
+                    newVertex.setProperty("Puissance Eqt fermée", PuissanceEqtFermé);
+                    newVertex.setProperty("Puissance Eqt ouverte", PuissanceEqtOuverte);
+                    newVertex.setProperty("Indice de confiance", indice);
+                    newVertex.setProperty("Origine de consommation", origineConsommation);
+                    newVertex.save();
+                }
+            }else if (className.equals("Composant")){
+                v.setProperty("Famille", famille);
+                v.setProperty("Type", type);
+                v.setProperty("Sous Famille", sousFamille);
+                v.setProperty("Constructeur", constructeur);
+                v.setProperty("Tension(VCC)", tension);
+                v.setProperty("Puissance Unitaire", puissanceUnitaire);
+                v.setProperty("Puissance Transitoire", puissanceTransitoire);
+                v.setProperty("Indice de confiance", indice);
+                v.setProperty("Origine de consommation", origineConsommation);
+                v.save();
+            }else if(className.equals("Equipement")){
+                v.setProperty("Type", type);
+                v.setProperty("Constructeur", constructeur);
+                v.setProperty("Tension Circuit Puissance", TensionCircuiPuissance);
+                v.setProperty("Tension Circuit de commande", TensionCircuitCommande);
+                v.setProperty("Puissance Unitaire consommée", PuissanceUnitaireCons);
+                v.setProperty("Puissance Eqt fermée", PuissanceEqtFermé);
+                v.setProperty("Puissance Eqt ouverte", PuissanceEqtOuverte);
+                v.setProperty("Indice de confiance", indice);
+                v.setProperty("Origine de consommation", origineConsommation);
+                v.save();
+                }
             dispose();
         } catch (Exception e) {
             printMessage("Erreur dans la modification : " + e.getMessage());
@@ -415,6 +482,34 @@ public class Modification_Frame extends javax.swing.JFrame {
     private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField8ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+
+    String selectedItem = (String) jComboBox1.getSelectedItem();
+
+    // Si la sélection est "Equipement"
+    if ("Equipement".equals(selectedItem)) {
+        jLabel3.setText("Type");
+        jLabel5.setText("Constructeur");
+        jLabel4.setText("Tension circuit puissance (V)");
+        jLabel6.setText("Tension Circuit de commande (V)");
+        jLabel7.setText("Puissance Unitaire consommée (W)");
+        jLabel8.setText("Puissance Eqt fermé");
+        jLabel8.setText("Puissance Eqt ouverte");
+        
+        // Actions spécifiques pour Equipement ici
+    }
+    // Si la sélection est "Composant"
+    else if ("Composant".equals(selectedItem)) {
+        jLabel3.setText("Famille");
+        jLabel5.setText("Type");
+        jLabel4.setText("Sous Famille");
+        jLabel6.setText("Constructeur");
+        jLabel7.setText("Tension (VCC)");
+        jLabel8.setText("Puissance Unitaire (W)");
+        jLabel8.setText("Puissance Transitoire (W)");
+    }        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
     
     private void setTextToAccessibleName(String accessibleName, String text) {
         setTextToAccessibleNameRecursive(getContentPane(), accessibleName, text);

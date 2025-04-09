@@ -140,7 +140,7 @@ public class Interface_app extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Famille", "Type", "Sous Famille", "Constructeur", "Tension(VCC)", "Puissance Unitaire(W)", "Puissance Transitoire(W)", "Indice de confiance", "Origine de consommation", "ID"
+                "Type", "Constructeur", "Tension circuit puissance (V)", "Tension Circuit de commande (V)", "Puissance Unitaire consommée (W)", "Puissance Eqt fermé", "Puissance Eqt ouverte", "Indice de confiance", "Origine de consommation", "ID"
             }
         ));
         jScrollPane3.setViewportView(jTable1);
@@ -411,11 +411,8 @@ public class Interface_app extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, 0)))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -487,7 +484,6 @@ public class Interface_app extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-        
     private void connexion_OrientDB() {
         /*Code JPanel8 fenêtre OrientDB */
         JFXPanel jfxPanel = new JFXPanel();
@@ -513,12 +509,12 @@ public class Interface_app extends javax.swing.JFrame {
         }
         return false;
     }
-
+//Pour fenêtre Graphe
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         Graphe = new Graphe(pool,this);
         Graphe.setVisible(true);
     }//GEN-LAST:event_jButton7ActionPerformed
-
+//Bouton Déconnexion
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         if (pool == null) {
             printMessage("Action impossible, la connexion n'est pas établie");
@@ -550,47 +546,87 @@ public class Interface_app extends javax.swing.JFrame {
             printMessage("Erreur lors de la fermeture des connexions : " + e.getMessage());
         }
     }//GEN-LAST:event_jButton6ActionPerformed
-
-    // Fonction pour charger les données initiales dans un DefaultTableModel
+// Fonction pour charger les jTable
     private DefaultTableModel loadInitialDataIntoTableModel(ODatabaseSession db, String className) {
-    // Initialiser les colonnes de votre table
-    String[] columnNames = {
-        "Famille", "Type", "Sous Famille", "Constructeur",
-        "Tension(VCC)", "Puissance Unitaire(W)", "Puissance Transitoire(W)",
-        "Indice de confiance", "Origine de consommation", "ID"
-    };
-    DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        String[] columnNames;
+        DefaultTableModel model;
 
-    // Initialiser listModel si ce n'est pas déjà fait
-    if (className.equals("Composant") && listModelC == null) {
-        listModelC = new DefaultListModel<>();
-    } else if (className.equals("Equipement") && listModelE == null) {
-        listModelE = new DefaultListModel<>();
-    }
+        // Choisir les colonnes en fonction du type
+        if (className.equals("Composant")) {
+            columnNames = new String[]{
+                "Famille", "Type", "Sous Famille", "Constructeur",
+                "Tension(VCC)", "Puissance Unitaire(W)", "Puissance Transitoire(W)",
+                "Indice de confiance", "Origine de consommation", "ID"
+        };
 
-    // Charger les données depuis la base de données
-    try (OResultSet rs = db.query("SELECT * FROM " + className)) {
-        while (rs.hasNext()) {
-            OResult item = rs.next();
-            Object[] rowData = {
-                item.getProperty("Famille"),
-                item.getProperty("Type"),
-                item.getProperty("Sous Famille"),
-                item.getProperty("Constructeur"),
-                item.getProperty("Tension(VCC)"),
-                item.getProperty("Puissance Unitaire(W)"),
-                item.getProperty("Puissance Transitoire(W)"),
-                item.getProperty("Indice de confiance"),
-                item.getProperty("Origine de consommation"),
-                // ID placed as the last column
-                item.getIdentity().toString().replaceAll("Optional\\[(.*)\\]", "$1")
-            };
-            model.addRow(rowData);
+            if (listModelC == null) {
+                listModelC = new DefaultListModel<>();
+            }
+
+        } else if (className.equals("Equipement")) {
+            columnNames = new String[]{
+                "Type", "Constructeur",
+                "Tension circuit puissance (V)", "Tension Circuit de commande (V)",
+                "Puissance Unitaire consommée (W)", "Puissance Eqt fermé",
+                "Puissance Eqt ouverte", "Indice de Confiance",
+                "Origine consommation", "ID"
+        };
+
+            if (listModelE == null) {
+                listModelE = new DefaultListModel<>();
+            }
+
+        } else {
+            // Par défaut, aucune colonne si classe inconnue
+            columnNames = new String[]{"ID"};
         }
-    }
-    return model;
+
+        model = new DefaultTableModel(columnNames, 0);
+
+        // Charger les données depuis la base de données
+        try (OResultSet rs = db.query("SELECT * FROM " + className)) {
+            while (rs.hasNext()) {
+                OResult item = rs.next();
+                Object[] rowData;
+
+                if (className.equals("Composant")) {
+                    rowData = new Object[]{
+                        item.getProperty("Famille"),
+                        item.getProperty("Type"),
+                        item.getProperty("Sous Famille"),
+                        item.getProperty("Constructeur"),
+                        item.getProperty("Tension(VCC)"),
+                        item.getProperty("Puissance Unitaire(W)"),
+                        item.getProperty("Puissance Transitoire(W)"),
+                        item.getProperty("Indice de confiance"),
+                        item.getProperty("Origine de consommation"),
+                        item.getIdentity().toString().replaceAll("Optional\\[(.*)\\]", "$1")
+                    };
+                } else if (className.equals("Equipement")) {
+                    rowData = new Object[]{
+                        item.getProperty("Type"),
+                        item.getProperty("Constructeur"),
+                        item.getProperty("Tension circuit puissance (V)"),
+                        item.getProperty("Tension Circuit de commande (V)"),
+                        item.getProperty("Puissance Unitaire consommée (W)"),
+                        item.getProperty("Puissance Eqt fermé"),
+                        item.getProperty("Puissance Eqt ouverte"),
+                        item.getProperty("Indice de Confiance"),
+                        item.getProperty("Origine consommation"),
+                        item.getIdentity().toString().replaceAll("Optional\\[(.*)\\]", "$1")
+                    };
+                } else {
+                    rowData = new Object[]{
+                        item.getIdentity().toString().replaceAll("Optional\\[(.*)\\]", "$1")
+                    };
+                }
+            model.addRow(rowData);
+            }
+        }
+        return model;
     }
 
+//Bouton Ajout_BDD
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         if (pool == null) {
             printMessage("Action impossible, la connexion n'est pas établie");
@@ -600,104 +636,7 @@ public class Interface_app extends javax.swing.JFrame {
         Ajout_BDD_Frame.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-    if (pool != null && !pool.isClosed()) {
-        printMessage("Action impossible, connexion déjà établie");
-        return;
-    }//GEN-LAST:event_jButton1ActionPerformed
 
-    Connexion_Frame connexionFrame = new Connexion_Frame(this);
-    connexionFrame.setVisible(true);
-
-    new SwingWorker<Void, Void>() {
-        @Override
-        protected Void doInBackground() throws Exception {
-            // Attendre que l'utilisateur termine (polling)
-            while (connexionFrame.isVisible()) {
-                Thread.sleep(100); // Intervalle de polling (100ms)
-            }
-            return null;
-        }
-
-        @Override
-        protected void done() {
-            // Récupérer les informations de connexion après la fermeture de la fenêtre
-            String BDD = connexionFrame.getBDD();
-            String User = connexionFrame.getUser();
-            String Password = connexionFrame.getPassword();
-
-            if (BDD != null && User != null && Password != null) {
-                try {
-                    // Initialiser le pool de connexions
-                    pool = new ODatabasePool(orientDB, BDD, User, Password, poolCfg.build());
-                    printMessage("Connexion réussie à la base de données : " + BDD);
-
-                    // SwingWorker pour charger les données d'Equipement
-                    new SwingWorker<DefaultTableModel, Void>() {
-                        @Override
-                        protected DefaultTableModel doInBackground() throws Exception {
-                            try (ODatabaseSession db = pool.acquire()) {
-                                // Créer les classes si elles n'existent pas
-                                if (!db.getMetadata().getSchema().existsClass("Equipement")) {
-                                    db.getMetadata().getSchema().createClass("Equipement", db.getMetadata().getSchema().getClass("V"));
-                                    printMessage("La classe Equipement a été créée dans le schéma.");
-                                }
-                                // Charger les données pour Equipement
-                                modelE = loadInitialDataIntoTableModel(db, "Equipement");
-                                return modelE;
-                            }
-                        }
-
-                        @Override
-                        protected void done() {
-                            try {
-                                listenerE = new MyLiveQueryListener(jTable1, "Equipement",pool.acquire(),modelE,modelC);
-                                listenerE.loadInitialData();
-                                monitorE = pool.acquire().live("SELECT FROM Equipement", listenerE);
-                            } catch (Exception e) {
-                                printMessage("Erreur d'exécution lors du chargement des données pour Equipement : " + e.getMessage());
-                            }
-                        }
-                    }.execute();
-
-                    // SwingWorker pour charger les données de Composant
-                    new SwingWorker<DefaultTableModel, Void>() {
-                        @Override
-                        protected DefaultTableModel doInBackground() throws Exception {
-                            try (ODatabaseSession db = pool.acquire()) {
-                                // Créer les classes si elles n'existent pas
-                                if (!db.getMetadata().getSchema().existsClass("Composant")) {
-                                    db.getMetadata().getSchema().createClass("Composant", db.getMetadata().getSchema().getClass("V"));
-                                    printMessage("La classe Composant a été créée dans le schéma.");
-                                }
-                                // Charger les données pour Composant
-                                modelC = loadInitialDataIntoTableModel(db, "Composant");
-                                return modelC;
-                            }
-                        }
-                        
-                        @Override
-                        protected void done() {
-                            try {
-                                listenerC = new MyLiveQueryListener(jTable2, "Composant", pool.acquire(),modelE,modelC);
-                                listenerC.loadInitialData();
-                                monitorC = pool.acquire().live("SELECT FROM Composant", listenerC);
-                            } catch (Exception e) {
-                                printMessage("Erreur lors du chargement des données pour Composant : " + e.getMessage());
-                            }
-                        }
-                    }.execute();
-
-                } catch (Exception e) {
-                    printMessage("Erreur lors de la connexion : " + e.getMessage());
-                }
-            } else {
-                printMessage("Connexion annulée par l'utilisateur.");
-            }
-        }
-    }.execute();
-}
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         if (pool == null) {
@@ -706,7 +645,7 @@ public class Interface_app extends javax.swing.JFrame {
         }
         ODatabaseSession db = pool.acquire();
         // Liste des propriétés associées
-        String[] propertyKeys = {
+        String[] propertyKeysC = {
             "Famille",
             "Type",
             "Sous Famille",
@@ -716,6 +655,13 @@ public class Interface_app extends javax.swing.JFrame {
             "Puissance Transitoire(W)",
             "Indice de confiance",
             "Origine de consommation",
+        };
+        String[] propertyKeysE = {
+            "Type", "Constructeur",
+            "Tension circuit puissance (V)", "Tension Circuit de commande (V)",
+            "Puissance Unitaire consommée (W)", "Puissance Eqt fermé",
+            "Puissance Eqt ouverte", "Indice de Confiance",
+            "Origine consommation", "ID"
         };
         // Récupérer les lignes sélectionnées dans jTable1
         int[] selectedRows1 = jTable1.getSelectedRows();
@@ -733,11 +679,12 @@ public class Interface_app extends javax.swing.JFrame {
                 Object value = model.getValueAt(row, col);
                 rowValues.add(value != null ? value.toString().trim() : "");
             }
+            System.out.println(rowValues);
             try {
                 printMessage("Tentative de duplication du vertex Equipement");
                 OVertex v = db.newVertex("Equipement");
-                for (int i = 0; i < propertyKeys.length; i++) {
-                    v.setProperty(propertyKeys[i], rowValues.get(i));
+                for (int i = 0; i < propertyKeysE.length; i++) {
+                    v.setProperty(propertyKeysE[i], rowValues.get(i));
                 }
                 // Utiliser db.save(v) pour éviter l'utilisation de la méthode dépréciée
                 db.save(v);
@@ -756,11 +703,12 @@ public class Interface_app extends javax.swing.JFrame {
                 Object value = model.getValueAt(row, col);
                 rowValues.add(value != null ? value.toString().trim() : "");
             }
+            System.out.println(rowValues);
             try {
                 printMessage("Tentative de duplication du vertex Composant");
                 OVertex v = db.newVertex("Composant");
-                for (int i = 0; i < propertyKeys.length; i++) {
-                    v.setProperty(propertyKeys[i], rowValues.get(i));
+                for (int i = 0; i < propertyKeysC.length; i++) {
+                    v.setProperty(propertyKeysC[i], rowValues.get(i));
                 }
                 // Utiliser db.save(v) pour éviter l'utilisation de la méthode dépréciée
                 db.save(v);
@@ -795,7 +743,7 @@ public class Interface_app extends javax.swing.JFrame {
                     OVertex vertex = db.load(recordId);
                     if (vertex != null) {
                         db.delete(vertex);  // Supprimer le vertex via le pool
-                        printMessage("Éléments supprimés avec succès !");
+                        printMessage("Éléments supprimés avec succès !");  
                     }
                 }
             } catch (Exception e) {
@@ -896,7 +844,8 @@ public class Interface_app extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTextField8ActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent unusedEvt) {                                         
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+                                
         if (pool == null) {
             printMessage("Action impossible, la connexion n'est pas établie");
             return;
@@ -941,8 +890,98 @@ public class Interface_app extends javax.swing.JFrame {
             }
             Modification_Frame modificationFrame = new Modification_Frame(infoC, db);
             modificationFrame.setVisible(true);
-        } 
+        }
     }//GEN-LAST:event_jButton5ActionPerformed
+//Bouton connexion
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+        if (pool != null && !pool.isClosed()) {
+            printMessage("Action impossible, connexion déjà établie");
+            return;
+        }                                        
+
+        Connexion_Frame connexionFrame = new Connexion_Frame(this,orientDB,poolCfg);
+        connexionFrame.setVisible(true);
+
+        new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                // Attendre que l'utilisateur termine (polling)
+                while (connexionFrame.isVisible()) {
+                    Thread.sleep(100); // Intervalle de polling (100ms)
+                }
+                return null;
+            }
+            @Override
+            protected void done() {
+                try {
+                    printMessage("Connexion réussie à la base de données!");
+                    // Initialiser le pool de connexions
+                    pool = connexionFrame.getpool();
+                    // SwingWorker pour charger les données d'Equipement
+                    new SwingWorker<DefaultTableModel, Void>() {
+                        @Override
+                        protected DefaultTableModel doInBackground() throws Exception {
+                            try (ODatabaseSession db = pool.acquire()) {
+                                // Créer les classes si elles n'existent pas
+                                if (!db.getMetadata().getSchema().existsClass("Equipement")) {
+                                    db.getMetadata().getSchema().createClass("Equipement", db.getMetadata().getSchema().getClass("V"));
+                                    printMessage("La classe Equipement a été créée dans le schéma.");
+                                }
+                                // Charger les données pour Equipement
+                                modelE = loadInitialDataIntoTableModel(db, "Equipement");
+                                return modelE;
+                            }
+                        }
+
+                        @Override
+                        protected void done() {
+                            try {
+                                listenerE = new MyLiveQueryListener(jTable1, "Equipement",pool.acquire(),modelE,modelC);
+                                listenerE.loadInitialData();
+                                monitorE = pool.acquire().live("SELECT FROM Equipement", listenerE);
+                            } catch (Exception e) {
+                                printMessage("Erreur d'exécution lors du chargement des données pour Equipement : " + e.getMessage());
+                            }
+                        }
+                    }.execute();
+
+                    // SwingWorker pour charger les données de Composant
+                    new SwingWorker<DefaultTableModel, Void>() {
+                        @Override
+                        protected DefaultTableModel doInBackground() throws Exception {
+                            try (ODatabaseSession db = pool.acquire()) {
+                                // Créer les classes si elles n'existent pas
+                                if (!db.getMetadata().getSchema().existsClass("Composant")) {
+                                    db.getMetadata().getSchema().createClass("Composant", db.getMetadata().getSchema().getClass("V"));
+                                    printMessage("La classe Composant a été créée dans le schéma.");
+                                }
+                                // Charger les données pour Composant
+                                modelC = loadInitialDataIntoTableModel(db, "Composant");
+                                return modelC;
+                            }
+                        }
+                        
+                        @Override
+                        protected void done() {
+                            try {
+                                listenerC = new MyLiveQueryListener(jTable2, "Composant", pool.acquire(),modelE,modelC);
+                                listenerC.loadInitialData();
+                                monitorC = pool.acquire().live("SELECT FROM Composant", listenerC);
+                            } catch (Exception e) {
+                                printMessage("Erreur lors du chargement des données pour Composant : " + e.getMessage());
+                            }
+                        }
+                    }.execute();
+
+                } catch (Exception e) {
+                    printMessage("Erreur lors de la connexion : " + e.getMessage());
+                }
+            }
+        }.execute();
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+                                      
     
     public String getTextFromAccessibleName(String accessibleName) {
         return getTextFromAccessibleNameRecursive(getContentPane(), accessibleName);
@@ -1023,8 +1062,8 @@ public class Interface_app extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
-    public javax.swing.JTable jTable1;
-    public javax.swing.JTable jTable2;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField8;
     // End of variables declaration//GEN-END:variables

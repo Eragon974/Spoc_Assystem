@@ -4,6 +4,9 @@
  */
 package com.mycompany.assystem_app;
 
+import com.orientechnologies.orient.core.db.ODatabasePool;
+import com.orientechnologies.orient.core.db.OrientDB;
+import com.orientechnologies.orient.core.db.OrientDBConfigBuilder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -15,11 +18,16 @@ public class Connexion_Frame extends javax.swing.JFrame {
     private String BDD;
     private String User;
     private String Password;
+    private ODatabasePool pool;
+    private OrientDB orientDB;
+    private OrientDBConfigBuilder poolCfg;
     private Interface_app Interface_app;
    
     
-    public Connexion_Frame( Interface_app Interface_app) {
+    public Connexion_Frame(Interface_app Interface_app,OrientDB orientDB ,OrientDBConfigBuilder poolCfg) {
         this.Interface_app = Interface_app;
+        this.orientDB = orientDB;
+        this.poolCfg= poolCfg;
         initComponents();
     }
     public void printMessage(String message) {
@@ -195,7 +203,7 @@ public class Connexion_Frame extends javax.swing.JFrame {
         String BDD = getTextFromAccessibleName("Connection_BDD");
         String User = getTextFromAccessibleName("Connection_User");
         String Password = getTextFromAccessibleName("Connection_Password");
-
+        
         // Vérification des valeurs
         if (BDD == null || BDD.isEmpty()) {
             printMessage("Le nom de la base de donnees (BDD) est vide ou nul. Veuillez verifier.");
@@ -212,7 +220,16 @@ public class Connexion_Frame extends javax.swing.JFrame {
             return;
         }
         this.Password=Password;
-        dispose();
+    
+
+        if (BDD != null && User != null && Password != null) {
+            try {
+                this.pool = new ODatabasePool(orientDB, BDD, User, Password, poolCfg.build());
+                dispose();
+            }catch (Exception e) {
+                    printMessage("Erreur lors de la connexion : " + e.getMessage());
+            }
+        }
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -224,6 +241,9 @@ public class Connexion_Frame extends javax.swing.JFrame {
     }
     public String getPassword(){
         return Password;
+    }
+    public ODatabasePool getpool(){
+        return pool;
     }
     private String getTextFromAccessibleName(String accessibleName) {
         return getTextFromAccessibleNameRecursive(getContentPane(), accessibleName);
