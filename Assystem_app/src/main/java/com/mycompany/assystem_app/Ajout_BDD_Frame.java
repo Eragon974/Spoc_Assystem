@@ -396,11 +396,11 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
         if ("Equipement".equals(selectedItem)) {
             jLabel3.setText("Type");
             jLabel5.setText("Constructeur");
-            jLabel4.setText("Tension circuit puissance (V)");
+            jLabel4.setText("Tension Circuit puissance (V)");
             jLabel6.setText("Tension Circuit de commande (V)");
             jLabel7.setText("Puissance Unitaire consommée (W)");
             jLabel8.setText("Puissance Eqt fermé");
-            jLabel8.setText("Puissance Eqt ouverte");
+            jLabel9.setText("Puissance Eqt ouverte");
         }
         else if ("Composant".equals(selectedItem)) {
             jLabel3.setText("Famille");
@@ -409,7 +409,7 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
             jLabel6.setText("Constructeur");
             jLabel7.setText("Tension (VCC)");
             jLabel8.setText("Puissance Unitaire (W)");
-            jLabel8.setText("Puissance Transitoire (W)");
+            jLabel9.setText("Puissance Transitoire (W)");
         }
     }//GEN-LAST:event_jComboBox1ActionPerformed
     private boolean isPositiveNumber(String value) {

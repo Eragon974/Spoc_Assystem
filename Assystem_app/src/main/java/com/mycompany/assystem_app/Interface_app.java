@@ -564,7 +564,7 @@ public class Interface_app extends javax.swing.JFrame {
                         item.getProperty("Tension Circuit Puissance"),
                         item.getProperty("Tension Circuit de commande"),
                         item.getProperty("Puissance Unitaire consommée"),
-                        item.getProperty("Puissance Eqt fermé"),
+                        item.getProperty("Puissance Eqt fermée"),
                         item.getProperty("Puissance Eqt ouverte"),
                         item.getProperty("Indice de confiance"),
                         item.getProperty("Origine de consommation"),
@@ -603,15 +603,15 @@ public class Interface_app extends javax.swing.JFrame {
             "Sous Famille",
             "Constructeur",
             "Tension(VCC)",
-            "Puissance Unitaire(W)",
-            "Puissance Transitoire(W)",
+            "Puissance Unitaire",
+            "Puissance Transitoire",
             "Indice de confiance",
             "Origine de consommation",
         };
         String[] propertyKeysE = {
             "Type", "Constructeur",
-            "Tension circuit puissance (V)", "Tension Circuit de commande (V)",
-            "Puissance Unitaire consommée (W)", "Puissance Eqt fermé",
+            "Tension Circuit Puissance", "Tension Circuit de commande",
+            "Puissance Unitaire consommée", "Puissance Eqt fermée",
             "Puissance Eqt ouverte", "Indice de Confiance",
             "Origine consommation"
         };
@@ -712,6 +712,12 @@ public class Interface_app extends javax.swing.JFrame {
 //Barre de Recherche
     private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
         String input = getTextFromAccessibleName("Recherche").trim().toLowerCase();
+
+        //Mettre à jour les modèles s'il y a modification avant la recherche
+        ODatabaseSession db = pool.acquire();
+        modelC = loadInitialDataIntoTableModel(db, "Composant");
+        modelE = loadInitialDataIntoTableModel(db, "Equipement");
+
         // Si la recherche est vide, restaurer les modèles d'origine
         if (input.isEmpty()) {
             jTable1.setModel(modelE);
@@ -885,6 +891,7 @@ public class Interface_app extends javax.swing.JFrame {
                                 listenerE = new MyLiveQueryListener(jTable1, "Equipement",pool.acquire(),modelE,modelC);
                                 listenerE.loadInitialData();
                                 monitorE = pool.acquire().live("SELECT FROM Equipement", listenerE);
+                                ODatabaseSession db = pool.acquire();
                             } catch (Exception e) {
                                 printMessage("Erreur d'exécution lors du chargement des données pour Equipement : " + e.getMessage());
                             }
@@ -911,6 +918,7 @@ public class Interface_app extends javax.swing.JFrame {
                                 listenerC = new MyLiveQueryListener(jTable2, "Composant", pool.acquire(),modelE, modelC);
                                 listenerC.loadInitialData();
                                 monitorC = pool.acquire().live("SELECT FROM Composant", listenerC);
+                                ODatabaseSession db = pool.acquire();
                             } catch (Exception e) {
                                 printMessage("Erreur lors du chargement des données pour Composant : " + e.getMessage());
                             }
