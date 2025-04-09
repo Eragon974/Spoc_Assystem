@@ -4,6 +4,9 @@
  */
 package com.mycompany.assystem_app;
 
+import com.orientechnologies.orient.core.db.ODatabasePool;
+import com.orientechnologies.orient.core.db.OrientDB;
+import com.orientechnologies.orient.core.db.OrientDBConfigBuilder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -15,26 +18,24 @@ public class Connexion_Frame extends javax.swing.JFrame {
     private String BDD;
     private String User;
     private String Password;
+    private ODatabasePool pool;
+    private OrientDB orientDB;
+    private OrientDBConfigBuilder poolCfg;
     private Interface_app Interface_app;
    
     
-    public Connexion_Frame( Interface_app Interface_app) {
+    public Connexion_Frame(Interface_app Interface_app,OrientDB orientDB ,OrientDBConfigBuilder poolCfg) {
         this.Interface_app = Interface_app;
+        this.orientDB = orientDB; //Besoin pour initialiser la connexion avec la BDD dans cette fenêtre pour permetrre une reconnexion en cas de problème
+        this.poolCfg= poolCfg; //Besoin pour initialiser la connexion avec la BDD dans cette fenêtre pour permetrre une reconnexion en cas de problème
         initComponents();
     }
     public void printMessage(String message) {
-        // Récupérer l'heure actuelle
-        SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm:ss.SSS");  // Format de l'heure
-        String time = sdf.format(new Date());  // Obtenir l'heure actuelle
-
-        // Construire le message avec l'heure
+        SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm:ss.SSS");
+        String time = sdf.format(new Date());
         String formattedMessage = time + " : " + message + "\n";
-
-        // Ajouter le message à la JTextArea
         jTextArea1.append(formattedMessage);
-        
-        // Faire défiler jusqu'à la fin pour afficher le dernier message
-        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
+        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength()); // Faire défiler jusqu'à la fin pour afficher le dernier message
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -61,27 +62,9 @@ public class Connexion_Frame extends javax.swing.JFrame {
 
         jPanel3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-        jTextField5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField5ActionPerformed(evt);
-            }
-        });
-
         jLabel7.setText("Utilisateur");
 
-        jTextField6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField6ActionPerformed(evt);
-            }
-        });
-
         jLabel8.setText("Password");
-
-        jTextField7.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField7ActionPerformed(evt);
-            }
-        });
 
         jLabel9.setText("Nom BDD");
 
@@ -176,27 +159,11 @@ public class Connexion_Frame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField5ActionPerformed
-
-    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField6ActionPerformed
-
-    private void jTextField7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField7ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField7ActionPerformed
-
+//Bouton de connexion
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-
-        // Récupération des informations de connexion
         String BDD = getTextFromAccessibleName("Connection_BDD");
         String User = getTextFromAccessibleName("Connection_User");
         String Password = getTextFromAccessibleName("Connection_Password");
-
-        // Vérification des valeurs
         if (BDD == null || BDD.isEmpty()) {
             printMessage("Le nom de la base de donnees (BDD) est vide ou nul. Veuillez verifier.");
             return;
@@ -212,7 +179,14 @@ public class Connexion_Frame extends javax.swing.JFrame {
             return;
         }
         this.Password=Password;
-        dispose();
+        if (BDD != null && User != null && Password != null) {
+            try {
+                this.pool = new ODatabasePool(orientDB, BDD, User, Password, poolCfg.build());
+                dispose();
+            }catch (Exception e) {
+                    printMessage("Erreur lors de la connexion : " + e.getMessage());
+            }
+        }
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -225,26 +199,27 @@ public class Connexion_Frame extends javax.swing.JFrame {
     public String getPassword(){
         return Password;
     }
+    public ODatabasePool getpool(){
+        return pool;
+    }
+    //Accéder aux informations d'une case
     private String getTextFromAccessibleName(String accessibleName) {
         return getTextFromAccessibleNameRecursive(getContentPane(), accessibleName);
     }
-    
+    //Recherche de toutes les cases de manière récursive
     private String getTextFromAccessibleNameRecursive(java.awt.Container container, String accessibleName) {
         for (java.awt.Component comp : container.getComponents()) {
-            // Vérifier si le composant est un JTextField
             if (comp instanceof javax.swing.JTextField) {
                 javax.swing.JTextField textField = (javax.swing.JTextField) comp;
                 if (accessibleName.equals(textField.getAccessibleContext().getAccessibleName())) {
                     return textField.getText();
                 }
             }    
-        // Vérifier si le composant est un JComboBox
             else if (comp instanceof javax.swing.JComboBox) {
                 javax.swing.JComboBox<?> comboBox = (javax.swing.JComboBox<?>) comp;
                 if (accessibleName.equals(comboBox.getAccessibleContext().getAccessibleName())) {
-                    // Récupérer la valeur sélectionnée dans la combobox
                     Object selectedItem = comboBox.getSelectedItem();
-                    return selectedItem != null ? selectedItem.toString() : ""; // Retourne une chaîne vide si aucun élément n'est sélectionné
+                    return selectedItem != null ? selectedItem.toString() : "";
                 }
             }
             // Rechercher récursivement dans les sous-conteneurs
@@ -255,12 +230,8 @@ public class Connexion_Frame extends javax.swing.JFrame {
                 }
             }
         }
-        return "";  // Retourne une chaîne vide si le champ ou la combobox n'est pas trouvé
+        return "";
     }
-    /**
-     * @param args the command line arguments
-     */
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel7;

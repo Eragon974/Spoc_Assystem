@@ -94,9 +94,9 @@
                                       </Group>
                                       <Group type="102" attributes="0">
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="jLabel7" min="-2" pref="85" max="-2" attributes="0"/>
-                                              <Component id="jLabel6" min="-2" pref="85" max="-2" attributes="0"/>
-                                              <Component id="jLabel4" alignment="0" min="-2" pref="76" max="-2" attributes="0"/>
+                                              <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel7" alignment="0" min="-2" pref="196" max="-2" attributes="0"/>
                                           </Group>
                                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                       </Group>
@@ -187,6 +187,9 @@
           <AccessibilityProperties>
             <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_Classe"/>
           </AccessibilityProperties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBox1ActionPerformed"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
@@ -198,48 +201,42 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Famille"/>
+            <Property name="text" type="java.lang.String" value="Type"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="jTextField1">
           <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_Famille"/>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_1"/>
           </AccessibilityProperties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField1ActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="jTextField2">
           <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_Constructeur"/>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_4"/>
           </AccessibilityProperties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField2ActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Sous famille"/>
+            <Property name="text" type="java.lang.String" value="Tension circuit puissance (V)"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="jTextField3">
           <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_Type"/>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_2"/>
           </AccessibilityProperties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel5">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Type"/>
+            <Property name="text" type="java.lang.String" value="Constructeur"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="jTextField4">
           <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_Sous_Famille"/>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_3"/>
           </AccessibilityProperties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel6">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Constructeur"/>
+            <Property name="text" type="java.lang.String" value="Tension Circuit de commande (V)"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="jButton1">
@@ -252,50 +249,38 @@
         </Component>
         <Component class="javax.swing.JTextField" name="jTextField5">
           <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_Tension"/>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_5"/>
           </AccessibilityProperties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField5ActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel7">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Tension (VCC)"/>
+            <Property name="text" type="java.lang.String" value="Puissance Unitaire consomm&#xe9;e (W)"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="jTextField6">
           <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_Puissance_Unitaire"/>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_6"/>
           </AccessibilityProperties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField6ActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel8">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Puissance unitaire (W)"/>
+            <Property name="text" type="java.lang.String" value="Puissance Eqt ferm&#xe9;"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="jTextField7">
           <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_Puissance_Transitoire"/>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_7"/>
           </AccessibilityProperties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField7ActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel9">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Puissance transitoire (W)"/>
+            <Property name="text" type="java.lang.String" value="Puissance Eqt ouverte"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="jTextField8">
           <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_Indice_Confiance"/>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_8"/>
           </AccessibilityProperties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField8ActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel10">
           <Properties>
@@ -304,11 +289,8 @@
         </Component>
         <Component class="javax.swing.JTextField" name="jTextField9">
           <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_Origine_Consommation"/>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Add_9"/>
           </AccessibilityProperties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField9ActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel11">
           <Properties>

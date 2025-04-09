@@ -15,7 +15,6 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
-
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -29,18 +28,11 @@ import org.graphstream.ui.graphicGraph.GraphicNode;
 import org.graphstream.ui.graphicGraph.GraphicEdge;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.GraphicElement;
-
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-
-/**
- *
- * @author frate
- */
 public class Graphe extends javax.swing.JFrame implements KeyListener {
     private ODatabasePool pool;
     private ODatabaseSession db;
@@ -58,7 +50,6 @@ public class Graphe extends javax.swing.JFrame implements KeyListener {
         createGraph();
         setupInteractions();
     }
-
     private void createGraph() {
         // Créer un graphe GraphStream
         graph = new SingleGraph("OrientDB Graph");
@@ -73,7 +64,6 @@ public class Graphe extends javax.swing.JFrame implements KeyListener {
         // Créer un viewer pour afficher le graphe dans jPanel1
         viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.enableAutoLayout();
-        
         JPanel viewPanel = (JPanel) viewer.addDefaultView(false); // false pour ne pas utiliser OpenGL
         viewPanel.addKeyListener(this); // Ajouter un KeyListener pour gérer les événements clavier
         viewPanel.setFocusable(true); // Ensure the panel can receive key events

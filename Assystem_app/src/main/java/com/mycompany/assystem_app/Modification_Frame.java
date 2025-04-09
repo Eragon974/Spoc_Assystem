@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.assystem_app;
-
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.OVertex;
@@ -11,33 +10,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-/**
- *
- * @author julie
- */
 public class Modification_Frame extends javax.swing.JFrame {
     private ODatabaseSession db;
-    private List<String> info;
-    private String RID;
-    private List<String> filteredWords;
-    private String[] propertyKeys = {
-            "Classe",
-            "Famille", 
-            "Type",
-            "Sous Famille", 
-            "Constructeur", 
-            "Tension(VCC)", 
-            "Puissance Unitaire(W)", 
-            "Puissance Transitoire(W)", 
-            "Indice de confiance", 
-            "Origine de consommation"
-        };
+    private List<String> info; //Informations de l'objet à modifier
+    private String RID; //Case 10 de info
+    private List<String> filteredWords; //On ne veut garder que les informations utile (pas le RID de l'objet dans la BDD)
 
-
-    /**
-     * Creates new form Modification_Frame
-     */
     public Modification_Frame(List<String> info, ODatabaseSession db) {
         this.db = db;
         this.info = info;
@@ -50,31 +28,26 @@ public class Modification_Frame extends javax.swing.JFrame {
              }
         }
         
-        setTextToAccessibleName("Mod_Classe", filteredWords.get(0));
-        setTextToAccessibleName("Mod_Famille", filteredWords.get(1));
-        setTextToAccessibleName("Mod_Type", filteredWords.get(2));
-        setTextToAccessibleName("Mod_Sous_Famille", filteredWords.get(3));
-        setTextToAccessibleName("Mod_Constructeur", filteredWords.get(4));
-        setTextToAccessibleName("Mod_Tension", filteredWords.get(5));
-        setTextToAccessibleName("Mod_PU", filteredWords.get(6));
-        setTextToAccessibleName("Mod_PT", filteredWords.get(7));
-        setTextToAccessibleName("Mod_IdC", filteredWords.get(8));
-        setTextToAccessibleName("Mod_Cons", filteredWords.get(9));
+        //Initialisation des informations de infos dans les cases de la Frame
+        setTextToAccessibleName("Mod_Classe", filteredWords.get(0)); 
+        setTextToAccessibleName("Mod_1", filteredWords.get(1));
+        setTextToAccessibleName("Mod_2", filteredWords.get(2));
+        setTextToAccessibleName("Mod_3", filteredWords.get(3));
+        setTextToAccessibleName("Mod_4", filteredWords.get(4));
+        setTextToAccessibleName("Mod_5", filteredWords.get(5));
+        setTextToAccessibleName("Mod_6", filteredWords.get(6));
+        setTextToAccessibleName("Mod_7", filteredWords.get(7));
+        setTextToAccessibleName("Mod_8", filteredWords.get(8));
+        setTextToAccessibleName("Mod_9", filteredWords.get(9));
         
     }
+    //Permet d'afficher des messages dans la JTextArea
     public void printMessage(String message) {
-        // Récupérer l'heure actuelle
         SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm:ss.SSS");  // Format de l'heure
         String time = sdf.format(new Date());  // Obtenir l'heure actuelle
-
-        // Construire le message avec l'heure
         String formattedMessage = time + " : " + message + "\n";
-
-        // Ajouter le message à la JTextArea
         jTextArea1.append(formattedMessage);
-        
-        // Faire défiler jusqu'à la fin pour afficher le dernier message
-        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
+        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());// Faire défiler jusqu'à la fin pour afficher le dernier message
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -115,13 +88,7 @@ public class Modification_Frame extends javax.swing.JFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-        jTextField9.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField9ActionPerformed(evt);
-            }
-        });
-
-        jLabel6.setText("Constructeur");
+        jLabel6.setText("Tension Circuit de commande (V)");
 
         jLabel11.setText("Origine consommation ");
 
@@ -132,53 +99,28 @@ public class Modification_Frame extends javax.swing.JFrame {
             }
         });
 
-        jTextField5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField5ActionPerformed(evt);
-            }
-        });
+        jLabel7.setText("Puissance Unitaire consommée (W)");
 
-        jLabel7.setText("Tension (VCC)");
+        jLabel8.setText("Puissance Eqt fermé");
 
-        jTextField6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField6ActionPerformed(evt);
-            }
-        });
-
-        jLabel8.setText("Puissance unitaire (W)");
-
-        jTextField7.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField7ActionPerformed(evt);
-            }
-        });
-
-        jLabel9.setText("Puissance transitoire (W)");
+        jLabel9.setText("Puissance Eqt ouverte");
 
         jLabel2.setText("Classe");
 
-        jLabel3.setText("Famille");
+        jLabel3.setText("Type");
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
-            }
-        });
+        jLabel4.setText("Tension circuit puissance (V)");
 
-        jLabel4.setText("Sous famille");
-
-        jTextField8.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField8ActionPerformed(evt);
-            }
-        });
-
-        jLabel5.setText("Type");
+        jLabel5.setText("Constructeur");
 
         jLabel10.setText("Indice de confiance");
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Equipement", "Composant" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -218,9 +160,9 @@ public class Modification_Frame extends javax.swing.JFrame {
                                         .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(jLabel4)
+                                            .addComponent(jLabel6)
+                                            .addComponent(jLabel7))
                                         .addGap(0, 0, Short.MAX_VALUE)))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -243,13 +185,14 @@ public class Modification_Frame extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(14, 14, 14)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -278,16 +221,16 @@ public class Modification_Frame extends javax.swing.JFrame {
                 .addGap(22, 22, 22))
         );
 
-        jTextField4.getAccessibleContext().setAccessibleName("Mod_Sous_Famille");
-        jTextField9.getAccessibleContext().setAccessibleName("Mod_Cons");
-        jTextField5.getAccessibleContext().setAccessibleName("Mod_Tension");
-        jTextField6.getAccessibleContext().setAccessibleName("Mod_PU");
-        jTextField7.getAccessibleContext().setAccessibleName("Mod_PT");
-        jTextField1.getAccessibleContext().setAccessibleName("Mod_Famille");
+        jTextField4.getAccessibleContext().setAccessibleName("Mod_3");
+        jTextField9.getAccessibleContext().setAccessibleName("Mod_9");
+        jTextField5.getAccessibleContext().setAccessibleName("Mod_5");
+        jTextField6.getAccessibleContext().setAccessibleName("Mod_6");
+        jTextField7.getAccessibleContext().setAccessibleName("Mod_7");
+        jTextField1.getAccessibleContext().setAccessibleName("Mod_1");
         jTextField1.getAccessibleContext().setAccessibleDescription("");
-        jTextField2.getAccessibleContext().setAccessibleName("Mod_Constructeur");
-        jTextField3.getAccessibleContext().setAccessibleName("Mod_Type");
-        jTextField8.getAccessibleContext().setAccessibleName("Mod_IdC");
+        jTextField2.getAccessibleContext().setAccessibleName("Mod_4");
+        jTextField3.getAccessibleContext().setAccessibleName("Mod_2");
+        jTextField8.getAccessibleContext().setAccessibleName("Mod_8");
         jComboBox1.getAccessibleContext().setAccessibleName("Mod_Classe");
 
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
@@ -333,61 +276,125 @@ public class Modification_Frame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jTextField9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField9ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField9ActionPerformed
-
+//Bouton de modification
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         OVertex v;
         try {
             ORecordId recordId = new ORecordId(RID);
-            OVertex vertex = db.load(recordId);
-            
+            v = db.load(recordId); // Récupération de l'objet dans la base de données
+            String famille = "NULL";
+            String sousFamille = "NULL";
+            String type = "NULL";
+            String constructeur = "NULL";
+            String tension = "NULL";
+            String puissanceUnitaire = "NULL";
+            String puissanceTransitoire = "NULL";
+            String indice = "NULL";
+            String origineConsommation = "NULL";
+            String TensionCircuiPuissance = "NULL";
+            String TensionCircuitCommande = "NULL";
+            String PuissanceUnitaireCons = "NULL";
+            String PuissanceEqtFermé = "NULL";
+            String PuissanceEqtOuverte = "NULL";
             String className = getTextFromAccessibleName("Mod_Classe");
-            String famille = getTextFromAccessibleName("Mod_Famille");
-            String sousFamille = getTextFromAccessibleName("Mod_Sous_Famille");
-            String type = getTextFromAccessibleName("Mod_Type");
-            String constructeur = getTextFromAccessibleName("Mod_Constructeur");
-            String tension = getTextFromAccessibleName("Mod_Tension");
-            String puissanceUnitaire = getTextFromAccessibleName("Mod_PU");
-            String puissanceTransitoire = getTextFromAccessibleName("Mod_PT");
-            String indice = getTextFromAccessibleName("Mod_IdC");
-            String origineConsommation = getTextFromAccessibleName("Mod_Cons");
-            
-            if (famille.isEmpty()) famille = "NULL";
-            if (sousFamille.isEmpty()) sousFamille = "NULL";
-            if (type.isEmpty()) type = "NULL";
-            if (constructeur.isEmpty()) constructeur = "NULL";
-            if (tension.isEmpty()) tension = "NULL";
-            if (puissanceUnitaire.isEmpty()) puissanceUnitaire = "NULL";
-            if (puissanceTransitoire.isEmpty()) puissanceTransitoire = "NULL";
-            if (indice.isEmpty()) indice = "NULL";
-            if (origineConsommation.isEmpty()) origineConsommation = "NULL";
-            if (!className.equals(info.get(0))){
-                vertex.delete();
+            if (className.equals("Composant")) {
+                famille = getTextFromAccessibleName("Mod_1");
+                type = getTextFromAccessibleName("Mod_2");
+                sousFamille = getTextFromAccessibleName("Mod_3");
+                constructeur = getTextFromAccessibleName("Mod_4");
+                tension = getTextFromAccessibleName("Mod_5");
+                puissanceUnitaire = getTextFromAccessibleName("Mod_6");
+                puissanceTransitoire = getTextFromAccessibleName("Mod_7");
+                indice = getTextFromAccessibleName("Mod_8");
+                origineConsommation = getTextFromAccessibleName("Mod_9");
+                if (famille.isEmpty()) famille = "NULL";
+                if (sousFamille.isEmpty()) sousFamille = "NULL";
+                if (type.isEmpty()) type = "NULL";
+                if (constructeur.isEmpty()) constructeur = "NULL";
+                if (tension.isEmpty()) tension = "NULL";
+                if (puissanceUnitaire.isEmpty()) puissanceUnitaire = "NULL";
+                if (puissanceTransitoire.isEmpty()) puissanceTransitoire = "NULL";
+                if (indice.isEmpty()) indice = "NULL";
+                if (origineConsommation.isEmpty()) origineConsommation = "NULL";
+                if (!isNumericAndPositive(tension)) { printMessage("Tension invalide."); return; }
+                if (!isNumericAndPositive(puissanceUnitaire)) { printMessage("Puissance Unitaire invalide."); return; }
+                if (!isNumericAndPositive(puissanceTransitoire)) { printMessage("Puissance Transitoire invalide."); return; }
+                if (!indice.equals("NULL") && !isIndiceValid(indice)) { printMessage("Indice de confiance invalide. Il doit être entre 0 et 1."); return; }
+            } else if (className.equals("Equipement")) {
+                type = getTextFromAccessibleName("Mod_1");
+                constructeur = getTextFromAccessibleName("Mod_2");
+                TensionCircuiPuissance = getTextFromAccessibleName("Mod_3");
+                TensionCircuitCommande = getTextFromAccessibleName("Mod_4");
+                PuissanceUnitaireCons = getTextFromAccessibleName("Mod_5");
+                PuissanceEqtFermé = getTextFromAccessibleName("Mod_6");
+                PuissanceEqtOuverte = getTextFromAccessibleName("Mod_7");
+                indice = getTextFromAccessibleName("Mod_8");
+                origineConsommation = getTextFromAccessibleName("Mod_9");
+                if (type.isEmpty()) type = "NULL";
+                if (constructeur.isEmpty()) constructeur = "NULL";
+                if (TensionCircuiPuissance.isEmpty()) TensionCircuiPuissance = "NULL";
+                if (TensionCircuitCommande.isEmpty()) TensionCircuitCommande = "NULL";
+                if (PuissanceUnitaireCons.isEmpty()) PuissanceUnitaireCons = "NULL";
+                if (PuissanceEqtFermé.isEmpty()) PuissanceEqtFermé = "NULL";
+                if (PuissanceEqtOuverte.isEmpty()) PuissanceEqtOuverte = "NULL";
+                if (indice.isEmpty()) indice = "NULL";
+                if (origineConsommation.isEmpty()) origineConsommation = "NULL";
+                if (!isNumericAndPositive(TensionCircuiPuissance)) { printMessage("Tension Circuit Puissance invalide."); return; }
+                if (!isNumericAndPositive(TensionCircuitCommande)) { printMessage("Tension Circuit Commande invalide."); return; }
+                if (!isNumericAndPositive(PuissanceUnitaireCons)) { printMessage("Puissance Unitaire Consommée invalide."); return; }
+                if (!isNumericAndPositive(PuissanceEqtFermé)) { printMessage("Puissance Eqt Fermé invalide."); return; }
+                if (!isNumericAndPositive(PuissanceEqtOuverte)) { printMessage("Puissance Eqt Ouverte invalide."); return; }
+                if (!indice.equals("NULL") && !isIndiceValid(indice)) { printMessage("Indice de confiance invalide. Il doit être entre 0 et 1."); return; }
+            }
+
+            if (!className.equals(info.get(0))) {
+                v.delete();
                 OVertex newVertex = db.newVertex(className);
-                newVertex.setProperty("Famille", famille);
-                newVertex.setProperty("Type", type);
-                newVertex.setProperty("Sous Famille", sousFamille);
-                newVertex.setProperty("Constructeur", constructeur);
-                newVertex.setProperty("Tension(VCC)", tension);
-                newVertex.setProperty("Puissance Unitaire(W)", puissanceUnitaire);
-                newVertex.setProperty("Puissance Transitoire(W)", puissanceTransitoire);
-                newVertex.setProperty("Indice de confiance", indice);
-                newVertex.setProperty("Origine de consommation", origineConsommation);
-                newVertex.save();
-            }else{
-                vertex.setProperty("Famille", famille);
-                vertex.setProperty("Type", type);
-                vertex.setProperty("Sous Famille", sousFamille);
-                vertex.setProperty("Constructeur", constructeur);
-                vertex.setProperty("Tension(VCC)", tension);
-                vertex.setProperty("Puissance Unitaire(W)", puissanceUnitaire);
-                vertex.setProperty("Puissance Transitoire(W)", puissanceTransitoire);
-                vertex.setProperty("Indice de confiance", indice);
-                vertex.setProperty("Origine de consommation", origineConsommation);
-                vertex.save();
+                if (className.equals("Composant")) {
+                    newVertex.setProperty("Famille", famille);
+                    newVertex.setProperty("Type", type);
+                    newVertex.setProperty("Sous Famille", sousFamille);
+                    newVertex.setProperty("Constructeur", constructeur);
+                    newVertex.setProperty("Tension(VCC)", tension);
+                    newVertex.setProperty("Puissance Unitaire", puissanceUnitaire);
+                    newVertex.setProperty("Puissance Transitoire", puissanceTransitoire);
+                    newVertex.setProperty("Indice de confiance", indice);
+                    newVertex.setProperty("Origine de consommation", origineConsommation);
+                    newVertex.save();
+                } else if (className.equals("Equipement")) {
+                    newVertex.setProperty("Type", type);
+                    newVertex.setProperty("Constructeur", constructeur);
+                    newVertex.setProperty("Tension Circuit Puissance", TensionCircuiPuissance);
+                    newVertex.setProperty("Tension Circuit de commande", TensionCircuitCommande);
+                    newVertex.setProperty("Puissance Unitaire consommée", PuissanceUnitaireCons);
+                    newVertex.setProperty("Puissance Eqt fermée", PuissanceEqtFermé);
+                    newVertex.setProperty("Puissance Eqt ouverte", PuissanceEqtOuverte);
+                    newVertex.setProperty("Indice de confiance", indice);
+                    newVertex.setProperty("Origine de consommation", origineConsommation);
+                    newVertex.save();
+                }
+            } else if (className.equals("Composant")) {
+                v.setProperty("Famille", famille);
+                v.setProperty("Type", type);
+                v.setProperty("Sous Famille", sousFamille);
+                v.setProperty("Constructeur", constructeur);
+                v.setProperty("Tension(VCC)", tension);
+                v.setProperty("Puissance Unitaire", puissanceUnitaire);
+                v.setProperty("Puissance Transitoire", puissanceTransitoire);
+                v.setProperty("Indice de confiance", indice);
+                v.setProperty("Origine de consommation", origineConsommation);
+                v.save();
+            } else if (className.equals("Equipement")) {
+                v.setProperty("Type", type);
+                v.setProperty("Constructeur", constructeur);
+                v.setProperty("Tension Circuit Puissance", TensionCircuiPuissance);
+                v.setProperty("Tension Circuit de commande", TensionCircuitCommande);
+                v.setProperty("Puissance Unitaire consommée", PuissanceUnitaireCons);
+                v.setProperty("Puissance Eqt fermée", PuissanceEqtFermé);
+                v.setProperty("Puissance Eqt ouverte", PuissanceEqtOuverte);
+                v.setProperty("Indice de confiance", indice);
+                v.setProperty("Origine de consommation", origineConsommation);
+                v.save();
             }
             dispose();
         } catch (Exception e) {
@@ -395,59 +402,75 @@ public class Modification_Frame extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+//Vérification de la valeur de la Classe pour mettre les bonnes cases à l'affichage
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        String selectedItem = (String) jComboBox1.getSelectedItem();
+        if ("Equipement".equals(selectedItem)) {
+            jLabel3.setText("Type");
+            jLabel5.setText("Constructeur");
+            jLabel4.setText("Tension circuit puissance (V)");
+            jLabel6.setText("Tension Circuit de commande (V)");
+            jLabel7.setText("Puissance Unitaire consommée (W)");
+            jLabel8.setText("Puissance Eqt fermé");
+            jLabel8.setText("Puissance Eqt ouverte");
+        }else if ("Composant".equals(selectedItem)) {
+            jLabel3.setText("Famille");
+            jLabel5.setText("Type");
+            jLabel4.setText("Sous Famille");
+            jLabel6.setText("Constructeur");
+            jLabel7.setText("Tension (VCC)");
+            jLabel8.setText("Puissance Unitaire (W)");
+            jLabel8.setText("Puissance Transitoire (W)");
+        }
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+//Vérification valeur numérique
+    private boolean isNumericAndPositive(String value) {
+        try {
+            return value != null && Double.parseDouble(value) > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+//Vérification Indice de confiance
+    private boolean isIndiceValid(String value) {
+        try {
+            double d = Double.parseDouble(value);
+            return d >= 0 && d <= 1;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 
-    private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField5ActionPerformed
-
-    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField6ActionPerformed
-
-    private void jTextField7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField7ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField7ActionPerformed
-
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
-
-    private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField8ActionPerformed
-    
+//Modifier les informations d'une case
     private void setTextToAccessibleName(String accessibleName, String text) {
         setTextToAccessibleNameRecursive(getContentPane(), accessibleName, text);
     }
-
+//Recherche de toutes les cases de manière récursive
     private void setTextToAccessibleNameRecursive(java.awt.Container container, String accessibleName, String text) {
     for (java.awt.Component comp : container.getComponents()) {
-        // Vérifier si le composant est un JTextField
         if (comp instanceof javax.swing.JTextField) {
             javax.swing.JTextField textField = (javax.swing.JTextField) comp;
             if (accessibleName.equals(textField.getAccessibleContext().getAccessibleName())) {
-                textField.setText(text); // Définir le texte
-                return; // Arrêter la recherche après modification
+                textField.setText(text);
+                return; 
             }
         }
-        // Vérifier si le composant est un JComboBox
         else if (comp instanceof javax.swing.JComboBox) {
             javax.swing.JComboBox<?> comboBox = (javax.swing.JComboBox<?>) comp;
             if (accessibleName.equals(comboBox.getAccessibleContext().getAccessibleName())) {
-                // Vérifier si le texte existe déjà dans la JComboBox
                 boolean found = false;
                 for (int i = 0; i < comboBox.getItemCount(); i++) {
                     Object item = comboBox.getItemAt(i);
-                    if (text.equals(item.toString())) { // Comparer en tant que String
-                        comboBox.setSelectedIndex(i); // Sélectionner l'élément existant
+                    if (text.equals(item.toString())) { 
+                        comboBox.setSelectedIndex(i);
                         found = true;
                         break;
                     }
                 }
                 if (!found) {
-                    System.out.println("Erreur input");
+                    printMessage("Erreur input");
                 }
-                return; // Arrêter la recherche après modification
+                return;
             }
         }
         // Rechercher récursivement dans les sous-conteneurs
@@ -456,27 +479,24 @@ public class Modification_Frame extends javax.swing.JFrame {
         }
     }
 }
-
+//Accéder aux informations d'une case
     public String getTextFromAccessibleName(String accessibleName) {
         return getTextFromAccessibleNameRecursive(getContentPane(), accessibleName);
     }
-
+//Recherche de toutes les cases de manière récursive
     public String getTextFromAccessibleNameRecursive(java.awt.Container container, String accessibleName) {
         for (java.awt.Component comp : container.getComponents()) {
-            // Vérifier si le composant est un JTextField
             if (comp instanceof javax.swing.JTextField) {
                 javax.swing.JTextField textField = (javax.swing.JTextField) comp;
                 if (accessibleName.equals(textField.getAccessibleContext().getAccessibleName())) {
                     return textField.getText();
                 }
             }    
-        // Vérifier si le composant est un JComboBox
             else if (comp instanceof javax.swing.JComboBox) {
                 javax.swing.JComboBox<?> comboBox = (javax.swing.JComboBox<?>) comp;
                 if (accessibleName.equals(comboBox.getAccessibleContext().getAccessibleName())) {
-                    // Récupérer la valeur sélectionnée dans la combobox
                     Object selectedItem = comboBox.getSelectedItem();
-                    return selectedItem != null ? selectedItem.toString() : ""; // Retourne une chaîne vide si aucun élément n'est sélectionné
+                    return selectedItem != null ? selectedItem.toString() : ""; 
                 }
             }
             // Rechercher récursivement dans les sous-conteneurs
@@ -487,9 +507,8 @@ public class Modification_Frame extends javax.swing.JFrame {
                 }
             }
         }
-        return "";  // Retourne une chaîne vide si le champ ou la combobox n'est pas trouvé
+        return ""; 
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JComboBox<String> jComboBox1;

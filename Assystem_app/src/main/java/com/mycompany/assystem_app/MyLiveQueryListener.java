@@ -2,11 +2,9 @@ package com.mycompany.assystem_app;
 
 import java.util.List;
 import java.util.Vector;
-
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
-
 import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.db.OLiveQueryResultListener;
@@ -15,8 +13,7 @@ import com.orientechnologies.orient.core.record.impl.OVertexDocument;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 
-public class MyLiveQueryListener implements OLiveQueryResultListener {
-
+public class MyLiveQueryListener implements OLiveQueryResultListener {  
     private final JTable table;
     private final String className;
     private final ODatabaseSession db;
@@ -76,8 +73,6 @@ public class MyLiveQueryListener implements OLiveQueryResultListener {
                     model.addColumn(field);
                 }
             }
-
-            // Add ID column
             model.addColumn("ID");
             
             // Add data rows
@@ -162,8 +157,10 @@ public class MyLiveQueryListener implements OLiveQueryResultListener {
             // Determine which model to update based on the className
             if (className.equals("Equipement")) {
                 model1 = model;
+                return model;
             } else if (className.equals("Composant")) {
                 model2 = model;
+                return model;
             } else {
                 System.err.println("Unknown class name: " + className);
                 return null;
@@ -173,14 +170,6 @@ public class MyLiveQueryListener implements OLiveQueryResultListener {
             System.err.println("Erreur lors du chargement des données pour " + className + ": " + e.getMessage());
             e.printStackTrace();
         }
-
-        if (className.equals("Equipement")) {
-            return model1;
-        } else if (className.equals("Composant")) {
-            return model2;
-        } else {
-            System.err.println("Unknown class name: " + className);
-            return null;
-        }
+        return null;
     }
 }
