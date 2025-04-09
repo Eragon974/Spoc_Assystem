@@ -613,7 +613,7 @@ public class Interface_app extends javax.swing.JFrame {
             "Tension circuit puissance (V)", "Tension Circuit de commande (V)",
             "Puissance Unitaire consommée (W)", "Puissance Eqt fermé",
             "Puissance Eqt ouverte", "Indice de Confiance",
-            "Origine consommation", "ID"
+            "Origine consommation"
         };
         int[] selectedRows1 = jTable1.getSelectedRows();
         int[] selectedRows2 = jTable2.getSelectedRows();
@@ -694,7 +694,7 @@ public class Interface_app extends javax.swing.JFrame {
         for (int row : selectedRows2) {
             try {
                 // Récupérer l'ID du vertex depuis le modèle (colonne 9 de jTable)
-                Object idValue = jTable2.getModel().getValueAt(row, 9);
+                Object idValue = jTable2.getModel().getValueAt(row, 9 );
                 if (idValue != null) {
                     String vertexId = idValue.toString();
                     ORecordId recordId = new ORecordId(vertexId);

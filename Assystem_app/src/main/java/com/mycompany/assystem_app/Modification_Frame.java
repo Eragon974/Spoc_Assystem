@@ -281,67 +281,76 @@ public class Modification_Frame extends javax.swing.JFrame {
         OVertex v;
         try {
             ORecordId recordId = new ORecordId(RID);
-            v = db.load(recordId); //Récupération de l'objet dans la base de données
-        String famille = "NULL";
-        String sousFamille = "NULL";
-        String type= "NULL";
-        String constructeur= "NULL";
-        String tension= "NULL";
-        String puissanceUnitaire= "NULL";
-        String puissanceTransitoire= "NULL";
-        String indice= "NULL";
-        String origineConsommation= "NULL";
-        String TensionCircuiPuissance= "NULL";
-        String TensionCircuitCommande= "NULL";
-        String PuissanceUnitaireCons= "NULL";
-        String PuissanceEqtFermé= "NULL";
-        String PuissanceEqtOuverte= "NULL";
-        String className = getTextFromAccessibleName("Mod_Classe");
-        if (className.equals("Composant")){ //On récupère les modifications apportées dans les cases
-            famille = getTextFromAccessibleName("Mod_1");
-            sousFamille = getTextFromAccessibleName("Mod_2");
-            type = getTextFromAccessibleName("Mod_3");
-            constructeur = getTextFromAccessibleName("Mod_4");
-            tension = getTextFromAccessibleName("Mod_5");
-            puissanceUnitaire = getTextFromAccessibleName("Mod_6");
-            puissanceTransitoire = getTextFromAccessibleName("Mod_7");
-            indice = getTextFromAccessibleName("Mod_8");
-            origineConsommation = getTextFromAccessibleName("Mod_9");
-            // Remplacer les valeurs null par "NULL" si case vide
-            if (famille.isEmpty()) famille = "NULL";
-            if (sousFamille.isEmpty()) sousFamille = "NULL";
-            if (type.isEmpty()) type = "NULL";
-            if (constructeur.isEmpty()) constructeur = "NULL";
-            if (tension.isEmpty()) tension = "NULL";
-            if (puissanceUnitaire.isEmpty()) puissanceUnitaire = "NULL";
-            if (puissanceTransitoire.isEmpty()) puissanceTransitoire = "NULL";
-            if (indice.isEmpty()) indice = "NULL";
-            if (origineConsommation.isEmpty()) origineConsommation = "NULL";
-        }else if (className.equals("Equipement")){ //On récupère les modifications apportées dans les cases
-            type = getTextFromAccessibleName("Mod_1");
-            constructeur = getTextFromAccessibleName("Mod_2");
-            TensionCircuiPuissance = getTextFromAccessibleName("Mod_3");
-            TensionCircuitCommande = getTextFromAccessibleName("Mod_4");
-            PuissanceUnitaireCons = getTextFromAccessibleName("Mod_5");
-            PuissanceEqtFermé = getTextFromAccessibleName("Mod_6");
-            PuissanceEqtOuverte = getTextFromAccessibleName("Mod_7");
-            indice = getTextFromAccessibleName("Mod_8");
-            origineConsommation = getTextFromAccessibleName("Mod_9");
-            // Remplacer les valeurs null par "NULL" si case Vide
-            if (type.isEmpty()) type = "NULL";
-            if (constructeur.isEmpty()) constructeur = "NULL";
-            if (TensionCircuiPuissance.isEmpty()) TensionCircuiPuissance = "NULL";
-            if (TensionCircuitCommande.isEmpty()) TensionCircuitCommande = "NULL";
-            if (PuissanceUnitaireCons.isEmpty()) PuissanceUnitaireCons = "NULL";
-            if (PuissanceEqtFermé.isEmpty()) PuissanceEqtFermé = "NULL";
-            if (PuissanceEqtOuverte.isEmpty()) PuissanceEqtOuverte = "NULL";
-            if (indice.isEmpty()) indice = "NULL";
-            if (origineConsommation.isEmpty()) origineConsommation = "NULL";
-        }
-            if (!className.equals(info.get(0))){ //Si la classe du vertex a été modifiée, on est obligé de supprimer l'ancien et de créer un nouveau dans la bonne classe
+            v = db.load(recordId); // Récupération de l'objet dans la base de données
+            String famille = "NULL";
+            String sousFamille = "NULL";
+            String type = "NULL";
+            String constructeur = "NULL";
+            String tension = "NULL";
+            String puissanceUnitaire = "NULL";
+            String puissanceTransitoire = "NULL";
+            String indice = "NULL";
+            String origineConsommation = "NULL";
+            String TensionCircuiPuissance = "NULL";
+            String TensionCircuitCommande = "NULL";
+            String PuissanceUnitaireCons = "NULL";
+            String PuissanceEqtFermé = "NULL";
+            String PuissanceEqtOuverte = "NULL";
+            String className = getTextFromAccessibleName("Mod_Classe");
+            if (className.equals("Composant")) {
+                famille = getTextFromAccessibleName("Mod_1");
+                type = getTextFromAccessibleName("Mod_2");
+                sousFamille = getTextFromAccessibleName("Mod_3");
+                constructeur = getTextFromAccessibleName("Mod_4");
+                tension = getTextFromAccessibleName("Mod_5");
+                puissanceUnitaire = getTextFromAccessibleName("Mod_6");
+                puissanceTransitoire = getTextFromAccessibleName("Mod_7");
+                indice = getTextFromAccessibleName("Mod_8");
+                origineConsommation = getTextFromAccessibleName("Mod_9");
+                if (famille.isEmpty()) famille = "NULL";
+                if (sousFamille.isEmpty()) sousFamille = "NULL";
+                if (type.isEmpty()) type = "NULL";
+                if (constructeur.isEmpty()) constructeur = "NULL";
+                if (tension.isEmpty()) tension = "NULL";
+                if (puissanceUnitaire.isEmpty()) puissanceUnitaire = "NULL";
+                if (puissanceTransitoire.isEmpty()) puissanceTransitoire = "NULL";
+                if (indice.isEmpty()) indice = "NULL";
+                if (origineConsommation.isEmpty()) origineConsommation = "NULL";
+                if (!isNumericAndPositive(tension)) { printMessage("Tension invalide."); return; }
+                if (!isNumericAndPositive(puissanceUnitaire)) { printMessage("Puissance Unitaire invalide."); return; }
+                if (!isNumericAndPositive(puissanceTransitoire)) { printMessage("Puissance Transitoire invalide."); return; }
+                if (!indice.equals("NULL") && !isIndiceValid(indice)) { printMessage("Indice de confiance invalide. Il doit être entre 0 et 1."); return; }
+            } else if (className.equals("Equipement")) {
+                type = getTextFromAccessibleName("Mod_1");
+                constructeur = getTextFromAccessibleName("Mod_2");
+                TensionCircuiPuissance = getTextFromAccessibleName("Mod_3");
+                TensionCircuitCommande = getTextFromAccessibleName("Mod_4");
+                PuissanceUnitaireCons = getTextFromAccessibleName("Mod_5");
+                PuissanceEqtFermé = getTextFromAccessibleName("Mod_6");
+                PuissanceEqtOuverte = getTextFromAccessibleName("Mod_7");
+                indice = getTextFromAccessibleName("Mod_8");
+                origineConsommation = getTextFromAccessibleName("Mod_9");
+                if (type.isEmpty()) type = "NULL";
+                if (constructeur.isEmpty()) constructeur = "NULL";
+                if (TensionCircuiPuissance.isEmpty()) TensionCircuiPuissance = "NULL";
+                if (TensionCircuitCommande.isEmpty()) TensionCircuitCommande = "NULL";
+                if (PuissanceUnitaireCons.isEmpty()) PuissanceUnitaireCons = "NULL";
+                if (PuissanceEqtFermé.isEmpty()) PuissanceEqtFermé = "NULL";
+                if (PuissanceEqtOuverte.isEmpty()) PuissanceEqtOuverte = "NULL";
+                if (indice.isEmpty()) indice = "NULL";
+                if (origineConsommation.isEmpty()) origineConsommation = "NULL";
+                if (!isNumericAndPositive(TensionCircuiPuissance)) { printMessage("Tension Circuit Puissance invalide."); return; }
+                if (!isNumericAndPositive(TensionCircuitCommande)) { printMessage("Tension Circuit Commande invalide."); return; }
+                if (!isNumericAndPositive(PuissanceUnitaireCons)) { printMessage("Puissance Unitaire Consommée invalide."); return; }
+                if (!isNumericAndPositive(PuissanceEqtFermé)) { printMessage("Puissance Eqt Fermé invalide."); return; }
+                if (!isNumericAndPositive(PuissanceEqtOuverte)) { printMessage("Puissance Eqt Ouverte invalide."); return; }
+                if (!indice.equals("NULL") && !isIndiceValid(indice)) { printMessage("Indice de confiance invalide. Il doit être entre 0 et 1."); return; }
+            }
+
+            if (!className.equals(info.get(0))) {
                 v.delete();
                 OVertex newVertex = db.newVertex(className);
-                if (className.equals("Composant")){
+                if (className.equals("Composant")) {
                     newVertex.setProperty("Famille", famille);
                     newVertex.setProperty("Type", type);
                     newVertex.setProperty("Sous Famille", sousFamille);
@@ -352,7 +361,7 @@ public class Modification_Frame extends javax.swing.JFrame {
                     newVertex.setProperty("Indice de confiance", indice);
                     newVertex.setProperty("Origine de consommation", origineConsommation);
                     newVertex.save();
-                }else if(className.equals("Equipement")){
+                } else if (className.equals("Equipement")) {
                     newVertex.setProperty("Type", type);
                     newVertex.setProperty("Constructeur", constructeur);
                     newVertex.setProperty("Tension Circuit Puissance", TensionCircuiPuissance);
@@ -364,7 +373,7 @@ public class Modification_Frame extends javax.swing.JFrame {
                     newVertex.setProperty("Origine de consommation", origineConsommation);
                     newVertex.save();
                 }
-            }else if (className.equals("Composant")){ //Si la classe du vertex n'a pas été modifiée, on peut simplement modifier les propriétés.
+            } else if (className.equals("Composant")) {
                 v.setProperty("Famille", famille);
                 v.setProperty("Type", type);
                 v.setProperty("Sous Famille", sousFamille);
@@ -375,7 +384,7 @@ public class Modification_Frame extends javax.swing.JFrame {
                 v.setProperty("Indice de confiance", indice);
                 v.setProperty("Origine de consommation", origineConsommation);
                 v.save();
-            }else if(className.equals("Equipement")){
+            } else if (className.equals("Equipement")) {
                 v.setProperty("Type", type);
                 v.setProperty("Constructeur", constructeur);
                 v.setProperty("Tension Circuit Puissance", TensionCircuiPuissance);
@@ -386,8 +395,8 @@ public class Modification_Frame extends javax.swing.JFrame {
                 v.setProperty("Indice de confiance", indice);
                 v.setProperty("Origine de consommation", origineConsommation);
                 v.save();
-                }
-            dispose(); //On ferme la fênetre
+            }
+            dispose();
         } catch (Exception e) {
             printMessage("Erreur dans la modification : " + e.getMessage());
             e.printStackTrace();
@@ -414,6 +423,24 @@ public class Modification_Frame extends javax.swing.JFrame {
             jLabel8.setText("Puissance Transitoire (W)");
         }
     }//GEN-LAST:event_jComboBox1ActionPerformed
+//Vérification valeur numérique
+    private boolean isNumericAndPositive(String value) {
+        try {
+            return value != null && Double.parseDouble(value) > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+//Vérification Indice de confiance
+    private boolean isIndiceValid(String value) {
+        try {
+            double d = Double.parseDouble(value);
+            return d >= 0 && d <= 1;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
 //Modifier les informations d'une case
     private void setTextToAccessibleName(String accessibleName, String text) {
         setTextToAccessibleNameRecursive(getContentPane(), accessibleName, text);

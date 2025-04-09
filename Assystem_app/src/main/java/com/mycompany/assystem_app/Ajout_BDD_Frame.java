@@ -257,30 +257,29 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String famille = "NULL";
         String sousFamille = "NULL";
-        String type= "NULL";
-        String constructeur= "NULL";
-        String tension= "NULL";
-        String puissanceUnitaire= "NULL";
-        String puissanceTransitoire= "NULL";
-        String indice= "NULL";
-        String origineConsommation= "NULL";
-        String TensionCircuiPuissance= "NULL";
-        String TensionCircuitCommande= "NULL";
-        String PuissanceUnitaireCons= "NULL";
-        String PuissanceEqtFermé= "NULL";
-        String PuissanceEqtOuverte= "NULL";
+        String type = "NULL";
+        String constructeur = "NULL";
+        String tension = "NULL";
+        String puissanceUnitaire = "NULL";
+        String puissanceTransitoire = "NULL";
+        String indice = "NULL";
+        String origineConsommation = "NULL";
+        String TensionCircuiPuissance = "NULL";
+        String TensionCircuitCommande = "NULL";
+        String PuissanceUnitaireCons = "NULL";
+        String PuissanceEqtFermé = "NULL";
+        String PuissanceEqtOuverte = "NULL";
         String className = getTextFromAccessibleName("Add_Classe");
-        if (className.equals("Composant")){
+        if (className.equals("Composant")) {
             famille = getTextFromAccessibleName("Add_1");
-            sousFamille = getTextFromAccessibleName("Add_2");
-            type = getTextFromAccessibleName("Add_3");
+            type = getTextFromAccessibleName("Add_2");
+            sousFamille = getTextFromAccessibleName("Add_3");
             constructeur = getTextFromAccessibleName("Add_4");
             tension = getTextFromAccessibleName("Add_5");
             puissanceUnitaire = getTextFromAccessibleName("Add_6");
             puissanceTransitoire = getTextFromAccessibleName("Add_7");
             indice = getTextFromAccessibleName("Add_8");
             origineConsommation = getTextFromAccessibleName("Add_9");
-            // Remplacer les valeurs null par "NULL" si la case est vide
             if (famille.isEmpty()) famille = "NULL";
             if (sousFamille.isEmpty()) sousFamille = "NULL";
             if (type.isEmpty()) type = "NULL";
@@ -290,37 +289,75 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
             if (puissanceTransitoire.isEmpty()) puissanceTransitoire = "NULL";
             if (indice.isEmpty()) indice = "NULL";
             if (origineConsommation.isEmpty()) origineConsommation = "NULL";
-        }else if (className.equals("Equipement")){
-            type = getTextFromAccessibleName("Add_1");
-            constructeur = getTextFromAccessibleName("Add_2");
-            TensionCircuiPuissance = getTextFromAccessibleName("Add_3");
-            TensionCircuitCommande = getTextFromAccessibleName("Add_4");
-            PuissanceUnitaireCons = getTextFromAccessibleName("Add_5");
-            PuissanceEqtFermé = getTextFromAccessibleName("Add_6");
-            PuissanceEqtOuverte = getTextFromAccessibleName("Add_7");
-            indice = getTextFromAccessibleName("Add_8");
-            origineConsommation = getTextFromAccessibleName("Add_9");
-            // Remplacer les valeurs null par "NULL" si la case est vide
-            if (type.isEmpty()) type = "NULL";
-            if (constructeur.isEmpty()) constructeur = "NULL";
-            if (TensionCircuiPuissance.isEmpty()) TensionCircuiPuissance = "NULL";
-            if (TensionCircuitCommande.isEmpty()) TensionCircuitCommande = "NULL";
-            if (PuissanceUnitaireCons.isEmpty()) PuissanceUnitaireCons = "NULL";
-            if (PuissanceEqtFermé.isEmpty()) PuissanceEqtFermé = "NULL";
-            if (PuissanceEqtOuverte.isEmpty()) PuissanceEqtOuverte = "NULL";
-            if (indice.isEmpty()) indice = "NULL";
-            if (origineConsommation.isEmpty()) origineConsommation = "NULL";
+            if (!tension.equals("NULL") && !isPositiveNumber(tension)) {
+                printMessage("La valeur de la tension doit être un nombre strictement positif.");
+                return;
+            }
+            if (!puissanceUnitaire.equals("NULL") && !isPositiveNumber(puissanceUnitaire)) {
+                printMessage("La puissance unitaire doit être un nombre strictement positif.");
+                return;
+            }
+            if (!puissanceTransitoire.equals("NULL") && !isPositiveNumber(puissanceTransitoire)) {
+                printMessage("La puissance transitoire doit être un nombre strictement positif.");
+                return;
+            }
+            }else if (className.equals("Equipement")) {
+                type = getTextFromAccessibleName("Add_1");
+                constructeur = getTextFromAccessibleName("Add_2");
+                TensionCircuiPuissance = getTextFromAccessibleName("Add_3");
+                TensionCircuitCommande = getTextFromAccessibleName("Add_4");
+                PuissanceUnitaireCons = getTextFromAccessibleName("Add_5");
+                PuissanceEqtFermé = getTextFromAccessibleName("Add_6");
+                PuissanceEqtOuverte = getTextFromAccessibleName("Add_7");
+                indice = getTextFromAccessibleName("Add_8");
+                origineConsommation = getTextFromAccessibleName("Add_9");
+                if (type.isEmpty()) type = "NULL";
+                if (constructeur.isEmpty()) constructeur = "NULL";
+                if (TensionCircuiPuissance.isEmpty()) TensionCircuiPuissance = "NULL";
+                if (TensionCircuitCommande.isEmpty()) TensionCircuitCommande = "NULL";
+                if (PuissanceUnitaireCons.isEmpty()) PuissanceUnitaireCons = "NULL";
+                if (PuissanceEqtFermé.isEmpty()) PuissanceEqtFermé = "NULL";
+                if (PuissanceEqtOuverte.isEmpty()) PuissanceEqtOuverte = "NULL";
+                if (indice.isEmpty()) indice = "NULL";
+                if (origineConsommation.isEmpty()) origineConsommation = "NULL";
+                if (!TensionCircuiPuissance.equals("NULL") && !isPositiveNumber(TensionCircuiPuissance)) {
+                    printMessage("La tension du circuit de puissance doit être un nombre strictement positif.");
+                    return;
+                }
+                if (!TensionCircuitCommande.equals("NULL") && !isPositiveNumber(TensionCircuitCommande)) {
+                    printMessage("La tension du circuit de commande doit être un nombre strictement positif.");
+                    return;
+                }
+                if (!PuissanceUnitaireCons.equals("NULL") && !isPositiveNumber(PuissanceUnitaireCons)) {
+                    printMessage("La puissance unitaire consommée doit être un nombre strictement positif.");
+                    return;
+                }
+                if (!PuissanceEqtFermé.equals("NULL") && !isPositiveNumber(PuissanceEqtFermé)) {
+                    printMessage("La puissance équipement fermée doit être un nombre strictement positif.");
+                    return;
+                }
+                if (!PuissanceEqtOuverte.equals("NULL") && !isPositiveNumber(PuissanceEqtOuverte)) {
+                    printMessage("La puissance équipement ouverte doit être un nombre strictement positif.");
+                    return;
+                }
+            }
+
+        if (!indice.equals("NULL") && !isIndiceValid(indice)) {
+            printMessage("L'indice de confiance doit être un nombre entre 0 et 1.");
+            return;
         }
+
         if (className.equals("NULL") || className.isEmpty()) {
-        printMessage("Le nom de la classe est vide ou nul. Creation du vertex impossible.");
-        return;
+            printMessage("Le nom de la classe est vide ou nul. Creation du vertex impossible.");
+            return;
         }
 
         try {
-            db = pool.acquire(); // Acquisition de la session de base de données
+            db = pool.acquire();
             printMessage("Tentative de creation du vertex pour la classe : " + className);
             OVertex v = db.newVertex(className);
-            if (className.equals("Composant")){
+
+            if (className.equals("Composant")) {
                 v.setProperty("Famille", famille);
                 v.setProperty("Type", type);
                 v.setProperty("Sous Famille", sousFamille);
@@ -331,9 +368,9 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
                 v.setProperty("Indice de confiance", indice);
                 v.setProperty("Origine de consommation", origineConsommation);
                 v.save();
-                clearAllTextFields();  
-                printMessage("Le vertex " + className + " " + famille + " " + sousFamille + " " + type + " " + constructeur + " " + tension + " " + puissanceUnitaire + " " + puissanceTransitoire + " " + indice + " " + origineConsommation + " a ete cree avec succès !");
-            }else if(className.equals("Equipement")){
+                clearAllTextFields();
+                printMessage("Le vertex Composant a été créé avec succès !");
+            }else if (className.equals("Equipement")) {
                 v.setProperty("Type", type);
                 v.setProperty("Constructeur", constructeur);
                 v.setProperty("Tension Circuit Puissance", TensionCircuiPuissance);
@@ -344,11 +381,12 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
                 v.setProperty("Indice de confiance", indice);
                 v.setProperty("Origine de consommation", origineConsommation);
                 v.save();
-                clearAllTextFields(); 
-                printMessage("Le vertex " + className + " " + type + " " + constructeur + " " + TensionCircuiPuissance + " " + TensionCircuitCommande + " " + PuissanceUnitaireCons + " " + PuissanceEqtFermé + " " + PuissanceEqtOuverte + " " + indice + " " + origineConsommation + " a ete cree avec succès !");
+                clearAllTextFields();
+                printMessage("Le vertex Equipement a été créé avec succès !");
             }
+
         } catch (Exception e) {
-            printMessage("Erreur lors de la creation du vertex : " + e.getMessage());
+            printMessage("Erreur lors de la création du vertex : " + e.getMessage());
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -374,7 +412,23 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
             jLabel8.setText("Puissance Transitoire (W)");
         }
     }//GEN-LAST:event_jComboBox1ActionPerformed
-    //Accéder aux informations d'une case
+    private boolean isPositiveNumber(String value) {
+        try {
+            return Double.parseDouble(value) > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private boolean isIndiceValid(String value) {
+        try {
+            double d = Double.parseDouble(value);
+            return d >= 0 && d <= 1;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+//Accéder aux informations d'une case
     private String getTextFromAccessibleName(String accessibleName) {
         return getTextFromAccessibleNameRecursive(getContentPane(), accessibleName);
     }
