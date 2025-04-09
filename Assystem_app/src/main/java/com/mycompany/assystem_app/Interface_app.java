@@ -16,25 +16,19 @@ import com.orientechnologies.orient.core.record.OVertex;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
 import com.orientechnologies.orient.core.id.ORecordId;
-
 import java.text.SimpleDateFormat;
 import java.util.*;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
-
 import org.apache.commons.text.similarity.LevenshteinDistance;
-
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.web.WebView;
 import java.awt.BorderLayout;
-
-
 
 public class Interface_app extends javax.swing.JFrame {
     private SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm");  // Format de l'heure
@@ -46,8 +40,6 @@ public class Interface_app extends javax.swing.JFrame {
     private ODatabasePool pool;
     private MyLiveQueryListener listenerC;
     private DefaultTableModel modelC;
-    
-    // Method to retrieve the model from MyLiveQueryListener
     private DefaultListModel<String> listModelC;
     private OLiveQueryMonitor monitorC;
     private DefaultTableModel modelE;
@@ -60,31 +52,17 @@ public class Interface_app extends javax.swing.JFrame {
     private Graphe Graphe;
     private DefaultListModel<String> listModel;
     private String className;
-    // Définition des en-têtes en HTML
-    private final String[] header = {
-    "Famille", "Type", "SousFamille", "Constructeur", "Tension", 
-    "Puiss.Unit", "Puiss.Trans", "Indice", "Origine", "ID"
-    };
     public Interface_app() {
-        modelC = new DefaultTableModel();
         initComponents();
         connexion_OrientDB();
     }
     public void printMessage(String message) {
-        // Récupérer l'heure actuelle
-        SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm:ss.SSS");  // Format de l'heure
-        String time = sdf.format(new Date());  // Obtenir l'heure actuelle
-
-        // Construire le message avec l'heure
+        SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm:ss.SSS");
+        String time = sdf.format(new Date());
         String formattedMessage = time + " : " + message + "\n";
-
-        // Ajouter le message à la JTextArea
         jTextArea1.append(formattedMessage);
-        
-        // Faire défiler jusqu'à la fin pour afficher le dernier message
-        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
+        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength()); // Faire défiler jusqu'à la fin pour afficher le dernier message
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -496,19 +474,6 @@ public class Interface_app extends javax.swing.JFrame {
             jPanel8.validate();
         });
     }
-    
-    private boolean isMatch(String input, String element, LevenshteinDistance levenshtein) {
-        // Diviser l'élément en mots
-        String[] words = element.split("\\s+");
-        for (String word : words) {
-            if (word.startsWith("ID:")) continue; // Ignorer les IDs
-            int distance = levenshtein.apply(input, word.toLowerCase());
-            if (distance <= 3) { // Ajustez le seuil
-                return true;
-            }
-        }
-        return false;
-    }
 //Pour fenêtre Graphe
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         Graphe = new Graphe(pool,this);
@@ -550,15 +515,12 @@ public class Interface_app extends javax.swing.JFrame {
     private DefaultTableModel loadInitialDataIntoTableModel(ODatabaseSession db, String className) {
         String[] columnNames;
         DefaultTableModel model;
-    
-        // Choisir les colonnes en fonction du type
         if (className.equals("Composant")) {
             columnNames = new String[]{
                 "Famille", "Type", "Sous Famille", "Constructeur",
                 "Tension(VCC)", "Puissance Unitaire(W)", "Puissance Transitoire(W)",
                 "Indice de confiance", "Origine de consommation", "ID"
         };
-
             if (listModelC == null) {
                 listModelC = new DefaultListModel<>();
             }
@@ -578,12 +540,10 @@ public class Interface_app extends javax.swing.JFrame {
             columnNames = new String[]{"ID"};
         }
         model = new DefaultTableModel(columnNames, 0);
-        // Charger les données depuis la base de données
         try (OResultSet rs = db.query("SELECT * FROM " + className)) {
             while (rs.hasNext()) {
                 OResult item = rs.next();
                 Object[] rowData;
-    
                 if (className.equals("Composant")) {
                     rowData = new Object[]{
                         item.getProperty("Famille"),
@@ -597,7 +557,6 @@ public class Interface_app extends javax.swing.JFrame {
                         item.getProperty("Origine de consommation"),
                         item.getIdentity().toString().replaceAll("Optional\\[(.*)\\]", "$1")
                     };
-
                 } else if (className.equals("Equipement")) {
                     rowData = new Object[]{
                         item.getProperty("Type"),
@@ -609,10 +568,8 @@ public class Interface_app extends javax.swing.JFrame {
                         item.getProperty("Puissance Eqt ouverte"),
                         item.getProperty("Indice de confiance"),
                         item.getProperty("Origine de consommation"),
-                        item.getIdentity().toString().replaceAll("Optional\\[(.*)\\]", "$1")
-                        
+                        item.getIdentity().toString().replaceAll("Optional\\[(.*)\\]", "$1") 
                     };
-                    
                 } else {
                     rowData = new Object[]{
                         item.getIdentity().toString().replaceAll("Optional\\[(.*)\\]", "$1")
@@ -640,7 +597,6 @@ public class Interface_app extends javax.swing.JFrame {
             return;
         }
         ODatabaseSession db = pool.acquire();
-        // Liste des propriétés associées
         String[] propertyKeysC = {
             "Famille",
             "Type",
@@ -659,9 +615,7 @@ public class Interface_app extends javax.swing.JFrame {
             "Puissance Eqt ouverte", "Indice de Confiance",
             "Origine consommation", "ID"
         };
-        // Récupérer les lignes sélectionnées dans jTable1
         int[] selectedRows1 = jTable1.getSelectedRows();
-        // Récupérer les lignes sélectionnées dans jTable2
         int[] selectedRows2 = jTable2.getSelectedRows();
         if (selectedRows1.length == 0 && selectedRows2.length == 0){
             printMessage("Pas d'éléments sélectionnés pour la duplication");
@@ -681,13 +635,10 @@ public class Interface_app extends javax.swing.JFrame {
                 for (int i = 0; i < propertyKeysE.length; i++) {
                     v.setProperty(propertyKeysE[i], rowValues.get(i));
                 }
-                // Utiliser db.save(v) pour éviter l'utilisation de la méthode dépréciée
                 db.save(v);
                 printMessage("Le Vertex Equipement a bien été dupliqué");
             } catch (Exception e) {
                 printMessage("Erreur lors de la duplication (Equipement) : " + e.getMessage());
-                // Remplacer e.printStackTrace() par un log via printMessage
-                // e.printStackTrace();
             }
         }
         // Duplication pour jTable2 (Composant)
@@ -704,7 +655,6 @@ public class Interface_app extends javax.swing.JFrame {
                 for (int i = 0; i < propertyKeysC.length; i++) {
                     v.setProperty(propertyKeysC[i], rowValues.get(i));
                 }
-                // Utiliser db.save(v) pour éviter l'utilisation de la méthode dépréciée
                 db.save(v);
                 printMessage("Le Vertex Composant a bien été dupliqué");
             } catch (Exception e) {
@@ -719,8 +669,6 @@ public class Interface_app extends javax.swing.JFrame {
             return;
         }
         ODatabaseSession db = pool.acquire();
-
-        // Récupérer les éléments sélectionnés dans jTable1 et jTable2
         int[] selectedRows1 = jTable1.getSelectedRows();
         int[] selectedRows2 = jTable2.getSelectedRows();
 
@@ -763,7 +711,7 @@ public class Interface_app extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 //Barre de Recherche
     private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
-         String input = getTextFromAccessibleName("Recherche").trim().toLowerCase();
+        String input = getTextFromAccessibleName("Recherche").trim().toLowerCase();
         // Si la recherche est vide, restaurer les modèles d'origine
         if (input.isEmpty()) {
             jTable1.setModel(modelE);
@@ -771,7 +719,6 @@ public class Interface_app extends javax.swing.JFrame {
             return;
         }
         LevenshteinDistance levenshtein = new LevenshteinDistance();
-
         // Filtrer jTable1 (par exemple, Equipement)
         DefaultTableModel originalModel1 = (DefaultTableModel) jTable1.getModel();
         DefaultTableModel filteredModel1 = new DefaultTableModel();
@@ -834,6 +781,19 @@ public class Interface_app extends javax.swing.JFrame {
             jTable2.setModel(filteredModel2);
         }
     }//GEN-LAST:event_jTextField8ActionPerformed
+    //Methode pour la fonction Recherche
+    private boolean isMatch(String input, String element, LevenshteinDistance levenshtein) {
+        // Diviser l'élément en mots
+        String[] words = element.split("\\s+");
+        for (String word : words) {
+            if (word.startsWith("ID:")) continue; // Ignorer les IDs
+            int distance = levenshtein.apply(input, word.toLowerCase());
+            if (distance <= 3) { // Ajustez le seuil
+                return true;
+            }
+        }
+        return false;
+    }
 //Bouton Modifier (pas encore finis)
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         if (pool == null) {
@@ -855,7 +815,6 @@ public class Interface_app extends javax.swing.JFrame {
         int columnCountE = localModelE.getColumnCount();
         for (int row : selectedRows1) {
             List<String> infoE = new ArrayList<>();
-            // Ajouter "Equipement" comme premier élément
             infoE.add("Equipement");
             // Récupérer toutes les colonnes de la ligne sélectionnée sauf le dernier (par exemple, l'ID)
             for (int col = 0; col < columnCountE; col++) {
@@ -871,7 +830,6 @@ public class Interface_app extends javax.swing.JFrame {
         int columnCountC = localModelC.getColumnCount();
         for (int row : selectedRows2) {
             List<String> infoC = new ArrayList<>();
-            // Ajouter "Composant" comme premier élément
             infoC.add("Composant");
             // Récupérer toutes les colonnes de la ligne sélectionnée sauf le dernier (par exemple, l'ID)
             for (int col = 0; col < columnCountC; col++) {
@@ -906,22 +864,20 @@ public class Interface_app extends javax.swing.JFrame {
                     printMessage("Connexion réussie à la base de données!");
                     // Initialiser le pool de connexions
                     pool = connexionFrame.getpool();
-                    // SwingWorker pour charger les données d'Equipement
+                    // SwingWorker pour charger les données d'Equipement et créer la classe de vertex si première connexion
                     new SwingWorker<DefaultTableModel, Void>() {
                         @Override
                         protected DefaultTableModel doInBackground() throws Exception {
                             try (ODatabaseSession db = pool.acquire()) {
-                                // Créer les classes si elles n'existent pas
                                 if (!db.getMetadata().getSchema().existsClass("Equipement")) {
                                     db.getMetadata().getSchema().createClass("Equipement", db.getMetadata().getSchema().getClass("V"));
                                     printMessage("La classe Equipement a été créée dans le schéma.");
                                 }
-                                // Charger les données pour Equipement
                                 modelE = loadInitialDataIntoTableModel(db, "Equipement");
                                 return modelE;
                             }
                         }
-    
+                        //LiveQuery pour Equipement    
                         @Override
                         protected void done() {
                             try {
@@ -935,22 +891,20 @@ public class Interface_app extends javax.swing.JFrame {
                         }
                     }.execute();
     
-                    // SwingWorker pour charger les données de Composant
+                    // SwingWorker pour charger les données de Composant et créer la classe de vertex si première connexion
                     new SwingWorker<DefaultTableModel, Void>() {
                         @Override
                         protected DefaultTableModel doInBackground() throws Exception {
                             try (ODatabaseSession db = pool.acquire()) {
-                                // Créer les classes si elles n'existent pas
                                 if (!db.getMetadata().getSchema().existsClass("Composant")) {
                                     db.getMetadata().getSchema().createClass("Composant", db.getMetadata().getSchema().getClass("V"));
                                     printMessage("La classe Composant a été créée dans le schéma.");
                                 }
-                                // Charger les données pour Composant
                                 modelC = loadInitialDataIntoTableModel(db, "Composant");
                                 return modelC;
                             }
                         }
-    
+                        //LiveQuery pour Composant
                         @Override
                         protected void done() {
                             try {
@@ -976,20 +930,17 @@ public class Interface_app extends javax.swing.JFrame {
 //Recherche de toutes les cases de manière récursive
     public String getTextFromAccessibleNameRecursive(java.awt.Container container, String accessibleName) {
         for (java.awt.Component comp : container.getComponents()) {
-            // Vérifier si le composant est un JTextField
             if (comp instanceof javax.swing.JTextField) {
                 javax.swing.JTextField textField = (javax.swing.JTextField) comp;
                 if (accessibleName.equals(textField.getAccessibleContext().getAccessibleName())) {
                     return textField.getText();
                 }
             }    
-        // Vérifier si le composant est un JComboBox
             else if (comp instanceof javax.swing.JComboBox) {
                 javax.swing.JComboBox<?> comboBox = (javax.swing.JComboBox<?>) comp;
                 if (accessibleName.equals(comboBox.getAccessibleContext().getAccessibleName())) {
-                    // Récupérer la valeur sélectionnée dans la combobox
                     Object selectedItem = comboBox.getSelectedItem();
-                    return selectedItem != null ? selectedItem.toString() : ""; // Retourne une chaîne vide si aucun élément n'est sélectionné
+                    return selectedItem != null ? selectedItem.toString() : "";
                 }
             }
             // Rechercher récursivement dans les sous-conteneurs
@@ -1000,7 +951,7 @@ public class Interface_app extends javax.swing.JFrame {
                 }
             }
         }
-        return "";  // Retourne une chaîne vide si le champ ou la combobox n'est pas trouvé
+        return "";
     }
     
     public static void main(String args[]) {
