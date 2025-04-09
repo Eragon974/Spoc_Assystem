@@ -7,12 +7,14 @@ package com.mycompany.assystem_app;
 
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.record.OEdge;
 import com.orientechnologies.orient.core.record.OVertex;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
-
+import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
@@ -241,49 +243,103 @@ public class Graphe extends javax.swing.JFrame implements KeyListener {
         }
     
         return null;
-    }
-
-    private void saveGraphToOrientDB() {
-       // Code pour sauvegarder le graphe dans OrientDB
-       // Utilisez les méthodes de l'API OrientDB pour sauvegarder les noeuds et les arêtes du graphe dans la base de données
-        // Assurez-vous que la session de base de données est ouverte
-    db = pool.acquire();
-    db.activateOnCurrentThread();
-
-    try {
-        // Sauvegarder les nœuds
-        for (Node node : graph) {
-            // Créer un document pour chaque nœud
-            ODocument nodeDoc = new ODocument("Node");
-            nodeDoc.field("id", node.getId());
-            Map<String, Object> attributes = new HashMap<>();
-            node.attributeKeys().forEach(key -> attributes.put(key, node.getAttribute(key)));
-            nodeDoc.field("attributes", attributes);
-            nodeDoc.save();
         }
 
-        // Sauvegarder les arêtes
-        graph.edges().forEach(edge -> { 
-            // Créer un document pour chaque arête
-            ODocument edgeDoc = new ODocument("Edge");
-            edgeDoc.field("id", edge.getId());
-            edgeDoc.field("source", edge.getSourceNode().getId());
-            edgeDoc.field("target", edge.getTargetNode().getId());
-            edgeDoc.save();
-        });
-
-        System.out.println("Graph saved to OrientDB successfully.");
-    } catch (Exception e) {
-        e.printStackTrace();
-        System.err.println("Failed to save graph to OrientDB: " + e.getMessage());
-    } finally {
-        // Fermer la session de base de données
-        if (db != null) {
-            db.close();
-            }
-        }
-    }
+        private void saveGraphToOrientDB() {
+            // Create OrientGraph with auto transactions disabled
+            OrientGraph orientGraph = new OrientGraph("plocal:C:/temp/graph/test", false);
     
+            try {
+                // Configure the schema for graph elements
+                configureGraphSchema(orientGraph);
+    
+                // Begin transaction manually
+                orientGraph.begin();
+    
+                // Clear existing graph data (optional, depending on your requirements)
+                for (com.tinkerpop.blueprints.Vertex vertex : orientGraph.getVertices()) {
+                    orientGraph.removeVertex(vertex);
+                }
+                for (com.tinkerpop.blueprints.Edge edge : orientGraph.getEdges()) {
+                    orientGraph.removeEdge(edge);
+                }
+    
+                // Create a map to store node IDs and their corresponding OrientVertex objects
+                Map<String, com.tinkerpop.blueprints.Vertex> nodeMap = new HashMap<>();
+    
+                // Create vertices for all nodes in the GraphStream graph
+                for (org.graphstream.graph.Node node : this.graph.nodes().collect(Collectors.toList())) {
+                    com.tinkerpop.blueprints.Vertex vertex = orientGraph.addVertex("class:V");
+                    vertex.setProperty("nodeId", node.getId());  // Using "nodeId" instead of "id"
+    
+                    // Store ui.label if present
+                    if (node.hasAttribute("ui.label")) {
+                        vertex.setProperty("label", node.getAttribute("ui.label").toString());
+                    }
+    
+                    // Save node position if available
+                    if (node.hasAttribute("xyz")) {
+                        double[] pos = (double[]) node.getAttribute("xyz");
+                        vertex.setProperty("x", pos[0]);
+                        vertex.setProperty("y", pos[1]);
+                        vertex.setProperty("z", pos.length > 2 ? pos[2] : 0.0);
+                    }
+    
+                    nodeMap.put(node.getId(), vertex);
+                }
+    
+                // Create edges
+                for (org.graphstream.graph.Edge edge : this.graph.edges().collect(Collectors.toList())) {
+                    String sourceId = edge.getSourceNode().getId();
+                    String targetId = edge.getTargetNode().getId();
+    
+                    if (nodeMap.containsKey(sourceId) && nodeMap.containsKey(targetId)) {
+                        com.tinkerpop.blueprints.Vertex source = nodeMap.get(sourceId);
+                        com.tinkerpop.blueprints.Vertex target = nodeMap.get(targetId);
+    
+                        com.tinkerpop.blueprints.Edge oEdge = orientGraph.addEdge(null, source, target, "E");
+                        oEdge.setProperty("edgeId", edge.getId());  // Using "edgeId" instead of "id"
+    
+                        if (edge.hasAttribute("weight")) {
+                            oEdge.setProperty("weight", edge.getAttribute("weight"));
+                        }
+    
+                        if (edge.hasAttribute("label")) {
+                            oEdge.setProperty("label", edge.getAttribute("label").toString());
+                        }
+                    }
+                }
+
+            // Commit transaction
+            orientGraph.commit();
+
+            Interface_app.printMessage("Graphe sauvegardé avec succès dans OrientDB");
+        } catch (Exception e) {
+            // Rollback in case of error
+            orientGraph.rollback();
+            e.printStackTrace();
+            Interface_app.printMessage("Erreur lors de la sauvegarde du graphe: " + e.getMessage());
+        } finally {
+            orientGraph.shutdown();
+        }
+    }
+
+    private void configureGraphSchema(OrientGraph graph) {
+        ODatabaseDocumentTx db = graph.getRawGraph();
+
+        // Create vertex class
+        OClass vertexClass = db.getMetadata().getSchema().getClass("V");
+        if (vertexClass == null) {
+            vertexClass = db.getMetadata().getSchema().createClass("V");
+        }
+
+        // Create edge class
+        OClass edgeClass = db.getMetadata().getSchema().getClass("E");
+        if (edgeClass == null) {
+            edgeClass = db.getMetadata().getSchema().createClass("E");
+        }
+    }
+
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -406,9 +462,74 @@ public class Graphe extends javax.swing.JFrame implements KeyListener {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String nodeId = "N" + graph.getNodeCount(); // Générer un ID unique
-                graph.addNode(nodeId);
-    }//GEN-LAST:event_jButton1ActionPerformed
+        // Afficher une fenêtre de dialogue personnalisée pour sélectionner un élément
+        JDialog dialog = new JDialog(this, "Sélectionnez un élément", true);
+        dialog.setSize(500, 400);
+        dialog.setLayout(new java.awt.BorderLayout());
+
+        JTabbedPane tabbedPane = new JTabbedPane();
+
+        // Créer des copies des tables au lieu d'utiliser les originales
+        JTable equipementsTable = new JTable(Interface_app.jTable1.getModel());
+        equipementsTable.setSelectionMode(Interface_app.jTable1.getSelectionModel().getSelectionMode());
+        JScrollPane scrollPane1 = new JScrollPane(equipementsTable);
+        tabbedPane.addTab("Equipements", scrollPane1);
+
+        // Créer une copie de la deuxième table
+        JTable composantsTable = new JTable(Interface_app.jTable2.getModel());
+        composantsTable.setSelectionMode(Interface_app.jTable2.getSelectionModel().getSelectionMode());
+        JScrollPane scrollPane2 = new JScrollPane(composantsTable);
+        tabbedPane.addTab("Composants", scrollPane2);
+
+        // Ajouter un bouton de confirmation
+        JButton confirmButton = new JButton("Confirmer");
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(confirmButton);
+
+        dialog.add(tabbedPane, java.awt.BorderLayout.CENTER);
+        dialog.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+
+        // Variables pour stocker l'élément sélectionné
+        final String[] selectedId = {null};
+        final int[] selectedTab = {-1};
+
+        confirmButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            int tab = tabbedPane.getSelectedIndex();
+            JTable selectedTable = tab == 0 ? equipementsTable : composantsTable;
+            
+            int selectedRow = selectedTable.getSelectedRow();
+            if (selectedRow != -1) {
+                selectedId[0] = selectedTable.getValueAt(selectedRow, 0).toString();
+                selectedTab[0] = tab;
+                dialog.dispose();
+            } else {
+                JOptionPane.showMessageDialog(dialog, 
+                "Veuillez sélectionner un élément dans la table.", 
+                "Aucune sélection", 
+                JOptionPane.WARNING_MESSAGE);
+            }
+            }
+        });
+
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+
+        // Code exécuté après la fermeture de la boîte de dialogue
+        if (selectedId[0] != null) {
+            // Créer un nouveau nœud avec l'ID sélectionné
+            String nodeId = selectedId[0];
+            graph.addNode(nodeId);
+            
+            // Vous pouvez ajouter d'autres attributs basés sur la ligne sélectionnée
+            graph.getNode(nodeId).setAttribute("ui.label", nodeId);
+        } else {
+            // Fallback: créer un nœud avec un ID automatique si aucun élément n'a été sélectionné
+            String nodeId = "N" + graph.getNodeCount();
+            graph.addNode(nodeId);
+            graph.getNode(nodeId).setAttribute("ui.label", nodeId);
+        }
+        }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         if (selectedNodeId != null) {
@@ -433,7 +554,11 @@ public class Graphe extends javax.swing.JFrame implements KeyListener {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
+        if (pool == null) {
+            Interface_app.printMessage("Action impossible, la connexion n'est pas établie");
+            return;
+        }
+        saveGraphToOrientDB();
     }//GEN-LAST:event_jButton4ActionPerformed
 
 
