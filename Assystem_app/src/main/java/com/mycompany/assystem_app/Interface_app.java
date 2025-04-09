@@ -562,7 +562,6 @@ public class Interface_app extends javax.swing.JFrame {
             if (listModelC == null) {
                 listModelC = new DefaultListModel<>();
             }
-
         } else if (className.equals("Equipement")) {
             columnNames = new String[]{
                 "Type", "Constructeur",
@@ -571,18 +570,14 @@ public class Interface_app extends javax.swing.JFrame {
                 "Puissance Eqt ouverte", "Indice de Confiance",
                 "Origine consommation", "ID"
         };
-
             if (listModelE == null) {
                 listModelE = new DefaultListModel<>();
             }
-
         } else {
             // Par défaut, aucune colonne si classe inconnue
             columnNames = new String[]{"ID"};
         }
-
         model = new DefaultTableModel(columnNames, 0);
-
         // Charger les données depuis la base de données
         try (OResultSet rs = db.query("SELECT * FROM " + className)) {
             while (rs.hasNext()) {
@@ -625,7 +620,6 @@ public class Interface_app extends javax.swing.JFrame {
         }
         return model;
     }
-
 //Bouton Ajout_BDD
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         if (pool == null) {
@@ -635,9 +629,7 @@ public class Interface_app extends javax.swing.JFrame {
         Ajout_BDD_Frame = new Ajout_BDD_Frame(pool,this);
         Ajout_BDD_Frame.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
-
-
-
+//Bouton Dupliquer
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         if (pool == null) {
             printMessage("Action impossible, la connexion n'est pas établie");
@@ -679,7 +671,6 @@ public class Interface_app extends javax.swing.JFrame {
                 Object value = model.getValueAt(row, col);
                 rowValues.add(value != null ? value.toString().trim() : "");
             }
-            System.out.println(rowValues);
             try {
                 printMessage("Tentative de duplication du vertex Equipement");
                 OVertex v = db.newVertex("Equipement");
@@ -703,7 +694,6 @@ public class Interface_app extends javax.swing.JFrame {
                 Object value = model.getValueAt(row, col);
                 rowValues.add(value != null ? value.toString().trim() : "");
             }
-            System.out.println(rowValues);
             try {
                 printMessage("Tentative de duplication du vertex Composant");
                 OVertex v = db.newVertex("Composant");
@@ -715,12 +705,10 @@ public class Interface_app extends javax.swing.JFrame {
                 printMessage("Le Vertex Composant a bien été dupliqué");
             } catch (Exception e) {
                 printMessage("Erreur lors de la duplication (Composant) : " + e.getMessage());
-                // Remplacer e.printStackTrace() par un log via printMessage
-                // e.printStackTrace();
             }
         }
     }//GEN-LAST:event_jButton4ActionPerformed
-
+//Bouton Supprimer
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         if (pool == null) {
             printMessage("Action impossible, la connexion n'est pas établie");
@@ -735,42 +723,41 @@ public class Interface_app extends javax.swing.JFrame {
         // Supprimer les éléments sélectionnés de la base de données pour jTable1 (Equipement)
         for (int row : selectedRows1) {
             try {
-                // Récupérer l'ID du vertex depuis le modèle (colonne 9)
+                // Récupérer l'ID du vertex depuis le modèle (colonne 9 de jTable)
                 Object idValue = jTable1.getModel().getValueAt(row, 9);
                 if (idValue != null) {
                     String vertexId = idValue.toString();
                     ORecordId recordId = new ORecordId(vertexId);
                     OVertex vertex = db.load(recordId);
                     if (vertex != null) {
-                        db.delete(vertex);  // Supprimer le vertex via le pool
+                        db.delete(vertex);
                         printMessage("Éléments supprimés avec succès !");  
                     }
                 }
             } catch (Exception e) {
-                System.err.println("Erreur lors de la suppression (Equipement) : " + e.getMessage());
+                printMessage("Erreur lors de la suppression (Equipement) : " + e.getMessage());
             }
         }
-
         // Supprimer les éléments sélectionnés de la base de données pour jTable2 (Composant)
         for (int row : selectedRows2) {
             try {
-                // Récupérer l'ID du vertex depuis le modèle (colonne 9)
+                // Récupérer l'ID du vertex depuis le modèle (colonne 9 de jTable)
                 Object idValue = jTable2.getModel().getValueAt(row, 9);
                 if (idValue != null) {
                     String vertexId = idValue.toString();
                     ORecordId recordId = new ORecordId(vertexId);
                     OVertex vertex = db.load(recordId);
                     if (vertex != null) {
-                        db.delete(vertex);  // Supprimer le vertex via le pool
+                        db.delete(vertex);  
                         printMessage("Éléments supprimés avec succès !");
                     }
                 }
             } catch (Exception e) {
-                System.err.println("Erreur lors de la suppression (Composant) : " + e.getMessage());
+                printMessage("Erreur lors de la suppression (Composant) : " + e.getMessage());
             }
         }
     }//GEN-LAST:event_jButton3ActionPerformed
-
+//Barre de Recherche
     private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
         String input = getTextFromAccessibleName("Recherche").trim().toLowerCase();
         // Si la recherche est vide, restaurer les modèles d'origine
@@ -843,9 +830,8 @@ public class Interface_app extends javax.swing.JFrame {
             jTable2.setModel(filteredModel2);
         }
     }//GEN-LAST:event_jTextField8ActionPerformed
-
+//Bouton Modifier (pas encore finis)
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-                                
         if (pool == null) {
             printMessage("Action impossible, la connexion n'est pas établie");
             return;
@@ -899,10 +885,8 @@ public class Interface_app extends javax.swing.JFrame {
             printMessage("Action impossible, connexion déjà établie");
             return;
         }                                        
-
         Connexion_Frame connexionFrame = new Connexion_Frame(this,orientDB,poolCfg);
         connexionFrame.setVisible(true);
-
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
@@ -973,20 +957,18 @@ public class Interface_app extends javax.swing.JFrame {
                             }
                         }
                     }.execute();
-
                 } catch (Exception e) {
                     printMessage("Erreur lors de la connexion : " + e.getMessage());
                 }
             }
         }.execute();
-
     }//GEN-LAST:event_jButton1ActionPerformed
                                       
-    
+//Accéder aux informations d'une case
     public String getTextFromAccessibleName(String accessibleName) {
         return getTextFromAccessibleNameRecursive(getContentPane(), accessibleName);
     }
-
+//Recherche de toutes les cases de manière récursive
     public String getTextFromAccessibleNameRecursive(java.awt.Container container, String accessibleName) {
         for (java.awt.Component comp : container.getComponents()) {
             // Vérifier si le composant est un JTextField
@@ -1024,7 +1006,7 @@ public class Interface_app extends javax.swing.JFrame {
             }
         }); 
     }
-
+//Frame en lien
     public void setJframeAjout_BDD(Ajout_BDD_Frame Ajout_BDD_Frame){
         this.Ajout_BDD_Frame = Ajout_BDD_Frame;
     }
@@ -1062,8 +1044,8 @@ public class Interface_app extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
+    public javax.swing.JTable jTable1;
+    public javax.swing.JTable jTable2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField8;
     // End of variables declaration//GEN-END:variables

@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.assystem_app;
-
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.OVertex;
@@ -11,33 +10,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-/**
- *
- * @author julie
- */
 public class Modification_Frame extends javax.swing.JFrame {
     private ODatabaseSession db;
-    private List<String> info;
-    private String RID;
-    private List<String> filteredWords;
-    private String[] propertyKeys = {
-            "Classe",
-            "Famille", 
-            "Type",
-            "Sous Famille", 
-            "Constructeur", 
-            "Tension(VCC)", 
-            "Puissance Unitaire(W)", 
-            "Puissance Transitoire(W)", 
-            "Indice de confiance", 
-            "Origine de consommation"
-        };
+    private List<String> info; //Informations de l'objet à modifier
+    private String RID; //Case 10 de info
+    private List<String> filteredWords; //On ne veut garder que les informations utile (pas le RID de l'objet dans la BDD)
 
-
-    /**
-     * Creates new form Modification_Frame
-     */
     public Modification_Frame(List<String> info, ODatabaseSession db) {
         this.db = db;
         this.info = info;
@@ -50,7 +28,8 @@ public class Modification_Frame extends javax.swing.JFrame {
              }
         }
         
-        setTextToAccessibleName("Mod_Classe", filteredWords.get(0));
+        //Initialisation des informations de infos dans les cases de la Frame
+        setTextToAccessibleName("Mod_Classe", filteredWords.get(0)); 
         setTextToAccessibleName("Mod_1", filteredWords.get(1));
         setTextToAccessibleName("Mod_2", filteredWords.get(2));
         setTextToAccessibleName("Mod_3", filteredWords.get(3));
@@ -62,19 +41,13 @@ public class Modification_Frame extends javax.swing.JFrame {
         setTextToAccessibleName("Mod_9", filteredWords.get(9));
         
     }
+    //Permet d'afficher des messages dans la JTextArea
     public void printMessage(String message) {
-        // Récupérer l'heure actuelle
         SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm:ss.SSS");  // Format de l'heure
         String time = sdf.format(new Date());  // Obtenir l'heure actuelle
-
-        // Construire le message avec l'heure
         String formattedMessage = time + " : " + message + "\n";
-
-        // Ajouter le message à la JTextArea
         jTextArea1.append(formattedMessage);
-        
-        // Faire défiler jusqu'à la fin pour afficher le dernier message
-        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
+        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());// Faire défiler jusqu'à la fin pour afficher le dernier message
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -115,12 +88,6 @@ public class Modification_Frame extends javax.swing.JFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-        jTextField9.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField9ActionPerformed(evt);
-            }
-        });
-
         jLabel6.setText("Tension Circuit de commande (V)");
 
         jLabel11.setText("Origine consommation ");
@@ -132,27 +99,9 @@ public class Modification_Frame extends javax.swing.JFrame {
             }
         });
 
-        jTextField5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField5ActionPerformed(evt);
-            }
-        });
-
         jLabel7.setText("Puissance Unitaire consommée (W)");
 
-        jTextField6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField6ActionPerformed(evt);
-            }
-        });
-
         jLabel8.setText("Puissance Eqt fermé");
-
-        jTextField7.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField7ActionPerformed(evt);
-            }
-        });
 
         jLabel9.setText("Puissance Eqt ouverte");
 
@@ -160,19 +109,7 @@ public class Modification_Frame extends javax.swing.JFrame {
 
         jLabel3.setText("Type");
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
-            }
-        });
-
         jLabel4.setText("Tension circuit puissance (V)");
-
-        jTextField8.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField8ActionPerformed(evt);
-            }
-        });
 
         jLabel5.setText("Constructeur");
 
@@ -339,17 +276,12 @@ public class Modification_Frame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jTextField9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField9ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField9ActionPerformed
-
+//Bouton de modification
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         OVertex v;
         try {
             ORecordId recordId = new ORecordId(RID);
-            v = db.load(recordId);
-            
+            v = db.load(recordId); //Récupération de l'objet dans la base de données
         String famille = "NULL";
         String sousFamille = "NULL";
         String type= "NULL";
@@ -364,9 +296,8 @@ public class Modification_Frame extends javax.swing.JFrame {
         String PuissanceUnitaireCons= "NULL";
         String PuissanceEqtFermé= "NULL";
         String PuissanceEqtOuverte= "NULL";
-        // Initialisation des variables avec la logique de remplacement si null
         String className = getTextFromAccessibleName("Mod_Classe");
-        if (className.equals("Composant")){
+        if (className.equals("Composant")){ //On récupère les modifications apportées dans les cases
             famille = getTextFromAccessibleName("Mod_1");
             sousFamille = getTextFromAccessibleName("Mod_2");
             type = getTextFromAccessibleName("Mod_3");
@@ -376,7 +307,7 @@ public class Modification_Frame extends javax.swing.JFrame {
             puissanceTransitoire = getTextFromAccessibleName("Mod_7");
             indice = getTextFromAccessibleName("Mod_8");
             origineConsommation = getTextFromAccessibleName("Mod_9");
-            // Remplacer les valeurs null par "NULL"
+            // Remplacer les valeurs null par "NULL" si case vide
             if (famille.isEmpty()) famille = "NULL";
             if (sousFamille.isEmpty()) sousFamille = "NULL";
             if (type.isEmpty()) type = "NULL";
@@ -386,7 +317,7 @@ public class Modification_Frame extends javax.swing.JFrame {
             if (puissanceTransitoire.isEmpty()) puissanceTransitoire = "NULL";
             if (indice.isEmpty()) indice = "NULL";
             if (origineConsommation.isEmpty()) origineConsommation = "NULL";
-        }else if (className.equals("Equipement")){
+        }else if (className.equals("Equipement")){ //On récupère les modifications apportées dans les cases
             type = getTextFromAccessibleName("Mod_1");
             constructeur = getTextFromAccessibleName("Mod_2");
             TensionCircuiPuissance = getTextFromAccessibleName("Mod_3");
@@ -396,7 +327,7 @@ public class Modification_Frame extends javax.swing.JFrame {
             PuissanceEqtOuverte = getTextFromAccessibleName("Mod_7");
             indice = getTextFromAccessibleName("Mod_8");
             origineConsommation = getTextFromAccessibleName("Mod_9");
-            // Remplacer les valeurs null par "NULL"
+            // Remplacer les valeurs null par "NULL" si case Vide
             if (type.isEmpty()) type = "NULL";
             if (constructeur.isEmpty()) constructeur = "NULL";
             if (TensionCircuiPuissance.isEmpty()) TensionCircuiPuissance = "NULL";
@@ -407,7 +338,7 @@ public class Modification_Frame extends javax.swing.JFrame {
             if (indice.isEmpty()) indice = "NULL";
             if (origineConsommation.isEmpty()) origineConsommation = "NULL";
         }
-            if (!className.equals(info.get(0))){
+            if (!className.equals(info.get(0))){ //Si la classe du vertex a été modifiée, on est obligé de supprimer l'ancien et de créer un nouveau dans la bonne classe
                 v.delete();
                 OVertex newVertex = db.newVertex(className);
                 if (className.equals("Composant")){
@@ -433,7 +364,7 @@ public class Modification_Frame extends javax.swing.JFrame {
                     newVertex.setProperty("Origine de consommation", origineConsommation);
                     newVertex.save();
                 }
-            }else if (className.equals("Composant")){
+            }else if (className.equals("Composant")){ //Si la classe du vertex n'a pas été modifiée, on peut simplement modifier les propriétés.
                 v.setProperty("Famille", famille);
                 v.setProperty("Type", type);
                 v.setProperty("Sous Famille", sousFamille);
@@ -456,93 +387,63 @@ public class Modification_Frame extends javax.swing.JFrame {
                 v.setProperty("Origine de consommation", origineConsommation);
                 v.save();
                 }
-            dispose();
+            dispose(); //On ferme la fênetre
         } catch (Exception e) {
             printMessage("Erreur dans la modification : " + e.getMessage());
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField5ActionPerformed
-
-    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField6ActionPerformed
-
-    private void jTextField7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField7ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField7ActionPerformed
-
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
-
-    private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField8ActionPerformed
-
+//Vérification de la valeur de la Classe pour mettre les bonnes cases à l'affichage
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-
-    String selectedItem = (String) jComboBox1.getSelectedItem();
-
-    // Si la sélection est "Equipement"
-    if ("Equipement".equals(selectedItem)) {
-        jLabel3.setText("Type");
-        jLabel5.setText("Constructeur");
-        jLabel4.setText("Tension circuit puissance (V)");
-        jLabel6.setText("Tension Circuit de commande (V)");
-        jLabel7.setText("Puissance Unitaire consommée (W)");
-        jLabel8.setText("Puissance Eqt fermé");
-        jLabel8.setText("Puissance Eqt ouverte");
-        
-        // Actions spécifiques pour Equipement ici
-    }
-    // Si la sélection est "Composant"
-    else if ("Composant".equals(selectedItem)) {
-        jLabel3.setText("Famille");
-        jLabel5.setText("Type");
-        jLabel4.setText("Sous Famille");
-        jLabel6.setText("Constructeur");
-        jLabel7.setText("Tension (VCC)");
-        jLabel8.setText("Puissance Unitaire (W)");
-        jLabel8.setText("Puissance Transitoire (W)");
-    }        // TODO add your handling code here:
+        String selectedItem = (String) jComboBox1.getSelectedItem();
+        if ("Equipement".equals(selectedItem)) {
+            jLabel3.setText("Type");
+            jLabel5.setText("Constructeur");
+            jLabel4.setText("Tension circuit puissance (V)");
+            jLabel6.setText("Tension Circuit de commande (V)");
+            jLabel7.setText("Puissance Unitaire consommée (W)");
+            jLabel8.setText("Puissance Eqt fermé");
+            jLabel8.setText("Puissance Eqt ouverte");
+        }else if ("Composant".equals(selectedItem)) {
+            jLabel3.setText("Famille");
+            jLabel5.setText("Type");
+            jLabel4.setText("Sous Famille");
+            jLabel6.setText("Constructeur");
+            jLabel7.setText("Tension (VCC)");
+            jLabel8.setText("Puissance Unitaire (W)");
+            jLabel8.setText("Puissance Transitoire (W)");
+        }
     }//GEN-LAST:event_jComboBox1ActionPerformed
-    
+//Modifier les informations d'une case
     private void setTextToAccessibleName(String accessibleName, String text) {
         setTextToAccessibleNameRecursive(getContentPane(), accessibleName, text);
     }
-
+//Recherche de toutes les cases de manière récursive
     private void setTextToAccessibleNameRecursive(java.awt.Container container, String accessibleName, String text) {
     for (java.awt.Component comp : container.getComponents()) {
-        // Vérifier si le composant est un JTextField
         if (comp instanceof javax.swing.JTextField) {
             javax.swing.JTextField textField = (javax.swing.JTextField) comp;
             if (accessibleName.equals(textField.getAccessibleContext().getAccessibleName())) {
-                textField.setText(text); // Définir le texte
-                return; // Arrêter la recherche après modification
+                textField.setText(text);
+                return; 
             }
         }
-        // Vérifier si le composant est un JComboBox
         else if (comp instanceof javax.swing.JComboBox) {
             javax.swing.JComboBox<?> comboBox = (javax.swing.JComboBox<?>) comp;
             if (accessibleName.equals(comboBox.getAccessibleContext().getAccessibleName())) {
-                // Vérifier si le texte existe déjà dans la JComboBox
                 boolean found = false;
                 for (int i = 0; i < comboBox.getItemCount(); i++) {
                     Object item = comboBox.getItemAt(i);
-                    if (text.equals(item.toString())) { // Comparer en tant que String
-                        comboBox.setSelectedIndex(i); // Sélectionner l'élément existant
+                    if (text.equals(item.toString())) { 
+                        comboBox.setSelectedIndex(i);
                         found = true;
                         break;
                     }
                 }
                 if (!found) {
-                    System.out.println("Erreur input");
+                    printMessage("Erreur input");
                 }
-                return; // Arrêter la recherche après modification
+                return;
             }
         }
         // Rechercher récursivement dans les sous-conteneurs
@@ -551,27 +452,24 @@ public class Modification_Frame extends javax.swing.JFrame {
         }
     }
 }
-
+//Accéder aux informations d'une case
     public String getTextFromAccessibleName(String accessibleName) {
         return getTextFromAccessibleNameRecursive(getContentPane(), accessibleName);
     }
-
+//Recherche de toutes les cases de manière récursive
     public String getTextFromAccessibleNameRecursive(java.awt.Container container, String accessibleName) {
         for (java.awt.Component comp : container.getComponents()) {
-            // Vérifier si le composant est un JTextField
             if (comp instanceof javax.swing.JTextField) {
                 javax.swing.JTextField textField = (javax.swing.JTextField) comp;
                 if (accessibleName.equals(textField.getAccessibleContext().getAccessibleName())) {
                     return textField.getText();
                 }
             }    
-        // Vérifier si le composant est un JComboBox
             else if (comp instanceof javax.swing.JComboBox) {
                 javax.swing.JComboBox<?> comboBox = (javax.swing.JComboBox<?>) comp;
                 if (accessibleName.equals(comboBox.getAccessibleContext().getAccessibleName())) {
-                    // Récupérer la valeur sélectionnée dans la combobox
                     Object selectedItem = comboBox.getSelectedItem();
-                    return selectedItem != null ? selectedItem.toString() : ""; // Retourne une chaîne vide si aucun élément n'est sélectionné
+                    return selectedItem != null ? selectedItem.toString() : ""; 
                 }
             }
             // Rechercher récursivement dans les sous-conteneurs
@@ -582,9 +480,8 @@ public class Modification_Frame extends javax.swing.JFrame {
                 }
             }
         }
-        return "";  // Retourne une chaîne vide si le champ ou la combobox n'est pas trouvé
+        return ""; 
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JComboBox<String> jComboBox1;

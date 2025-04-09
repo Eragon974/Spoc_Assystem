@@ -2,11 +2,9 @@ package com.mycompany.assystem_app;
 
 import java.util.List;
 import java.util.Vector;
-
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
-
 import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.db.OLiveQueryResultListener;
@@ -15,8 +13,7 @@ import com.orientechnologies.orient.core.record.impl.OVertexDocument;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 
-public class MyLiveQueryListener implements OLiveQueryResultListener {
-
+public class MyLiveQueryListener implements OLiveQueryResultListener {  
     private final JTable table;
     private final String className;
     private final ODatabaseSession db;
@@ -76,8 +73,6 @@ public class MyLiveQueryListener implements OLiveQueryResultListener {
                     model.addColumn(field);
                 }
             }
-
-            // Add ID column
             model.addColumn("ID");
             
             // Add data rows
