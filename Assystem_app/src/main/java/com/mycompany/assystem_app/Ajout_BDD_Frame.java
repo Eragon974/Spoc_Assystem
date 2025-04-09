@@ -3,11 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.assystem_app;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.record.OVertex;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  *
@@ -64,7 +65,7 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
 
         jPanel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Equipement", "Composant" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {"Composant", "Equipement"}));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
@@ -327,7 +328,7 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
         String PuissanceEqtOuverte= "NULL";
         // Initialisation des variables avec la logique de remplacement si null
         String className = getTextFromAccessibleName("Add_Classe");
-        if (className.equals("Composant")){
+        if (className.equals("Equipement")){
             famille = getTextFromAccessibleName("Add_1");
             sousFamille = getTextFromAccessibleName("Add_2");
             type = getTextFromAccessibleName("Add_3");
@@ -347,7 +348,7 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
             if (puissanceTransitoire.isEmpty()) puissanceTransitoire = "NULL";
             if (indice.isEmpty()) indice = "NULL";
             if (origineConsommation.isEmpty()) origineConsommation = "NULL";
-        }else if (className.equals("Equipement")){
+        }else if (className.equals("Composant")){
             type = getTextFromAccessibleName("Add_1");
             constructeur = getTextFromAccessibleName("Add_2");
             TensionCircuiPuissance = getTextFromAccessibleName("Add_3");
@@ -382,7 +383,7 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
         printMessage("Tentative de creation du vertex pour la classe : " + className);
         // Création d'un vertex de cette classe
         OVertex v = db.newVertex(className);
-        if (className.equals("Composant")){
+        if (className.equals("Equipement")){
           v.setProperty("Famille", famille);
             v.setProperty("Type", type);
             v.setProperty("Sous Famille", sousFamille);
@@ -395,13 +396,13 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
             v.save();
             clearAllTextFields();  
             printMessage("Le vertex " + className + " " + famille + " " + sousFamille + " " + type + " " + constructeur + " " + tension + " " + puissanceUnitaire + " " + puissanceTransitoire + " " + indice + " " + origineConsommation + " a ete cree avec succès !");
-        }else if(className.equals("Equipement")){
+        }else if(className.equals("Composant")){
            v.setProperty("Type", type);
             v.setProperty("Constructeur", constructeur);
             v.setProperty("Tension Circuit Puissance", TensionCircuiPuissance);
             v.setProperty("Tension Circuit de commande", TensionCircuitCommande);
             v.setProperty("Puissance Unitaire consommée", PuissanceUnitaireCons);
-            v.setProperty("Puissance Eqt fermée", PuissanceEqtFermé);
+            v.setProperty("Puissance Eqt fermé", PuissanceEqtFermé);
             v.setProperty("Puissance Eqt ouverte", PuissanceEqtOuverte);
             v.setProperty("Indice de confiance", indice);
             v.setProperty("Origine de consommation", origineConsommation);
@@ -446,27 +447,29 @@ public class Ajout_BDD_Frame extends javax.swing.JFrame {
         // Récupérer l'élément sélectionné dans le JComboBox
     String selectedItem = (String) jComboBox1.getSelectedItem();
 
+    
     // Si la sélection est "Equipement"
     if ("Equipement".equals(selectedItem)) {
-        jLabel3.setText("Type");
-        jLabel5.setText("Constructeur");
-        jLabel4.setText("Tension circuit puissance (V)");
-        jLabel6.setText("Tension Circuit de commande (V)");
-        jLabel7.setText("Puissance Unitaire consommée (W)");
-        jLabel8.setText("Puissance Eqt fermé");
-        jLabel8.setText("Puissance Eqt ouverte");
-        
-        // Actions spécifiques pour Equipement ici
-    }
-    // Si la sélection est "Composant"
-    else if ("Composant".equals(selectedItem)) {
         jLabel3.setText("Famille");
         jLabel5.setText("Type");
         jLabel4.setText("Sous Famille");
         jLabel6.setText("Constructeur");
         jLabel7.setText("Tension (VCC)");
         jLabel8.setText("Puissance Unitaire (W)");
-        jLabel8.setText("Puissance Transitoire (W)");
+        jLabel9.setText("Puissance Transitoire (W)");
+    }
+
+    // Si la sélection est "Composant"
+    if ("Composant".equals(selectedItem)) {
+        jLabel3.setText("Type");
+        jLabel5.setText("Constructeur");
+        jLabel4.setText("Tension circuit puissance (V)");
+        jLabel6.setText("Tension Circuit de commande (V)");
+        jLabel7.setText("Puissance Unitaire consommée (W)");
+        jLabel8.setText("Puissance Eqt fermé");
+        jLabel9.setText("Puissance Eqt ouverte");
+        
+        // Actions spécifiques pour Equipement ici
     }
     }//GEN-LAST:event_jComboBox1ActionPerformed
     private String getTextFromAccessibleName(String accessibleName) {

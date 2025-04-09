@@ -162,8 +162,10 @@ public class MyLiveQueryListener implements OLiveQueryResultListener {
             // Determine which model to update based on the className
             if (className.equals("Equipement")) {
                 model1 = model;
+                return model;
             } else if (className.equals("Composant")) {
                 model2 = model;
+                return model;
             } else {
                 System.err.println("Unknown class name: " + className);
                 return null;
@@ -173,14 +175,6 @@ public class MyLiveQueryListener implements OLiveQueryResultListener {
             System.err.println("Erreur lors du chargement des données pour " + className + ": " + e.getMessage());
             e.printStackTrace();
         }
-
-        if (className.equals("Equipement")) {
-            return model1;
-        } else if (className.equals("Composant")) {
-            return model2;
-        } else {
-            System.err.println("Unknown class name: " + className);
-            return null;
-        }
+        return null;
     }
 }
