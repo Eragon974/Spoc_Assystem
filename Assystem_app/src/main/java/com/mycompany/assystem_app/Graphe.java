@@ -160,6 +160,12 @@ public class Graphe extends javax.swing.JFrame implements KeyListener {
             graph.getNode(nodeId).setAttribute("ui.class", "selected"); // Mettre en surbrillance
         } else {
             // Si un nœud est déjà sélectionné, créer une arête entre les deux nœuds
+            if (selectedNodeId.equals(nodeId)) {
+                // Si le même nœud est cliqué, le désélectionner
+                graph.getNode(selectedNodeId).removeAttribute("ui.class"); // Retirer la surbrillance
+                selectedNodeId = null; // Réinitialiser la sélection
+                return;
+            }
             graph.addEdge(selectedNodeId + "-" + nodeId, selectedNodeId, nodeId);
             graph.getNode(selectedNodeId).removeAttribute("ui.class"); // Retirer la surbrillance
             selectedNodeId = null; // Réinitialiser la sélection

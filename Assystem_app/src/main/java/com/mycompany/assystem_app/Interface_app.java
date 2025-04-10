@@ -749,12 +749,7 @@ public class Interface_app extends javax.swing.JFrame {
             filteredModel1.addRow((Vector) originalModel1.getDataVector().elementAt(i));
             }
         }
-        if (filteredModel1.getRowCount() == 0) {
-            printMessage("Aucun élément trouvé dans jTable1, restauration de la table d'origine.");
-            jTable1.setModel(modelE);
-        } else {
             jTable1.setModel(filteredModel1);
-        }
 
         // Filtrer jTable2 (par exemple, Composant)
         DefaultTableModel originalModel2 = (DefaultTableModel) jTable2.getModel();
@@ -780,12 +775,7 @@ public class Interface_app extends javax.swing.JFrame {
             filteredModel2.addRow((Vector) originalModel2.getDataVector().elementAt(i));
             }
         }
-        if (filteredModel2.getRowCount() == 0) {
-            printMessage("Aucun élément trouvé dans jTable2, restauration de la table d'origine.");
-            jTable2.setModel(modelC);
-        } else {
             jTable2.setModel(filteredModel2);
-        }
     }//GEN-LAST:event_jTextField8ActionPerformed
     //Methode pour la fonction Recherche
     private boolean isMatch(String input, String element, LevenshteinDistance levenshtein) {
