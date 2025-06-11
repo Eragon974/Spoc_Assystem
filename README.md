@@ -52,9 +52,9 @@ cd Spoc_Assystem
 ## Comment utiliser notre interface
 1. Cliquer sur le bouton connexion et remplir les cases avec les informations correspondantes
 2. Une fois la connexion réalisée vous devriez voir les composants et équipements de la base de données.
-3. Sélectionner un composant ou équipement
-4. Cliquer sur un des boutons "Supprimer","Dupliquer" ou "Modifier"
-5. Pour ajouter un composant, cliquer sur "Ajouter à la BDD"
+3. Sélectionner un composant ou équipement.
+4. Cliquer sur un des boutons "Supprimer","Dupliquer" ou "Modifier".
+5. Pour ajouter un composant, cliquer sur "Ajouter à la BDD".
 6. Cliquez sur déconnexion pour mettre fin à la session.
 
 ## Remarques
