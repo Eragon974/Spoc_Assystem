@@ -49,6 +49,14 @@ cd Spoc_Assystem
 3. Suivez les instructions de l’interface pour saisir et gérer les données électriques.
 4. (A venir) Utilisez les fonctionnalités d’extraction de bilan de puissance selon vos besoins.
 
+## Comment utiliser notre interface
+1. Cliquer sur le bouton connexion et remplir les cases avec les informations correspondantes
+2. Une fois la connexion réalisée vous devriez voir les composants et équipements de la base de données.
+3. Sélectionner un composant ou équipement
+4. Cliquer sur un des boutons "Supprimer","Dupliquer" ou "Modifier"
+5. Pour ajouter un composant, cliquer sur "Ajouter à la BDD"
+6. Cliquez sur déconnexion pour mettre fin à la session.
+
 ## Remarques
 
 - L’application requiert qu’OrientDB soit en fonctionnement pour pouvoir accéder ou modifier les données.
